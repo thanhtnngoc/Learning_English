@@ -44,6 +44,10 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%);background:var(--pr);color:#fff;padding:9px 16px;border-radius:99px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.s{opacity:1;top:calc(env(safe-area-inset-top,0px) + 24px)}
 .combo{text-align:center;font-weight:800;color:#ff8a3d;min-height:24px;margin-bottom:6px}
+.combo+.q{font-weight:700;font-size:19px;padding:20px 18px;margin-bottom:6px}
+.combo+.q .hint{font-weight:400}
+#os{margin-top:22px}
+.combo+.q+input{margin-top:22px}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 </style>
