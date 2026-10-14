@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learning English</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ff;--card:#fff;--tx:#1f1b3a;--mu:#6b6890;--pr:#6c4cf1;--ok:#1fa971;--no:#e5484d;--bd:#e3dfff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15132b;--card:#201d3d;--tx:#f0eeff;--mu:#a9a5d1;--pr:#8f78ff;--ok:#3ddc97;--no:#ff6b70;--bd:#34305e}}
+:root[data-theme="dark"]{--bg:#15132b;--card:#201d3d;--tx:#f0eeff;--mu:#a9a5d1;--pr:#8f78ff;--ok:#3ddc97;--no:#ff6b70;--bd:#34305e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+main{max-width:560px;margin:0 auto;padding:16px}
+.top{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+h1{font-size:20px;margin:0}
+.chip{background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:5px 11px;font-size:13px;font-weight:600}
+.bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:12px 0 4px}
+.bar i{display:block;height:100%;min-width:6px;background:linear-gradient(90deg,var(--pr),#ff7ac6);transition:width .4s}
+.sub{font-size:12px;color:var(--mu);margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:24px 18px;min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;box-shadow:0 6px 24px rgba(108,76,241,.12)}
+.w{font-size:34px;font-weight:800;margin:0}
+.ipa{color:var(--pr);font-size:18px;margin:6px 0}
+.def{font-size:17px;line-height:1.5}
+.hint{color:var(--mu);font-size:12px;margin-top:10px}
+.row{display:flex;gap:8px;margin-top:12px}
+.btn{flex:1;padding:12px;border-radius:12px;border:0;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:var(--pr)}
+.btn.g{background:var(--ok)}.btn.r{background:var(--no)}.btn.l{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin-top:8px;border-radius:12px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;font-weight:600;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.opt.no{border-color:var(--no);background:color-mix(in srgb,var(--no) 18%,var(--card))}
+.q{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;font-size:17px;line-height:1.5}
+input,textarea{width:100%;padding:11px;margin-top:8px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}
+.list{margin-top:14px;font-size:14px}
+.list div{padding:8px 0;border-bottom:1px solid var(--bd)}
+.it b{display:block;font-size:16px}
+.cn{font-size:12px;font-weight:600;margin-left:8px}
+.it small{display:block;color:var(--mu);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%);background:var(--pr);color:#fff;padding:9px 16px;border-radius:99px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:9}
+.toast.s{opacity:1;top:calc(env(safe-area-inset-top,0px) + 24px)}
+.combo{text-align:center;font-weight:800;color:#ff8a3d;min-height:24px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<main>
+ <div class="top"><h1>📚 Learning English</h1><div><span class="chip" id="st">🔥 0</span> <span class="chip" id="lv">Lv 1</span> <span class="chip" id="xp">0 XP</span> <button class="chip" id="rs" title="Reset" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:17px;color:var(--tx)">↺</button></div></div>
+ <div class="bar"><i id="pb"></i></div>
+ <div class="sub" id="ps"></div>
+ <div class="tabs"><button data-t="f">🃏 Thẻ</button><button data-t="q">🎯 Quiz</button><button data-t="a">➕ Thêm từ</button></div>
+ <div id="v"></div>
+</main>
+<div class="toast" id="to"></div>
+<script>
+const BASE=[["police","/pəˈliːs/","the official organization that is responsible for protecting people and property, making people obey the law, and catching people who have committed a crime"],["obey","/əʊˈbeɪ/","to act according to what you have been asked or ordered to do by someone in authority, or to behave according to a rule, law, or instruction"],["property","/ˈprɒp.ə.ti/","an object or objects that belong to someone"],["belong","/bɪˈlɒŋ/","to be in the right place or a suitable place"],["suitable","/ˈsjuː.tə.bəl/","acceptable or right for someone or something"],["crime","/kraɪm/","illegal activities"],["illegal","/ɪˈliː.ɡəl/","not allowed by law"],["allow","/əˈlaʊ/","to give permission for someone to do something, or to not prevent something from happening"],["permission","/pəˈmɪʃ.ən/","if someone is given this to do something, they are allowed to do it"],["prevent","/prɪˈvent/","to stop something from happening or someone from doing something"],["committed","/kəˈmɪt.ɪd/","loyal and willing to give your time and energy to something that you believe in"],["loyal","/ˈlɔɪ.əl/","firm and not changing in your friendship with or support for a person or an organization, or in your belief in your principles"],["firm","/fɜːm/","not soft but not completely hard"],["completely","/kəmˈpliːt.li/","in every way or as much as possible"],["principle","/ˈprɪn.sə.pəl/","a basic idea or rule that explains or controls how something happens or works"],["willing","/ˈwɪl.ɪŋ/","to be happy to do something if it is needed"],["restaurant","/ˈres.tər.ɒnt/","a place where meals are prepared and served to customers"],["meal","/mɪəl/","an occasion when food is eaten, or the food that is eaten on such an occasion"],["particular","/pəˈtɪk.jə.lər/","special, or this and not any other"],["occasion","/əˈkeɪ.ʒən/","a particular time, especially when something happens or has happened"],["beach","/biːtʃ/","an area of sand or small stones near the sea or another area of water such as a lake"],["sand","/sænd/","a substance that consists of very small grains of rock, found on beaches and in deserts"],["substance","/ˈsʌb.stəns/","material with particular physical characteristics"],["grain","/ɡreɪn/","a seed or seeds from a plant, especially a plant like a grass such as rice or wheat"],["seed","/siːd/","a small, round or oval object produced by a plant and from which, when it is planted, a new plant can grow"],["oval","/ˈəʊ.vəl/","shaped like a circle that is flattened so that it is like an egg or an ellipse"],["knife","/naɪf/","a tool, usually with a metal blade and a handle, used for cutting and spreading food or other substances, or as a weapon"],["metal","/ˈmet.əl/","a chemical element, such as iron or gold, or a mixture of such elements, such as steel, that is generally hard and strong"],["element","/ˈel.ɪ.mənt/","a part of something"],["blade","/bleɪd/","the flat part on a knife or similar tool or weapon, with a very thin edge used for cutting"],["spread","/spred/","to cover or reach a wider or increasing area, or to make something do this"],["weapon","/ˈwep.ən/","any object used in fighting or war, such as a gun, bomb, knife, etc."],["fork","/fɔːk/","a small object with three or four points and a handle, that you use to pick up food and eat with"],["spoon","/spuːn/","an object consisting of a round, hollow part and a handle, used for mixing, serving, and eating food"]];
+let S={xp:0,streak:0,last:"",custom:[],m:{}};
+try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}};
+const B=()=>S.base||BASE;
+const W=()=>B().concat(S.custom);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const day=()=>new Date().toISOString().slice(0,10);
+let fc=null,tab="f",fi=0,flip=false,combo=0,cur=null,tt;
+function toast(t){const e=$("to");e.textContent=t;e.classList.add("s");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("s"),1300)}
+function gain(n,msg){
+ const d=day();
+ if(S.last!==d){const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=d;toast("🔥 Chuỗi "+S.streak+" ngày!")}
+ const l0=Math.floor(S.xp/100);S.xp+=n;
+ if(Math.floor(S.xp/100)>l0)toast("🎉 Lên Level "+(Math.floor(S.xp/100)+1)+"!");else if(msg)toast(msg);
+ save();hud();
+}
+function hud(){
+ $("st").textContent="🔥 "+S.streak;$("lv").textContent="Lv "+(Math.floor(S.xp/100)+1);$("xp").textContent=S.xp+" XP";
+ const w=W(),k=w.filter(x=>(S.m[x[0]]||0)>=3).length;
+ const p=w.reduce((a,x)=>a+Math.min(S.m[x[0]]||0,3),0)/(3*w.length)*100;
+ $("pb").style.width=Math.max(p,1.5)+"%";$("ps").textContent="Đã thuộc "+k+"/"+w.length+" từ · Tiến độ "+p.toFixed(1)+"% (mỗi từ cần nhớ đúng 3 lần để tính là thuộc)";
+}
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function mark(w,d){S.m[w]=Math.max(0,Math.min(5,(S.m[w]||0)+d));S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
+const cnt=w=>{const c=(S.c||{})[w]||[0,0];return `<span class="cn" style="color:var(--ok)">✅${c[0]}</span><span class="cn" style="color:var(--no)">❌${c[1]}</span>`};
+function pick(){ // ưu tiên từ còn yếu
+ const w=W(),ws=w.map(x=>6-(S.m[x[0]]||0)),t=ws.reduce((a,b)=>a+b,0);let r=Math.random()*t;
+ for(let i=0;i<w.length;i++){r-=ws[i];if(r<=0)return w[i]}return w[0];
+}
+function render(){
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+ ({f:rFlash,q:rQuiz,a:rAdd})[tab]();
+}
+function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n}
+function rFlash(){
+ const w=W();if(!fc||!w.includes(fc))fc=pick();const x=fc;
+ $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Chạm để lật lại</p>`:`<p class="w">${esc(x[0])}</p><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Nghe</button><p class="hint">Chạm thẻ để xem nghĩa</p>`}</div>
+ <div class="row"><button class="btn r" id="hd">😵 Chưa nhớ</button><button class="btn g" id="ez">😎 Nhớ rồi</button></div>
+ <div class="hint" style="text-align:center">Thẻ ngẫu nhiên · Đã ôn ${fi} thẻ</div>`;
+ $("cd").onclick=e=>{if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
+ $("hd").onclick=()=>{mark(x[0],-1);gain(1);fi++;nextCard(x);flip=false;rFlash()};
+ $("ez").onclick=()=>{mark(x[0],1);gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
+}
+function rQuiz(){
+ let pv=cur;do{cur=pick()}while(cur===pv&&W().length>1);const w=W();
+ let o=[cur];while(o.length<4){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
+ o.sort(()=>Math.random()-.5);
+ $("v").innerHTML=`<div class="combo">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q">${esc(cur[2])}</div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}</button>`).join("")}</div><div id="nx"></div>`;
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".opt").forEach(z=>{z.disabled=true;if(z.dataset.w===cur[0])z.classList.add("ok")});
+  if(b.dataset.w===cur[0]){combo++;mark(cur[0],1);speak(cur[0]);gain(10+Math.min(combo,5)*2,["Chuẩn! ","Quá đỉnh! ","Xịn sò! "][combo%3]+"+"+(10+Math.min(combo,5)*2)+" XP")}
+  else{b.classList.add("no");combo=0;mark(cur[0],-1);save();hud();toast("Không sao, nhớ lại nhé 💪")}
+  $("nx").innerHTML=`<div class="row"><button class="btn" id="nb">Câu tiếp ➜</button></div>`;$("nb").onclick=rQuiz;
+ });
+}
+function rAdd(){
+ const P=S.custom.filter(x=>!x[3]),L=S.custom.filter(x=>x[3]).reverse().concat(B());
+ $("v").innerHTML=`<div class="q">Thêm từ mới (+15 XP mỗi từ)
+ <input id="nw" placeholder="Từ (vd: obey)"><input id="ni" placeholder="Phiên âm (vd: /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="Định nghĩa tiếng Anh"></textarea></div>
+ <div class="row"><button class="btn" id="ad">➕ Thêm từ</button></div>
+ <div class="list">${P.length?`<b>✨ Từ mới chờ dán vào Sheet (${P.length})</b>${P.slice().reverse().map(x=>`<div class="it"><b>${esc(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}<div class="row"><button class="btn l" id="cp">📋 1. Copy</button><button class="btn g" id="ok">✅ 2. Đã dán vào Sheet</button></div>`:`<span style="color:var(--mu)">Chưa có từ mới nào đang chờ. Thêm từ nhé!</span>`}</div>
+ <details open><summary>📖 Danh sách từ (${L.length})</summary><div class="list">${L.map(x=>`<div class="it"><b>${esc(x[0])}${cnt(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}</div></details>
+ <details><summary>🔄 Đồng bộ từ Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">Trong Sheet, bôi đen cột A:C rồi Ctrl+C, dán vào ô dưới. App sẽ lấy danh sách từ đúng theo Sheet; từ mới nào chưa có trong Sheet sẽ quay lại mục chờ dán.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn" id="sb">🔄 Đồng bộ</button></div></div></details>`;
+ $("ad").onclick=()=>{
+  const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim();
+  if(!a||!c){toast("Cần nhập từ và định nghĩa");return}
+  if(W().some(x=>x[0].toLowerCase()===a.toLowerCase())&&!confirm("Từ này đã có. Vẫn thêm?"))return;
+  S.custom.push([a,b,c]);gain(15,"🎉 Thêm \""+a+"\" +15 XP");speak(a);rAdd();
+ };
+ const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[3]=true});save();toast("✅ Đã chuyển vào Danh sách từ");rAdd()};
+ $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),r[2].trim().replace(/:$/,"")]);
+  if(!rows.length){toast("Chưa nhận được dữ liệu từ Sheet");return}
+  const have=new Set(rows.map(r=>r[0].toLowerCase()));
+  S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2]]);
+  save();hud();toast("🔄 Đã đồng bộ "+rows.length+" từ");rAdd()};
+ const cp=$("cp");if(cp)cp.onclick=()=>{
+  const t=P.map(x=>x.slice(0,3).join("\t")).join("\n");
+  const done=()=>{P.forEach(x=>x[3]=true);save();toast("Đã copy! Từ đã chuyển vào Danh sách từ");rAdd()};
+  try{navigator.clipboard.writeText(t).then(()=>toast("Đã copy! Dán vào Sheet xong thì bấm ✅"),()=>prompt("Copy:",t))}catch(e){prompt("Copy:",t)}
+ };
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, thanh tiến độ và số lần đúng/sai? (Danh sách từ vẫn giữ nguyên)"))return;S.xp=0;S.m={};S.c={};combo=0;save();hud();render();toast("Đã reset ↺")};
+hud();render();
+</script>
+</body>
+</html>
