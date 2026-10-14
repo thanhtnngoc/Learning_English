@@ -82,7 +82,7 @@ function gain(n,msg){
 function hud(){
  $("st").textContent="🔥 "+S.streak;$("lv").textContent="Lv "+(Math.floor(S.xp/100)+1);$("xp").textContent=S.xp+" XP";
  const r=S.rd;let p=0,t="Chưa bắt đầu vòng ôn · Vào tab 🎯 Quiz để bắt đầu";
- if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(r.ph===1?"Vòng 1 · Chọn đáp án":"Vòng 2 · Điền chữ")+(r.sub?" (ôn từ sai)":"")+": "+r.i+"/"+r.deck.length+" từ"}
+ if(r&&r.deck.length){const n=r.n||r.deck.length,d=r.ph===1?r.ok:r.i;p=d/n*100;t=(r.ph===1?"Vòng 1 · Chọn đáp án":"Vòng 2 · Điền chữ")+(r.sub?" (ôn từ sai)":"")+": "+d+"/"+n+(r.ph===1?" từ đã đúng":" từ")}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
 function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
@@ -108,15 +108,15 @@ function rFlash(){
 }
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const byW=n=>W().find(x=>x[0]===n);
-function newRound(ph,names){S.rd={ph:ph,deck:shuf(names||W().map(x=>x[0])),i:0,ok:0,wr:[],sub:!!names};save();hud()}
+function newRound(ph,names){const d=shuf(names||W().map(x=>x[0]));S.rd={ph:ph,deck:d,n:d.length,i:0,ok:0,wr:[],sub:!!names};save();hud()}
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
-function answered(w,okk){const r=S.rd;r.i++;if(okk)r.ok++;else r.wr.push(w);mark(w,okk?1:-1)}
+function answered(w,okk){const r=S.rd;r.i++;if(okk)r.ok++;else{if(!r.wr.includes(w))r.wr.push(w);if(r.ph===1)r.deck.splice(Math.min(r.deck.length,r.i+3),0,w)}mark(w,okk?1:-1)}
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
  if(r.i>=r.deck.length)return rEnd();
  const x=byW(r.deck[r.i]);
- if(!x){r.deck.splice(r.i,1);save();return rQuiz()}
+ if(!x){r.deck.splice(r.i,1);if(r.n)r.n--;save();return rQuiz()}
  return r.ph===1?rPick(x):rType(x);
 }
 function nextBtn(r){return `<div class="row"><button class="btn" id="nb">${r.i>=r.deck.length?"Xem kết quả ➜":"Câu tiếp ➜"}</button></div>`}
@@ -130,7 +130,7 @@ function rPick(x){
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);const g=10+Math.min(combo,5)*2;gain(g,["Chuẩn! ","Quá đỉnh! ","Xịn sò! "][combo%3]+"+"+g+" XP")}
-  else{b.classList.add("no");combo=0;save();hud();toast("Không sao, nhớ lại nhé 💪")}
+  else{b.classList.add("no");combo=0;save();hud();toast("Sai rồi, từ này sẽ quay lại sau 💪")}
   $("nx").innerHTML=nextBtn(r);$("nb").onclick=rQuiz;
  });
 }
@@ -158,7 +158,7 @@ function rEnd(){
  const r=S.rd,n=r.deck.length,w=r.wr;
  const lst=w.map(k=>{const z=byW(k);return z?`<div class="it"><b>${esc(z[0])}${cnt(z[0])}</b><small>${esc(z[2])}</small></div>`:""}).join("");
  if(r.ph===1){
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">🎯</div><b>Xong vòng chọn đáp án!</b><br>Đúng ${r.ok}/${n} từ.</div>${w.length?`<div class="list"><b>Từ chọn sai (${w.length})</b>${lst}</div>`:""}<div class="row"><button class="btn" id="go">✍️ Qua vòng điền chữ ➜</button></div>`;
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">🎯</div><b>Xong vòng chọn đáp án!</b><br>Bạn đã chọn đúng cả ${r.n||n} từ.</div>${w.length?`<div class="list"><b>Từ từng chọn sai (${w.length})</b>${lst}</div>`:""}<div class="row"><button class="btn" id="go">✍️ Qua vòng điền chữ ➜</button></div>`;
   $("go").onclick=()=>{newRound(2);rQuiz()};
  }else if(!w.length){
   if(!r.cel){r.cel=1;save();confetti();gain(r.sub?20:50,"🏆 Hoàn hảo! +"+(r.sub?20:50)+" XP")}
