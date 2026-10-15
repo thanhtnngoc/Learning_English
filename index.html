@@ -58,6 +58,20 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .qq{display:flex;align-items:flex-start;gap:12px}
 .qt{display:block;flex:1;min-width:0}
 .qq .sp{flex:none;margin-left:0}
+.subrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.subrow .sub{margin:0;flex:1;padding-top:4px}
+.vw{position:relative;flex:none}
+.vp{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.vb{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:8;width:270px;max-width:calc(100vw - 32px);padding:14px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.vb.open{display:block}
+.vr{display:flex;align-items:center;gap:10px}
+.vr+.vr{margin-top:14px}
+.vr label{flex:none;width:52px;font-size:12px;color:var(--mu);font-weight:600}
+.vb input{width:auto;flex:1;min-width:0;margin:0;padding:0;border:0;background:none;accent-color:var(--pr)}
+#spv{flex:none;min-width:40px;text-align:right;font-weight:700;color:var(--pr)}
+.seg{display:flex;flex:none;border:1px solid var(--bd);border-radius:99px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--tx);padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer}
+.seg button.on{background:var(--pr);color:var(--bt)}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 </style>
@@ -66,7 +80,7 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 <main>
  <div class="top"><h1>📚 Learning English</h1><div><span class="chip" id="st">🔥 0</span> <span class="chip" id="lv">Lv 1</span> <span class="chip" id="xp">0 XP</span> <button class="chip" id="th" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:16px;color:var(--tx)">☀️</button> <button class="chip" id="rs" title="Reset" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:17px;color:var(--tx)">↺</button></div></div>
  <div class="bar"><i id="pb"></i></div>
- <div class="sub" id="ps"></div>
+ <div class="subrow"><div class="sub" id="ps"></div><div class="vw"><button class="vp" id="vp" title="Voice settings"></button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div></div></div></div>
  <div class="tabs"><button data-t="f">🃏 Cards</button><button data-t="q">🎯 Quiz</button><button data-t="a">📖 Word List</button></div>
  <div id="v"></div>
 </main>
@@ -96,7 +110,20 @@ function hud(){
  if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(r.ph===1?"Round 1 · Multiple choice":"Round 2 · Spelling")+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
-function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function mkU(t){const u=new SpeechSynthesisUtterance(t),l=S.acc||"en-GB";u.lang=l;u.rate=S.rate||.85;try{const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")===l);if(v)u.voice=v}catch(e){}return u}
+function speak(t){try{const u=mkU(t);speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+let qTok=0;
+function qSpeak(btn,t){
+ if(btn.dataset.on==="1"){qTok++;try{speechSynthesis.cancel()}catch(e){}btn.dataset.on="0";btn.textContent="🔊";return}
+ try{
+  speechSynthesis.cancel();
+  const id=++qTok,u=mkU(t);
+  const reset=()=>{if(id===qTok){btn.dataset.on="0";btn.textContent="🔊"}};
+  u.onend=reset;u.onerror=reset;
+  btn.dataset.on="1";btn.textContent="⏸️";
+  speechSynthesis.speak(u);
+ }catch(e){}
+}
 function mark(w,d){S.m[w]=Math.max(0,Math.min(5,(S.m[w]||0)+d));S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
 const cnt=w=>{const c=(S.c||{})[w]||[0,0];return `<span class="cn" style="color:var(--ok)">✅${c[0]}</span><span class="cn" style="color:var(--no)">❌${c[1]}</span>`};
 function pick(){ // favor weaker words
@@ -125,6 +152,7 @@ function answered(w,okk){const r=S.rd;r.i++;if(okk)r.ok++;else if(!r.wr.includes
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
+ qTok++;try{speechSynthesis.cancel()}catch(e){}
  if(r.i>=r.deck.length)return rEnd();
  const x=byW(r.deck[r.i]);
  if(!x){r.deck.splice(r.i,1);if(r.n)r.n--;save();return rQuiz()}
@@ -136,8 +164,9 @@ function rPick(x){
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
  $("v").innerHTML=`<div class="combo">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
- $("qs").onclick=()=>speak(x[2]);
+ $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   document.querySelectorAll(".opt").forEach(z=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok")});
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
@@ -150,13 +179,13 @@ function rType(x){
  const r=S.rd;
  $("v").innerHTML=`<div class="combo">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}<span class="hint" style="display:block">${x[0].length} letters</span></span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><input id="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the English word…"><div class="row"><button class="btn l" id="hr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="ck">Check</button></div><div id="nx"></div>`;
  const inp=$("ty");inp.focus();
- $("qs").onclick=()=>speak(x[2]);
+ $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  $("hr").onclick=()=>speak(x[0]);
  let done=false;
  const check=()=>{
   if(done)return;
   const v=inp.value.trim().toLowerCase();if(!v){toast("Type a word first");return}
-  done=true;inp.disabled=true;$("ck").disabled=true;
+  done=true;inp.disabled=true;$("ck").disabled=true;qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   const okk=v===x[0].toLowerCase();
   answered(x[0],okk);
   if(okk){combo++;inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP")}
@@ -223,6 +252,21 @@ function applyTheme(t){
 }
 $("th").onclick=()=>{S.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";save();applyTheme(S.theme)};
 applyTheme(S.theme||((window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light"));
+let vOpen=false;
+function voiceUI(){
+ document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.a===(S.acc||"en-GB")));
+ const r=+(S.rate||.85);$("spd").value=r;$("spv").textContent=r.toFixed(2)+"×";
+ $("vp").textContent="🔊 "+((S.acc||"en-GB")==="en-US"?"US":"UK")+(vOpen?" ▴":" ▾");
+}
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.acc=b.dataset.a;save();voiceUI();speak("Hello, let's learn English")});
+$("spd").oninput=()=>{S.rate=+$("spd").value;$("spv").textContent=S.rate.toFixed(2)+"×"};
+$("spd").onchange=()=>{save();speak("Hello, let's learn English")};
+try{speechSynthesis.getVoices()}catch(e){}
+function setV(o){vOpen=o;$("vb").classList.toggle("open",o);voiceUI()}
+$("vp").onclick=()=>setV(!vOpen);
+document.addEventListener("pointerdown",e=>{if(vOpen&&!e.target.closest(".vw"))setV(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&vOpen)setV(false)});
+voiceUI();
 hud();render();
 </script>
 </body>
