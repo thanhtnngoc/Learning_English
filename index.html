@@ -101,8 +101,9 @@ const BASE=[["police","/pəˈliːs/","the official organization that is responsi
 let S={xp:0,streak:0,last:"",custom:[],m:{}};
 try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3]]:typeof x[4]==="boolean"?[x[0],x[1],x[2],x[3]||"","",x[4]]:x);
-const vi=x=>x[3]||"";
-const vd=x=>x[4]||"";
+const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
+const vi=x=>cl(x[3]);
+const vd=x=>cl(x[4]);
 const save=()=>{try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}};
 const B=()=>S.base||BASE;
 const W=()=>B().concat(S.custom);
@@ -245,7 +246,7 @@ function rAdd(){
   S.custom.push([a,b,c,d,e,false]);gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd();
  };
  const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[5]=true});save();toast("✅ Moved to the Word List");rAdd()};
- $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),r[2].trim().replace(/:$/,""),(r[3]||"").trim(),(r[4]||"").trim()]);
+ $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4])]);
   if(!rows.length){toast("No Sheet data received");return}
   const have=new Set(rows.map(r=>r[0].toLowerCase()));
   S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",x[4]||"",false]);
