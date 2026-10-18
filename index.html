@@ -182,7 +182,8 @@ function rPick(x){
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
-  document.querySelectorAll(".opt").forEach(z=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok")});
+  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
+  const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);const g=10+Math.min(combo,5)*2;gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP")}
