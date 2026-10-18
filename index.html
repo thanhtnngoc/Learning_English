@@ -72,6 +72,9 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .seg{display:flex;flex:none;border:1px solid var(--bd);border-radius:99px;overflow:hidden}
 .seg button{border:0;background:transparent;color:var(--tx);padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer}
 .seg button.on{background:var(--pr);color:var(--bt)}
+.vi{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:99px;background:color-mix(in srgb,var(--pr) 14%,var(--card));color:var(--tx);font-size:12px;font-weight:600;vertical-align:middle}
+.wl{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px}
+.wl .vi{margin-left:0;font-size:15px;padding:3px 12px}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 </style>
@@ -89,6 +92,8 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 const BASE=[["police","/pəˈliːs/","the official organization that is responsible for protecting people and property, making people obey the law, and catching people who have committed a crime"],["obey","/əʊˈbeɪ/","to act according to what you have been asked or ordered to do by someone in authority, or to behave according to a rule, law, or instruction"],["property","/ˈprɒp.ə.ti/","an object or objects that belong to someone"],["belong","/bɪˈlɒŋ/","to be in the right place or a suitable place"],["suitable","/ˈsjuː.tə.bəl/","acceptable or right for someone or something"],["crime","/kraɪm/","illegal activities"],["illegal","/ɪˈliː.ɡəl/","not allowed by law"],["allow","/əˈlaʊ/","to give permission for someone to do something, or to not prevent something from happening"],["permission","/pəˈmɪʃ.ən/","if someone is given this to do something, they are allowed to do it"],["prevent","/prɪˈvent/","to stop something from happening or someone from doing something"],["committed","/kəˈmɪt.ɪd/","loyal and willing to give your time and energy to something that you believe in"],["loyal","/ˈlɔɪ.əl/","firm and not changing in your friendship with or support for a person or an organization, or in your belief in your principles"],["firm","/fɜːm/","not soft but not completely hard"],["completely","/kəmˈpliːt.li/","in every way or as much as possible"],["principle","/ˈprɪn.sə.pəl/","a basic idea or rule that explains or controls how something happens or works"],["willing","/ˈwɪl.ɪŋ/","to be happy to do something if it is needed"],["restaurant","/ˈres.tər.ɒnt/","a place where meals are prepared and served to customers"],["meal","/mɪəl/","an occasion when food is eaten, or the food that is eaten on such an occasion"],["particular","/pəˈtɪk.jə.lər/","special, or this and not any other"],["occasion","/əˈkeɪ.ʒən/","a particular time, especially when something happens or has happened"],["beach","/biːtʃ/","an area of sand or small stones near the sea or another area of water such as a lake"],["sand","/sænd/","a substance that consists of very small grains of rock, found on beaches and in deserts"],["substance","/ˈsʌb.stəns/","material with particular physical characteristics"],["grain","/ɡreɪn/","a seed or seeds from a plant, especially a plant like a grass such as rice or wheat"],["seed","/siːd/","a small, round or oval object produced by a plant and from which, when it is planted, a new plant can grow"],["oval","/ˈəʊ.vəl/","shaped like a circle that is flattened so that it is like an egg or an ellipse"],["knife","/naɪf/","a tool, usually with a metal blade and a handle, used for cutting and spreading food or other substances, or as a weapon"],["metal","/ˈmet.əl/","a chemical element, such as iron or gold, or a mixture of such elements, such as steel, that is generally hard and strong"],["element","/ˈel.ɪ.mənt/","a part of something"],["blade","/bleɪd/","the flat part on a knife or similar tool or weapon, with a very thin edge used for cutting"],["spread","/spred/","to cover or reach a wider or increasing area, or to make something do this"],["weapon","/ˈwep.ən/","any object used in fighting or war, such as a gun, bomb, knife, etc."],["fork","/fɔːk/","a small object with three or four points and a handle, that you use to pick up food and eat with"],["spoon","/spuːn/","an object consisting of a round, hollow part and a handle, used for mixing, serving, and eating food"]];
 let S={xp:0,streak:0,last:"",custom:[],m:{}};
 try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"",x[3]]:x);
+const vi=x=>x[3]||"";
 const save=()=>{try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}};
 const B=()=>S.base||BASE;
 const W=()=>B().concat(S.custom);
@@ -137,7 +142,7 @@ function render(){
 function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n}
 function rFlash(){
  const w=W();if(!fc||!w.includes(fc))fc=pick();const x=fc;
- $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Tap to flip back</p>`:`<p class="w">${esc(x[0])}</p><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
+ $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Tap to flip back</p>`:`<div class="wl"><p class="w">${esc(x[0])}</p>${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</div><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
  <div class="row"><button class="btn r" id="hd">😵 Don't know</button><button class="btn g" id="ez">😎 Got it</button></div>
  <div class="hint" style="text-align:center">Random cards · ${fi} reviewed</div>`;
  $("cd").onclick=e=>{if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
@@ -215,30 +220,30 @@ function rEnd(){
  }
 }
 function rAdd(){
- const P=S.custom.filter(x=>!x[3]),L=S.custom.filter(x=>x[3]).reverse().concat(B());
- $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</b><small>${esc(x[2])}</small></span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
+ const P=S.custom.filter(x=>!x[4]),L=S.custom.filter(x=>x[4]).reverse().concat(B());
+ $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small></span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
- <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea></div>
+ <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning (e.g. tuân thủ)"></div>
  <div class="row"><button class="btn" id="ad">➕ Add word</button></div>
  <div class="list">${P.length?`<b>✨ New words waiting to paste into the Sheet (${P.length})</b>${P.slice().reverse().map(x=>`<div class="it"><b>${esc(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}<div class="row"><button class="btn l" id="cp">📋 1. Copy</button><button class="btn g" id="ok">✅ 2. Pasted into Sheet</button></div>`:`<span style="color:var(--mu)">No new words waiting. Add one!</span>`}</div></details>
- <details><summary>🔄 Sync from Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:C, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn" id="sb">🔄 Sync</button></div></div></details>`;
+ <details><summary>🔄 Sync from Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:D, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn" id="sb">🔄 Sync</button></div></div></details>`;
  document.querySelectorAll(".sp").forEach(b=>b.onclick=()=>speak(b.dataset.w));
  $("ad").onclick=()=>{
-  const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim();
+  const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim();
   if(!a||!c){toast("Enter a word and its definition");return}
   if(W().some(x=>x[0].toLowerCase()===a.toLowerCase())&&!confirm("This word already exists. Add anyway?"))return;
-  S.custom.push([a,b,c]);gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd();
+  S.custom.push([a,b,c,d,false]);gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd();
  };
- const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[3]=true});save();toast("✅ Moved to the Word List");rAdd()};
- $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),r[2].trim().replace(/:$/,"")]);
+ const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[4]=true});save();toast("✅ Moved to the Word List");rAdd()};
+ $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),r[2].trim().replace(/:$/,""),(r[3]||"").trim()]);
   if(!rows.length){toast("No Sheet data received");return}
   const have=new Set(rows.map(r=>r[0].toLowerCase()));
-  S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2]]);
+  S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",false]);
   save();hud();toast("🔄 Synced "+rows.length+" words");rAdd()};
  const cp=$("cp");if(cp)cp.onclick=()=>{
-  const t=P.map(x=>x.slice(0,3).join("\t")).join("\n");
-  const done=()=>{P.forEach(x=>x[3]=true);save();toast("Copied! Words moved to the Word List");rAdd()};
+  const t=P.map(x=>x.slice(0,4).join("\t")).join("\n");
+  const done=()=>{P.forEach(x=>x[4]=true);save();toast("Copied! Words moved to the Word List");rAdd()};
   try{navigator.clipboard.writeText(t).then(()=>toast("Copied! Paste into the Sheet, then tap ✅"),()=>prompt("Copy:",t))}catch(e){prompt("Copy:",t)}
  };
 }
