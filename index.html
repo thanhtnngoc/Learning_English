@@ -51,7 +51,8 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .lt{display:block;flex:1;min-width:0}
 .ip{color:var(--pr);font-size:13px;font-weight:500;margin-left:8px}
 .lt small{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.4;margin-top:2px}
-.lt small.vd{color:var(--tx);opacity:.85}
+.lt small.vd{color:var(--tx);font-weight:600;opacity:.95}
+.dv{display:block;margin-top:10px;font-size:16px;font-weight:600;color:var(--pr)}
 .lr{display:flex;align-items:center;flex:none}
 .lr .cn{margin-left:6px}
 .sp{width:34px;height:34px;margin-left:10px;padding:0;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:15px;cursor:pointer}
@@ -150,7 +151,7 @@ function render(){
 function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n;viOn=false}
 function rFlash(){
  const w=W();if(!fc||!w.includes(fc))fc=pick();const x=fc;
- $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Tap to flip back</p>`:`<div class="wl"><p class="w">${esc(x[0])}</p>${vi(x)?(viOn?`<span class="vi vsh" id="vt" title="Tap to hide">${esc(vi(x))}</span>`:`<button class="vt" id="vt" title="Show Vietnamese meaning" aria-label="Show Vietnamese meaning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>`):""}</div><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
+ $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}${vd(x)?`<span class="dv">(${esc(vd(x))})</span>`:""}</p><p class="hint">Tap to flip back</p>`:`<div class="wl"><p class="w">${esc(x[0])}</p>${vi(x)?(viOn?`<span class="vi vsh" id="vt" title="Tap to hide">${esc(vi(x))}</span>`:`<button class="vt" id="vt" title="Show Vietnamese meaning" aria-label="Show Vietnamese meaning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>`):""}</div><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
  <div class="row"><button class="btn r" id="hd">😵 Don't know</button><button class="btn g" id="ez">😎 Got it</button></div>
  <div class="hint" style="text-align:center">Random cards · ${fi} reviewed</div>`;
  $("cd").onclick=e=>{if(e.target.closest("#vt")){viOn=!viOn;rFlash();return}if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
@@ -229,7 +230,7 @@ function rEnd(){
 }
 function rAdd(){
  const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).reverse().concat(B());
- $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">${esc(vd(x))}</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
+ $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
  <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning of the word (e.g. tuân thủ)"><textarea id="ne" rows="2" placeholder="Vietnamese translation of the definition"></textarea></div>
