@@ -231,7 +231,7 @@ function rEnd(){
  }
 }
 function rAdd(){
- const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).reverse().concat(B());
+ const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).concat(B()).sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
  $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
