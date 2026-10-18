@@ -75,6 +75,11 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .vi{margin-left:8px;color:var(--tx);font-size:13px;font-weight:600}
 .wl{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:4px 12px}
 .wl .vi{margin-left:0;font-size:22px;font-weight:600}
+.vt{align-self:center;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border-radius:50%;border:1.5px solid var(--pr);background:transparent;color:var(--pr);cursor:pointer;transition:background .15s,transform .15s}
+.vt:hover{background:color-mix(in srgb,var(--pr) 14%,transparent)}
+.vt:active{transform:scale(.92)}
+.wl .vi.vsh{cursor:pointer;border-bottom:1.5px dashed var(--mu);animation:vfi .25s ease}
+@keyframes vfi{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 </style>
@@ -100,7 +105,7 @@ const W=()=>B().concat(S.custom);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const day=()=>new Date().toISOString().slice(0,10);
-let fc=null,tab="f",fi=0,flip=false,combo=0,cur=null,tt;
+let viOn=false,fc=null,tab="f",fi=0,flip=false,combo=0,cur=null,tt;
 function toast(t){const e=$("to");e.textContent=t;e.classList.add("s");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("s"),1300)}
 function gain(n,msg){
  const d=day();
@@ -139,13 +144,13 @@ function render(){
  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
  ({f:rFlash,q:rQuiz,a:rAdd})[tab]();
 }
-function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n}
+function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n;viOn=false}
 function rFlash(){
  const w=W();if(!fc||!w.includes(fc))fc=pick();const x=fc;
- $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Tap to flip back</p>`:`<div class="wl"><p class="w">${esc(x[0])}</p>${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</div><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
+ $("v").innerHTML=`<div class="card" id="cd">${flip?`<p class="def">${esc(x[2])}</p><p class="hint">Tap to flip back</p>`:`<div class="wl"><p class="w">${esc(x[0])}</p>${vi(x)?(viOn?`<span class="vi vsh" id="vt" title="Tap to hide">${esc(vi(x))}</span>`:`<button class="vt" id="vt" title="Show Vietnamese meaning" aria-label="Show Vietnamese meaning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>`):""}</div><p class="ipa">${esc(x[1])}</p><button class="btn l" id="sp" style="flex:none;padding:8px 16px">🔊 Listen</button><p class="hint">Tap the card to see the meaning</p>`}</div>
  <div class="row"><button class="btn r" id="hd">😵 Don't know</button><button class="btn g" id="ez">😎 Got it</button></div>
  <div class="hint" style="text-align:center">Random cards · ${fi} reviewed</div>`;
- $("cd").onclick=e=>{if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
+ $("cd").onclick=e=>{if(e.target.closest("#vt")){viOn=!viOn;rFlash();return}if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
  $("hd").onclick=()=>{mark(x[0],-1);gain(1);fi++;nextCard(x);flip=false;rFlash()};
  $("ez").onclick=()=>{mark(x[0],1);gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
 }
