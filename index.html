@@ -166,6 +166,9 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 @keyframes stk{0%{opacity:0;transform:translateY(4px)}50%{opacity:.9}100%{opacity:0;transform:translateY(-6px)}}
 .pl.wt{border-color:var(--no)}
 .pl.wt .pp{color:var(--no)}
+.q.pb{position:relative}
+.pbt{position:absolute;top:10px;left:10px;z-index:2;background:var(--pr);color:var(--bt);padding:6px 12px;border-radius:99px;font-size:13px;font-weight:700;line-height:1.3;pointer-events:none;animation:pbt 1.8s ease forwards}
+@keyframes pbt{0%{opacity:0;transform:translateY(-6px)}12%,75%{opacity:1;transform:none}100%{opacity:0}}
 </style>
 </head>
 <body>
@@ -576,7 +579,8 @@ function waterPlant(word){
   if(okk){speak(word);gain(5)}else{b.classList.add("no");save()}
   const nm=Math.min(S.m[word]||0,5);
   $("pbx").innerHTML=pic(word);
-  toast(okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…"));
+  const msg=okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…");
+  $("pbx").insertAdjacentHTML("beforeend",`<span class="pbt">${msg}</span>`);
   $("nx").innerHTML=`<div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
   $("bg").onclick=gGarden;
  });
