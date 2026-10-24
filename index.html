@@ -112,6 +112,11 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .en .eb{font-size:30px;line-height:1.1}
 .en .ec{background:rgba(255,255,255,.93);color:#0b1020;border-radius:10px;padding:4px 8px;font-size:12px;font-weight:700;line-height:1.25}
 .en .ec small{display:block;font-weight:500;color:#475569;font-size:10px;margin-top:1px}
+.spd>span{flex:none;margin-right:8px}
+.spd .rt{display:flex;align-items:center;gap:6px;min-width:0}
+.spd .seg button{padding:5px 9px}
+.lg{padding:5px 10px!important}
+.lg{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
 .spd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12px;color:var(--mu);font-weight:600}
 .rk{position:absolute;left:50%;bottom:6px;margin-left:-17px;font-size:30px;line-height:1.15;z-index:2;transform:rotate(-45deg);transform-origin:50% 55%;transition:transform .25s ease-out;pointer-events:none}
 .bm{position:absolute;width:3px;margin:0;border-radius:2px;background:linear-gradient(to top,rgba(253,224,71,.15),#fde047);transform-origin:50% 100%;z-index:1;pointer-events:none;animation:bmf .3s ease-out forwards}
@@ -312,8 +317,14 @@ const GAMES=[
  {k:"garden",e:"🌱",t:"Word Garden",d:"Water your words with 💧 and watch them grow as you learn."}
 ];
 const SPD={slow:1.5,normal:1,fast:.7};
-const spdHTML=()=>`<div class="spd"><span>Speed</span><div class="seg">${["slow","normal","fast"].map(k=>`<button data-s="${k}" class="${(S.gspd||"normal")===k?"on":""}">${{slow:"🐢 Slow",normal:"🚶 Normal",fast:"🐇 Fast"}[k]}</button>`).join("")}</div></div>`;
+const spdHTML=()=>`<div class="spd"><span>Speed</span><div class="rt"><div class="seg">${["slow","normal","fast"].map(k=>`<button data-s="${k}" class="${(S.gspd||"normal")===k?"on":""}">${{slow:"🐢 Slow",normal:"🚶 Normal",fast:"🐇 Fast"}[k]}</button>`).join("")}</div><button class="lg" id="lgb"></button></div></div>`;
 function spdBind(){document.querySelectorAll(".spd .seg button").forEach(b=>b.onclick=()=>{S.gspd=b.dataset.s;save();document.querySelectorAll(".spd .seg button").forEach(z=>z.classList.toggle("on",z===b))})}
+function fitArena(ar,res,skip){
+ const f=()=>{if(skip&&skip())return;const top=ar.getBoundingClientRect().top+(window.scrollY||0);ar.style.height=Math.round(Math.max(340,Math.min(720,innerHeight-top-res)))+"px"};
+ f();addEventListener("resize",f);return()=>removeEventListener("resize",f)
+}
+const cq=x=>S.glang==="vi"?(vd(x)||vi(x)||x[2]):x[2];
+function lgBind(cb){const b=$("lgb"),set=()=>{b.textContent="🌐 "+(S.glang==="vi"?"VI":"EN");b.title=S.glang==="vi"?"Question language: Vietnamese (tap for English)":"Question language: English (tap for Vietnamese)"};set();b.onclick=()=>{S.glang=S.glang==="vi"?"en":"vi";save();set();cb()}}
 const nW=t=>String(t).trim().split(/\s+/).length;
 const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15} 0`;return `<svg class="spk" id="spk" viewBox="0 0 390 16" preserveAspectRatio="none"><path d="${d}Z" fill="#64748b"/></svg>`})();
 const STG=["🌰","🌱","🌿","🌷","🌳","🍎"],SN=["Seed","Sprout","Leafy","Blooming","Tree","Fruiting"];
@@ -339,10 +350,10 @@ function gOver(key,score,again){
 function gBalloon(){
  gShell("🎈 Balloon Pop");
  $("ga").innerHTML=spdHTML()+`<div class="ga sky" id="gar"><div class="gp"><span id="gdef" style="flex:1"></span><button class="sp" id="gq" title="Listen">🔊</button></div>${SPK}</div><div class="hint" style="text-align:center">Pop the balloon that matches the definition. A wrong pop, or letting it hit the spikes, costs a life.</div>`;
- spdBind();const ar=$("gar"),COL=["#dc2626","#d97706","#16a34a","#2563eb","#9333ea","#db2777"];
+ spdBind();const ar=$("gar"),unfit=fitArena(ar,76),COL=["#dc2626","#d97706","#16a34a","#2563eb","#9333ea","#db2777"];
  let lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,bl=[],target=null,pen=false,roundOver=false,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer)};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit()};
  function end(){over=true;timer=setTimeout(()=>gOver("balloon",score,gBalloon),700)}
  function next(){
   bl.forEach(b=>b.el.remove());bl=[];pen=false;roundOver=false;
@@ -350,10 +361,10 @@ function gBalloon(){
   const w=W();target=pick();
   let o=[target];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
   o=shuf(o);
-  $("gdef").textContent=target[2];
+  $("gdef").textContent=cq(target);
   const lane=ar.clientWidth/o.length;
   $("spk").style.top=(ar.querySelector(".gp").offsetHeight+7)+"px";
-  const dist=ar.clientHeight-ar.querySelector(".gp").offsetHeight-17,T=(10+nW(target[2])*.7)*SPD[S.gspd||"normal"]*(1-Math.min(lvl,10)*.02);
+  const dist=ar.clientHeight-ar.querySelector(".gp").offsetHeight-17,T=(10+nW(target[2])*.7)*(1-Math.min(lvl,10)*.02);
   o.forEach((z,i)=>{
    const el=document.createElement("div");el.className="bl";
    el.innerHTML=`<div class="bb" style="background:${COL[Math.floor(Math.random()*COL.length)]};${z[0].length>9?"font-size:11px":""}">${esc(z[0])}</div>`;
@@ -389,7 +400,7 @@ function gBalloon(){
   if(!alive)return;
   const dt=Math.min(.05,(t-last)/1000);last=t;
   const H=ar.clientHeight,ph=ar.querySelector(".gp").offsetHeight,popY=H-ph-17;let miss=false;
-  bl.forEach(b=>{if(b.dead)return;b.y+=b.v*dt;b.el.style.transform=`translate3d(0,${-b.y}px,0)`;if(b.y>=popY){b.dead=true;burst(b);if(b.z===target&&!roundOver)miss=true}});
+  bl.forEach(b=>{if(b.dead)return;b.y+=b.v/SPD[S.gspd||"normal"]*dt;b.el.style.transform=`translate3d(0,${-b.y}px,0)`;if(b.y>=popY){b.dead=true;burst(b);if(b.z===target&&!roundOver)miss=true}});
   if(miss&&!roundOver&&!over){
    roundOver=true;lives--;cmb=0;mark(target[0],-1);save();upd();toast("Missed: "+target[0]);speak(target[0]);
    if(lives<=0)end();else timer=setTimeout(next,1200);
@@ -397,17 +408,18 @@ function gBalloon(){
   raf=requestAnimationFrame(loop);
  }
  $("gq").onclick=()=>qSpeak($("gq"),target[2]);
+ lgBind(()=>{if(target){$("gdef").textContent=cq(target);$("spk").style.top=(ar.querySelector(".gp").offsetHeight+7)+"px"}});
  upd();next();raf=requestAnimationFrame(t=>{last=t;loop(t)});
 }
 
 /* ---- Space Typing ---- */
 function gSpace(){
  gShell("🚀 Space Typing");
- $("ga").innerHTML=spdHTML()+`<div class="ga spc" id="gar"><div class="gnd"></div><div class="rk" id="rk">🚀</div></div><input id="gt" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type the word — it fires automatically"><div class="hint" style="text-align:center">The clue is the Vietnamese meaning (or a short definition if there isn't one).</div>`;
- spdBind();const ar=$("gar"),inp=$("gt");
+ $("ga").innerHTML=spdHTML()+`<div class="ga spc" id="gar"><div class="gnd"></div><div class="rk" id="rk">🚀</div></div><input id="gt" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type the word — it fires automatically"><div class="hint" style="text-align:center">The clue is the definition. Use the EN / VI button to switch its language.</div>`;
+ spdBind();const ar=$("gar"),inp=$("gt"),unfit=fitArena(ar,132,()=>document.activeElement===inp);
  let hold=0,lastAng=999,lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,en=[],spawnT=0,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer)};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit()};
  function end(){over=true;inp.disabled=true;timer=setTimeout(()=>gOver("space",score,gSpace),900)}
  function spawn(){
   const used=new Set(en.filter(e=>!e.dead&&e.y<e.el.offsetHeight+20).map(e=>e.lane));
@@ -415,11 +427,11 @@ function gSpace(){
   let x,tries=0;do{x=pick();tries++}while(en.some(e=>!e.dead&&e.x[0]===x[0])&&tries<25);
   if(en.some(e=>!e.dead&&e.x[0]===x[0]))return false;
   const lane=free[Math.floor(Math.random()*free.length)];
-  const clue=vi(x)||x[2];
+  const clue=cq(x);
   const el=document.createElement("div");el.className="en";el.style.left=(lane*50)+"%";
   el.innerHTML=`<div class="eb">🛸</div><div class="ec">${esc(clue)}<small>${x[0].length} letters</small></div>`;
   ar.appendChild(el);
-  const eh=el.offsetHeight,H=ar.clientHeight,T=(12+nW(clue)*.5+x[0].length*.6)*SPD[S.gspd||"normal"]*(1-Math.min(lvl,16)*.015);
+  const eh=el.offsetHeight,H=ar.clientHeight,T=(12+nW(clue)*.5+x[0].length*.6)*(1-Math.min(lvl,16)*.015);
   en.push({el,x,lane,y:-eh,v:(H-46+eh)/T*(0.95+Math.random()*0.1),dead:false,hint:false});
   return true;
  }
@@ -449,11 +461,11 @@ function gSpace(){
   const dt=Math.min(.05,(t-last)/1000);last=t;
   const H=ar.clientHeight;
   if(!over){
-   spawnT-=dt;
-   if(spawnT<=0&&en.filter(e=>!e.dead).length<2){if(spawn())spawnT=Math.max(3,6.5*SPD[S.gspd||"normal"]-lvl*.15)}
+   spawnT-=dt/SPD[S.gspd||"normal"];
+   if(spawnT<=0&&en.filter(e=>!e.dead).length<2){if(spawn())spawnT=Math.max(3,6.5-lvl*.15)}
    en.forEach(e=>{
     if(e.dead)return;
-    e.y+=e.v*dt;e.el.style.transform=`translate3d(0,${e.y}px,0)`;
+    e.y+=e.v/SPD[S.gspd||"normal"]*dt;e.el.style.transform=`translate3d(0,${e.y}px,0)`;
     if(!e.hint&&e.y>(H-46)*.45){e.hint=true;e.el.querySelector("small").textContent=e.x[0].length+" letters · starts with “"+e.x[0][0]+"”"}
     if(e.y+e.el.offsetHeight>=H-46)land(e);
    });
@@ -466,6 +478,7 @@ function gSpace(){
   en=en.filter(e=>!e.dead||e.el.isConnected);
   raf=requestAnimationFrame(loop);
  }
+ lgBind(()=>{en.forEach(e=>{if(e.dead)return;const c=e.el.querySelector(".ec");if(c&&c.firstChild)c.firstChild.textContent=cq(e.x)})});
  upd();inp.focus();raf=requestAnimationFrame(t=>{last=t;loop(t)});
 }
 
