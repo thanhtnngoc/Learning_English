@@ -83,6 +83,48 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .vt:active{transform:scale(.92)}
 .wl .vi.vsh{cursor:pointer;border-bottom:1.5px dashed var(--mu);animation:vfi .25s ease}
 @keyframes vfi{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.gh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.gc{display:flex;gap:14px;align-items:center;padding:14px;margin-bottom:10px;background:var(--card);border:1px solid var(--bd);border-radius:16px;cursor:pointer;transition:transform .12s}
+.gc:active{transform:scale(.98)}
+.ge{font-size:38px;flex:none}
+.gi{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mu);line-height:1.35}
+.gi b{font-size:16px;color:var(--tx)}
+.gi em{font-style:normal;font-size:12px;color:var(--pr);font-weight:700}
+.ga{position:relative;height:340px;overflow:hidden;border-radius:16px;border:1px solid var(--bd);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.sky{background:linear-gradient(color-mix(in srgb,var(--pr) 26%,var(--card)),var(--card))}
+.gp{position:absolute;top:8px;left:8px;right:8px;z-index:3;display:flex;gap:8px;align-items:flex-start;background:var(--card);border:2px solid var(--pr);border-radius:12px;padding:8px 10px;font-size:14px;line-height:1.35}
+.gp .sp{margin-left:0;flex:none}
+.bl{position:absolute;bottom:-130px;width:92px;cursor:pointer;will-change:transform;touch-action:manipulation}
+.bl::after{content:"";display:block;width:2px;height:16px;margin:0 auto;background:rgba(0,0,0,.35)}
+.bb{width:92px;height:112px;border-radius:50% 50% 48% 48%/55% 55% 45% 45%;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-weight:800;font-size:13px;padding:6px;box-shadow:inset -8px -10px 0 rgba(0,0,0,.14);word-break:break-word}
+.spk{position:absolute;left:0;top:70px;width:100%;height:16px;z-index:2;pointer-events:none}
+.spk.fx{animation:spkf .35s}
+@keyframes spkf{50%{filter:drop-shadow(0 0 6px #ef4444) brightness(1.5)}}
+.pt{position:absolute;width:7px;height:7px;margin:-3px 0 0 -3px;border-radius:50%;z-index:2;pointer-events:none;animation:ptb .65s ease-out forwards}
+@keyframes ptb{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.bx{position:absolute;z-index:2;font-size:28px;pointer-events:none;animation:bxa .45s ease-out forwards}
+@keyframes bxa{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
+.bb.pop{animation:bpop .25s forwards;pointer-events:none}
+.bb.bad{filter:grayscale(1)}
+@keyframes bpop{50%{transform:scale(1.25)}to{transform:scale(.2);opacity:0}}
+.spc{background:radial-gradient(1px 1px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 70px 80px,#fff,transparent),radial-gradient(circle at 25% 20%,#1d2a5c,#0a0f24);background-size:100px 100px,130px 130px,100% 100%;border-color:#1e293b}
+.en{position:absolute;top:0;left:0;width:50%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4px;will-change:transform}
+.en .eb{font-size:30px;line-height:1.1}
+.en .ec{background:rgba(255,255,255,.93);color:#0b1020;border-radius:10px;padding:4px 8px;font-size:12px;font-weight:700;line-height:1.25}
+.en .ec small{display:block;font-weight:500;color:#475569;font-size:10px;margin-top:1px}
+.spd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12px;color:var(--mu);font-weight:600}
+.rk{position:absolute;left:50%;bottom:6px;margin-left:-17px;font-size:30px;line-height:1.15;z-index:2;transform:rotate(-45deg);transform-origin:50% 55%;transition:transform .25s ease-out;pointer-events:none}
+.bm{position:absolute;width:3px;margin:0;border-radius:2px;background:linear-gradient(to top,rgba(253,224,71,.15),#fde047);transform-origin:50% 100%;z-index:1;pointer-events:none;animation:bmf .3s ease-out forwards}
+@keyframes bmf{from{opacity:1}to{opacity:0}}
+.gnd{position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(transparent,rgba(56,189,248,.28));border-top:2px dashed rgba(255,255,255,.35);text-align:center;font-size:26px;padding-top:6px}
+#gt{margin-top:10px}
+.gg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.pl{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--tx);font:inherit;min-width:0}
+.pl i{font-style:normal;font-size:26px;line-height:1.15}
+.pl span{font-size:10.5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;padding:0 2px}
+.pl.full{border-color:var(--ok)}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;font-size:12px;white-space:nowrap}
+.tabs button span{font-size:17px;line-height:1.2}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 </style>
@@ -92,7 +134,7 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
  <div class="top"><h1>📚 Learning English</h1><div><span class="chip" id="st">🔥 0</span> <span class="chip" id="lv">Lv 1</span> <span class="chip" id="xp">0 XP</span> <button class="chip" id="th" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:16px;color:var(--tx)">☀️</button> <button class="chip" id="rs" title="Reset" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:17px;color:var(--tx)">↺</button></div></div>
  <div class="bar"><i id="pb"></i></div>
  <div class="subrow"><div class="sub" id="ps"></div><div class="vw"><button class="vp" id="vp" title="Voice settings"></button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div></div></div></div>
- <div class="tabs"><button data-t="f">🃏 Cards</button><button data-t="q">🎯 Quiz</button><button data-t="a">📖 Word List</button></div>
+ <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="q"><span>🎯</span>Quiz</button><button data-t="g"><span>🎮</span>Games</button><button data-t="a"><span>📖</span>Word List</button></div>
  <div id="v"></div>
 </main>
 <div class="toast" id="to"></div>
@@ -146,8 +188,9 @@ function pick(){ // favor weaker words
  for(let i=0;i<w.length;i++){r-=ws[i];if(r<=0)return w[i]}return w[0];
 }
 function render(){
+ gClean();
  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
- ({f:rFlash,q:rQuiz,a:rAdd})[tab]();
+ ({f:rFlash,q:rQuiz,g:rGames,a:rAdd})[tab]();
 }
 function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n;viOn=false}
 function rFlash(){
@@ -157,13 +200,13 @@ function rFlash(){
  <div class="hint" style="text-align:center">Random cards · ${fi} reviewed</div>`;
  $("cd").onclick=e=>{if(e.target.closest("#vt")){viOn=!viOn;rFlash();return}if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
  $("hd").onclick=()=>{mark(x[0],-1);gain(1);fi++;nextCard(x);flip=false;rFlash()};
- $("ez").onclick=()=>{mark(x[0],1);gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
+ $("ez").onclick=()=>{mark(x[0],1);S.coins=(S.coins||0)+1;gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
 }
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const byW=n=>W().find(x=>x[0]===n);
 function newRound(ph,names){const d=shuf(names||W().map(x=>x[0]));S.rd={ph:ph,deck:d,n:d.length,i:0,ok:0,wr:[],sub:!!names};save();hud()}
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
-function answered(w,okk){const r=S.rd;r.i++;if(okk)r.ok++;else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1)}
+function answered(w,okk){const r=S.rd;r.i++;if(okk){r.ok++;S.coins=(S.coins||0)+1}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1)}
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
@@ -258,8 +301,207 @@ function rAdd(){
   try{navigator.clipboard.writeText(t).then(()=>toast("Copied! Paste into the Sheet, then tap ✅"),()=>prompt("Copy:",t))}catch(e){prompt("Copy:",t)}
  };
 }
+/* ===== Games ===== */
+if(S.coins==null)S.coins=5;
+S.gb=S.gb||{};
+let gStop=null;
+function gClean(){if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}}
+const GAMES=[
+ {k:"balloon",e:"🎈",t:"Balloon Pop",d:"Read the definition and pop the right balloon before it floats away."},
+ {k:"space",e:"🚀",t:"Space Typing",d:"Type the word that matches the clue before the alien lands."},
+ {k:"garden",e:"🌱",t:"Word Garden",d:"Water your words with 💧 and watch them grow as you learn."}
+];
+const SPD={slow:1.5,normal:1,fast:.7};
+const spdHTML=()=>`<div class="spd"><span>Speed</span><div class="seg">${["slow","normal","fast"].map(k=>`<button data-s="${k}" class="${(S.gspd||"normal")===k?"on":""}">${{slow:"🐢 Slow",normal:"🚶 Normal",fast:"🐇 Fast"}[k]}</button>`).join("")}</div></div>`;
+function spdBind(){document.querySelectorAll(".spd .seg button").forEach(b=>b.onclick=()=>{S.gspd=b.dataset.s;save();document.querySelectorAll(".spd .seg button").forEach(z=>z.classList.toggle("on",z===b))})}
+const nW=t=>String(t).trim().split(/\s+/).length;
+const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15} 0`;return `<svg class="spk" id="spk" viewBox="0 0 390 16" preserveAspectRatio="none"><path d="${d}Z" fill="#64748b"/></svg>`})();
+const STG=["🌰","🌱","🌿","🌷","🌳","🍎"],SN=["Seed","Sprout","Leafy","Blooming","Tree","Fruiting"];
+function gardenStat(){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"}
+function rGames(){
+ gClean();
+ $("v").innerHTML=`<div class="gh"><b>🎮 Games</b><span class="chip">💧 ${S.coins}</span></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="garden"?gardenStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("")+`<div class="hint" style="text-align:center">Earn 💧 from games, quizzes and cards. Everything you learn counts in every mode.</div>`;
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({balloon:gBalloon,space:gSpace,garden:gGarden})[c.dataset.g]());
+}
+function gShell(title){
+ gClean();
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Back</button><b>${title}</b><span class="chip" id="gs"></span></div><div id="ga"></div>`;
+ $("gb").onclick=rGames;
+}
+function gOver(key,score,again){
+ const best=S.gb[key]||0,nb=score>best;if(nb)S.gb[key]=score;
+ const w=Math.ceil(score/30);S.coins+=w;save();
+ $("ga").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:48px">${nb&&score>0?"🏆":"🎮"}</div><b>${nb&&score>0?"New best!":"Game over"}</b><br>Score ${score} · Best ${Math.max(best,score)}<br><span style="color:var(--pr);font-weight:700">+${w} 💧</span></div><div class="row"><button class="btn" id="ag">🔁 Play again</button><button class="btn l" id="bk">← Games</button></div>`;
+ $("ag").onclick=again;$("bk").onclick=rGames;
+}
+
+/* ---- Balloon Pop ---- */
+function gBalloon(){
+ gShell("🎈 Balloon Pop");
+ $("ga").innerHTML=spdHTML()+`<div class="ga sky" id="gar"><div class="gp"><span id="gdef" style="flex:1"></span><button class="sp" id="gq" title="Listen">🔊</button></div>${SPK}</div><div class="hint" style="text-align:center">Pop the balloon that matches the definition. A wrong pop, or letting it hit the spikes, costs a life.</div>`;
+ spdBind();const ar=$("gar"),COL=["#dc2626","#d97706","#16a34a","#2563eb","#9333ea","#db2777"];
+ let lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,bl=[],target=null,pen=false,roundOver=false,last=performance.now(),raf=0,timer=0;
+ const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer)};
+ function end(){over=true;timer=setTimeout(()=>gOver("balloon",score,gBalloon),700)}
+ function next(){
+  bl.forEach(b=>b.el.remove());bl=[];pen=false;roundOver=false;
+  qTok++;try{speechSynthesis.cancel()}catch(e){}$("gq").dataset.on="0";$("gq").textContent="🔊";
+  const w=W();target=pick();
+  let o=[target];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
+  o=shuf(o);
+  $("gdef").textContent=target[2];
+  const lane=ar.clientWidth/o.length;
+  $("spk").style.top=(ar.querySelector(".gp").offsetHeight+7)+"px";
+  const dist=ar.clientHeight-ar.querySelector(".gp").offsetHeight-17,T=(10+nW(target[2])*.7)*SPD[S.gspd||"normal"]*(1-Math.min(lvl,10)*.02);
+  o.forEach((z,i)=>{
+   const el=document.createElement("div");el.className="bl";
+   el.innerHTML=`<div class="bb" style="background:${COL[Math.floor(Math.random()*COL.length)]};${z[0].length>9?"font-size:11px":""}">${esc(z[0])}</div>`;
+   el.style.left=Math.max(0,i*lane+(lane-92)/2)+"px";
+   ar.appendChild(el);
+   const b={el,z,y:-Math.random()*40,v:dist/T*(0.92+Math.random()*0.16),dead:false};
+   el.onpointerdown=()=>hit(b);
+   bl.push(b);
+  });
+ }
+ function burst(b){
+  const x=b.el.offsetLeft+46,y=ar.querySelector(".gp").offsetHeight+19,col=b.el.firstChild.style.background;
+  b.el.firstChild.classList.add("pop");
+  for(let i=0;i<10;i++){const q=document.createElement("i");q.className="pt";const a=Math.random()*Math.PI,r=30+Math.random()*40;q.style.cssText=`left:${x}px;top:${y}px;background:${col};--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r+10}px`;ar.appendChild(q);setTimeout(()=>q.remove(),700)}
+  const bx=document.createElement("span");bx.className="bx";bx.textContent="💥";bx.style.cssText=`left:${x-14}px;top:${y-6}px`;ar.appendChild(bx);setTimeout(()=>bx.remove(),500);
+  const sk=$("spk");if(sk){sk.classList.remove("fx");void sk.getBoundingClientRect();sk.classList.add("fx")}
+  setTimeout(()=>b.el.remove(),350);
+ }
+ function hit(b){
+  if(roundOver||over||b.dead)return;
+  if(b.z===target){
+   roundOver=true;score+=10+Math.min(cmb,5)*2;cmb++;lvl=Math.min(lvl+1,14);
+   mark(target[0],1);gain(3);
+   b.el.firstChild.classList.add("pop");bl.forEach(x=>{if(x!==b)x.el.style.opacity=".35"});
+   speak(target[0]);upd();timer=setTimeout(next,850);
+  }else{
+   b.dead=true;b.el.firstChild.classList.add("pop","bad");lives--;cmb=0;
+   if(!pen){pen=true;mark(target[0],-1);save()}
+   upd();if(lives<=0){roundOver=true;end()}
+  }
+ }
+ function loop(t){
+  if(!alive)return;
+  const dt=Math.min(.05,(t-last)/1000);last=t;
+  const H=ar.clientHeight,ph=ar.querySelector(".gp").offsetHeight,popY=H-ph-17;let miss=false;
+  bl.forEach(b=>{if(b.dead)return;b.y+=b.v*dt;b.el.style.transform=`translate3d(0,${-b.y}px,0)`;if(b.y>=popY){b.dead=true;burst(b);if(b.z===target&&!roundOver)miss=true}});
+  if(miss&&!roundOver&&!over){
+   roundOver=true;lives--;cmb=0;mark(target[0],-1);save();upd();toast("Missed: "+target[0]);speak(target[0]);
+   if(lives<=0)end();else timer=setTimeout(next,1200);
+  }
+  raf=requestAnimationFrame(loop);
+ }
+ $("gq").onclick=()=>qSpeak($("gq"),target[2]);
+ upd();next();raf=requestAnimationFrame(t=>{last=t;loop(t)});
+}
+
+/* ---- Space Typing ---- */
+function gSpace(){
+ gShell("🚀 Space Typing");
+ $("ga").innerHTML=spdHTML()+`<div class="ga spc" id="gar"><div class="gnd"></div><div class="rk" id="rk">🚀</div></div><input id="gt" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type the word — it fires automatically"><div class="hint" style="text-align:center">The clue is the Vietnamese meaning (or a short definition if there isn't one).</div>`;
+ spdBind();const ar=$("gar"),inp=$("gt");
+ let hold=0,lastAng=999,lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,en=[],spawnT=0,last=performance.now(),raf=0,timer=0;
+ const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer)};
+ function end(){over=true;inp.disabled=true;timer=setTimeout(()=>gOver("space",score,gSpace),900)}
+ function spawn(){
+  const used=new Set(en.filter(e=>!e.dead&&e.y<e.el.offsetHeight+20).map(e=>e.lane));
+  const free=[0,1].filter(l=>!used.has(l));if(!free.length)return false;
+  let x,tries=0;do{x=pick();tries++}while(en.some(e=>!e.dead&&e.x[0]===x[0])&&tries<25);
+  if(en.some(e=>!e.dead&&e.x[0]===x[0]))return false;
+  const lane=free[Math.floor(Math.random()*free.length)];
+  const clue=vi(x)||x[2];
+  const el=document.createElement("div");el.className="en";el.style.left=(lane*50)+"%";
+  el.innerHTML=`<div class="eb">🛸</div><div class="ec">${esc(clue)}<small>${x[0].length} letters</small></div>`;
+  ar.appendChild(el);
+  const eh=el.offsetHeight,H=ar.clientHeight,T=(12+nW(clue)*.5+x[0].length*.6)*SPD[S.gspd||"normal"]*(1-Math.min(lvl,16)*.015);
+  en.push({el,x,lane,y:-eh,v:(H-46+eh)/T*(0.95+Math.random()*0.1),dead:false,hint:false});
+  return true;
+ }
+ function aim(a){a=Math.max(-80,Math.min(80,a));if(Math.abs(a-lastAng)>.5){lastAng=a;$("rk").style.transform=`rotate(${a-45}deg)`}}
+ function kill(e){
+  {const W0=ar.clientWidth,H0=ar.clientHeight,px=W0/2,py=H0-23,cx=W0*(e.lane*.5+.25),cy=e.y+e.el.offsetHeight/2,dx=cx-px,dy=py-cy,dist=Math.hypot(dx,dy),a=Math.atan2(dx,dy)*180/Math.PI;
+   aim(a);hold=performance.now()+450;
+   const bm=document.createElement("i");bm.className="bm";bm.style.cssText=`left:${px-1.5}px;top:${py-dist}px;height:${dist}px;transform:rotate(${a}deg)`;ar.appendChild(bm);setTimeout(()=>bm.remove(),320)}
+  e.dead=true;inp.value="";score+=8+e.x[0].length*2+Math.min(cmb,5)*2;cmb++;lvl=Math.min(lvl+.5,16);
+  mark(e.x[0],1);gain(3);speak(e.x[0]);upd();
+  e.el.firstChild.textContent="💥";e.el.style.opacity=".6";setTimeout(()=>e.el.remove(),350);
+ }
+ function land(e){
+  e.dead=true;lives--;cmb=0;mark(e.x[0],-1);save();upd();
+  e.el.innerHTML=`<div class="eb">💥</div><div class="ec">${esc(e.x[0])}<small>${esc(e.x[1]||"")}</small></div>`;
+  e.el.style.transform=`translate3d(0,${ar.clientHeight-46-e.el.offsetHeight}px,0)`;
+  setTimeout(()=>e.el.remove(),1600);
+  if(lives<=0)end();
+ }
+ inp.oninput=()=>{
+  const v=inp.value.trim().toLowerCase();if(!v||over)return;
+  const e=en.find(e=>!e.dead&&e.x[0].toLowerCase()===v);if(e)kill(e);
+ };
+ inp.onkeydown=ev=>{if(ev.key==="Enter"&&inp.value.trim()){inp.value="";cmb=0}};
+ function loop(t){
+  if(!alive)return;
+  const dt=Math.min(.05,(t-last)/1000);last=t;
+  const H=ar.clientHeight;
+  if(!over){
+   spawnT-=dt;
+   if(spawnT<=0&&en.filter(e=>!e.dead).length<2){if(spawn())spawnT=Math.max(3,6.5*SPD[S.gspd||"normal"]-lvl*.15)}
+   en.forEach(e=>{
+    if(e.dead)return;
+    e.y+=e.v*dt;e.el.style.transform=`translate3d(0,${e.y}px,0)`;
+    if(!e.hint&&e.y>(H-46)*.45){e.hint=true;e.el.querySelector("small").textContent=e.x[0].length+" letters · starts with “"+e.x[0][0]+"”"}
+    if(e.y+e.el.offsetHeight>=H-46)land(e);
+   });
+   if(performance.now()>=hold){
+    const W0=ar.clientWidth,px=W0/2,py=H-23;let tg=null,bd=1e9;
+    en.forEach(e=>{if(e.dead)return;const cx=W0*(e.lane*.5+.25),cy=e.y+e.el.offsetHeight/2,d=Math.hypot(cx-px,cy-py);if(d<bd){bd=d;tg=[cx,cy]}});
+    aim(tg?Math.atan2(tg[0]-px,py-tg[1])*180/Math.PI:0);
+   }
+  }
+  en=en.filter(e=>!e.dead||e.el.isConnected);
+  raf=requestAnimationFrame(loop);
+ }
+ upd();inp.focus();raf=requestAnimationFrame(t=>{last=t;loop(t)});
+}
+
+/* ---- Word Garden ---- */
+function gGarden(){
+ gShell("🌱 Word Garden");
+ const w=W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
+ $("gs").textContent="💧 "+S.coins;
+ const tot=w.reduce((a,x)=>a+Math.min(S.m[x[0]]||0,5),0),p=Math.round(tot/(5*w.length)*100);
+ $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5);return `<button class="pl${m>=5?" full":""}" data-w="${esc(x[0])}" title="${SN[m]}"><i>${STG[m]}</i><span>${esc(x[0])}</span></button>`}).join("")}</div>`;
+ document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>waterPlant(b.dataset.w));
+}
+function waterPlant(word){
+ const x=byW(word);if(!x)return;
+ const m=Math.min(S.m[word]||0,5);
+ if(m>=5){toast("Already fully grown 🍎");return}
+ if(S.coins<1){toast("No 💧 left — earn more in Quiz, Cards or Games");return}
+ gClean();
+ const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
+ o=shuf(o);
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q" style="text-align:center;font-size:44px;line-height:1.2">${STG[m]}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("gb").onclick=gGarden;
+ $("qs").onclick=()=>qSpeak($("qs"),x[2]);
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
+  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===word)z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
+  const okk=b.dataset.w===word;
+  S.coins--;mark(word,okk?1:-1);
+  if(okk){speak(word);gain(5)}else{b.classList.add("no");save()}
+  const nm=Math.min(S.m[word]||0,5);
+  $("nx").innerHTML=`<div class="q" style="margin-top:10px;text-align:center">${okk?"💧 It grew!":"🥀 It wilted…"} ${STG[m]} ➜ ${STG[nm]}</div><div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
+  $("bg").onclick=gGarden;
+ });
+}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress and correct/wrong counts? (Your word list is kept.)"))return;S.xp=0;S.m={};S.c={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list and 💧 are kept.)"))return;S.xp=0;S.m={};S.c={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 function applyTheme(t){
  document.documentElement.dataset.theme=t;
  $("th").textContent=t==="dark"?"🌙":"☀️";
