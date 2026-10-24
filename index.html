@@ -169,15 +169,22 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .q.pb{position:relative}
 .pbt{position:absolute;top:10px;left:10px;z-index:2;background:var(--pr);color:var(--bt);padding:6px 12px;border-radius:99px;font-size:13px;font-weight:700;line-height:1.3;pointer-events:none;animation:pbt 1.8s ease forwards}
 @keyframes pbt{0%{opacity:0;transform:translateY(-6px)}12%,75%{opacity:1;transform:none}100%{opacity:0}}
+.au{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
+.au.off{display:none}
+.aub{width:100%;max-width:340px;background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:22px 18px;text-align:center}
+.aub h2{margin:0 0 10px;font-size:20px}
+.aub .btn{width:100%;margin-top:12px}
+.aub .btn:disabled{opacity:.6}
 </style>
 </head>
 <body>
 <main>
- <div class="top"><h1>📚 Learning English</h1><div class="chips"><span class="chip" id="st">🔥 0</span> <span class="chip" id="lv">Lv 1</span> <span class="chip" id="xp">0 XP</span> <div class="vw"><button class="vp" id="vp" title="Voice settings"></button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div></div></div><button class="chip" id="th" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:16px;color:var(--tx)">☀️</button> <button class="chip" id="rs" title="Reset" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:17px;color:var(--tx)">↺</button></div></div>
+ <div class="top"><h1>📚 Learning English</h1><div class="chips"><span class="chip" id="st">🔥 0</span> <span class="chip" id="lv">Lv 1</span> <span class="chip" id="xp">0 XP</span> <div class="vw"><button class="vp" id="vp" title="Voice settings"></button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div><button class="chip" id="th" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:16px;color:var(--tx)">☀️</button> <button class="chip" id="rs" title="Reset" style="cursor:pointer;width:32px;height:32px;padding:0;border-radius:50%;font-size:17px;color:var(--tx)">↺</button></div></div>
  <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="q"><span>🎯</span>Quiz</button><button data-t="g"><span>🎮</span>Games</button><button data-t="a"><span>📖</span>Word List</button></div>
  <div id="qp" style="display:none"><div class="bar"><i id="pb"></i></div><div class="sub" id="ps"></div></div>
  <div id="v"></div>
 </main>
+<div class="au" id="auth"><form class="aub" id="af"><h2>📚 Learning English</h2><input id="au" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username"><input id="ap" name="password" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" id="ab" type="submit">Log in</button><div class="hint" id="am"></div></form></div>
 <div class="toast" id="to"></div>
 <script>
 const BASE=[["police","/pəˈliːs/","the official organization that is responsible for protecting people and property, making people obey the law, and catching people who have committed a crime"],["obey","/əʊˈbeɪ/","to act according to what you have been asked or ordered to do by someone in authority, or to behave according to a rule, law, or instruction"],["property","/ˈprɒp.ə.ti/","an object or objects that belong to someone"],["belong","/bɪˈlɒŋ/","to be in the right place or a suitable place"],["suitable","/ˈsjuː.tə.bəl/","acceptable or right for someone or something"],["crime","/kraɪm/","illegal activities"],["illegal","/ɪˈliː.ɡəl/","not allowed by law"],["allow","/əˈlaʊ/","to give permission for someone to do something, or to not prevent something from happening"],["permission","/pəˈmɪʃ.ən/","if someone is given this to do something, they are allowed to do it"],["prevent","/prɪˈvent/","to stop something from happening or someone from doing something"],["committed","/kəˈmɪt.ɪd/","loyal and willing to give your time and energy to something that you believe in"],["loyal","/ˈlɔɪ.əl/","firm and not changing in your friendship with or support for a person or an organization, or in your belief in your principles"],["firm","/fɜːm/","not soft but not completely hard"],["completely","/kəmˈpliːt.li/","in every way or as much as possible"],["principle","/ˈprɪn.sə.pəl/","a basic idea or rule that explains or controls how something happens or works"],["willing","/ˈwɪl.ɪŋ/","to be happy to do something if it is needed"],["restaurant","/ˈres.tər.ɒnt/","a place where meals are prepared and served to customers"],["meal","/mɪəl/","an occasion when food is eaten, or the food that is eaten on such an occasion"],["particular","/pəˈtɪk.jə.lər/","special, or this and not any other"],["occasion","/əˈkeɪ.ʒən/","a particular time, especially when something happens or has happened"],["beach","/biːtʃ/","an area of sand or small stones near the sea or another area of water such as a lake"],["sand","/sænd/","a substance that consists of very small grains of rock, found on beaches and in deserts"],["substance","/ˈsʌb.stəns/","material with particular physical characteristics"],["grain","/ɡreɪn/","a seed or seeds from a plant, especially a plant like a grass such as rice or wheat"],["seed","/siːd/","a small, round or oval object produced by a plant and from which, when it is planted, a new plant can grow"],["oval","/ˈəʊ.vəl/","shaped like a circle that is flattened so that it is like an egg or an ellipse"],["knife","/naɪf/","a tool, usually with a metal blade and a handle, used for cutting and spreading food or other substances, or as a weapon"],["metal","/ˈmet.əl/","a chemical element, such as iron or gold, or a mixture of such elements, such as steel, that is generally hard and strong"],["element","/ˈel.ɪ.mənt/","a part of something"],["blade","/bleɪd/","the flat part on a knife or similar tool or weapon, with a very thin edge used for cutting"],["spread","/spred/","to cover or reach a wider or increasing area, or to make something do this"],["weapon","/ˈwep.ən/","any object used in fighting or war, such as a gun, bomb, knife, etc."],["fork","/fɔːk/","a small object with three or four points and a handle, that you use to pick up food and eat with"],["spoon","/spuːn/","an object consisting of a round, hollow part and a handle, used for mixing, serving, and eating food"]];
@@ -187,7 +194,8 @@ S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
 const vd=x=>cl(x[4]);
-const save=()=>{try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}};
+let cUser=null,pushT=0,cDirty=false;
+const save=()=>{try{S.ts=Date.now();localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}if(cUser){cDirty=true;cStat();cSoon()}};
 const B=()=>S.base||BASE;
 const W=()=>B().concat(S.custom);
 const $=id=>document.getElementById(id);
@@ -611,6 +619,109 @@ document.addEventListener("pointerdown",e=>{if(vOpen&&!e.target.closest(".vw"))s
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&vOpen)setV(false)});
 voiceUI();
 hud();render();
+/* ===== Cloud sync (Firebase) ===== */
+const FIREBASE_CONFIG={apiKey:"AIzaSyDuO0VWsiXij8lqBP-teQ-gz9hz-vSqC98",authDomain:"learning-english-79f0e.firebaseapp.com",projectId:"learning-english-79f0e",storageBucket:"learning-english-79f0e.firebasestorage.app",messagingSenderId:"507742159971",appId:"1:507742159971:web:a1eb3f39dad546ae6fe456"};
+const EMAIL_DOMAIN="learningenglish.app";
+const DEVICE_KEYS=["acc","rate","theme","gspd","glang"],LOCAL_KEYS=DEVICE_KEYS.concat(["rd"]);
+let FB=null;
+const aShow=on=>$("auth").classList.toggle("off",!on);
+const aMsg=(t,bad)=>{const e=$("am");e.textContent=t||"";e.style.color=bad?"var(--no)":"var(--mu)"};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const cPay=o=>{const c=clone(o);LOCAL_KEYS.forEach(k=>delete c[k]);return c};
+const stab=o=>JSON.stringify(o,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
+const cmp=o=>{const c=cPay(o);delete c.ts;return stab(c)};
+const cRef=ch=>{if(ch){hud();if(!gStop)render()}};
+function cStat(){if(cUser)$("acn").textContent=cUser.name+" "+(cDirty?"⏳":"☁️")}
+function cSoon(ms){if(!pushT)pushT=setTimeout(()=>{pushT=0;cPush()},ms||4000)}
+async function cPush(){
+ if(!cUser||!cDirty)return;
+ cDirty=false;
+ try{const p=cPay(S);await cUser.fb.setDoc(cUser.ref,{data:JSON.stringify(p),ts:p.ts||Date.now()})}
+ catch(e){cDirty=true;cSoon(15000)}
+ cStat();
+}
+function cMerge(L,R){
+ const rn=(R.ts||0)>(L.ts||0),n=rn?R:L,o=rn?L:R,M=clone(n);
+ M.custom=M.custom||[];M.base=M.base||o.base;
+ M.gb=Object.assign({},o.gb);
+ Object.keys(n.gb||{}).forEach(k=>{M.gb[k]=Math.max(M.gb[k]||0,n.gb[k]||0)});
+ const have=new Set((M.base||BASE).concat(M.custom).map(x=>x[0].toLowerCase()));
+ (o.custom||[]).forEach(x=>{const k=x[0].toLowerCase();if(!have.has(k)){have.add(k);M.custom.push(clone(x))}});
+ return M;
+}
+function applyS(M){
+ const keep={};LOCAL_KEYS.forEach(k=>{if(S[k]!==undefined)keep[k]=S[k]});
+ Object.keys(S).forEach(k=>delete S[k]);
+ Object.assign(S,M,keep);
+ S.custom=S.custom||[];S.m=S.m||{};S.gb=S.gb||{};if(S.coins==null)S.coins=5;
+ S.uid=cUser.uid;
+ try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}
+}
+async function cPull(){
+ if(!cUser)return false;
+ let R=null;
+ try{const s=await cUser.fb.getDoc(cUser.ref);if(s.exists())R=JSON.parse(s.data().data)}
+ catch(e){cStat();return false}
+ const L=cPay(S);
+ if(!R){cDirty=true;S.ts=S.ts||Date.now();cStat();cSoon(500);return false}
+ const M=cMerge(L,R),ch=cmp(M)!==cmp(L),up=cmp(M)!==cmp(R);
+ if(up)M.ts=Date.now();
+ applyS(M);
+ if(up){cDirty=true;cSoon(800)}
+ cStat();
+ return ch;
+}
+function cStart(u){
+ cUser={uid:u.uid,name:(u.email||"").split("@")[0],fb:FB,ref:FB.doc(FB.db,"users",u.uid)};
+ if(S.uid&&S.uid!==u.uid){ // local data belongs to another nick: start clean
+  const k={};DEVICE_KEYS.forEach(x=>{if(S[x]!==undefined)k[x]=S[x]});
+  Object.keys(S).forEach(x=>delete S[x]);
+  Object.assign(S,{xp:0,streak:0,last:"",custom:[],m:{},coins:5,gb:{}},k);fc=null;combo=0;
+ }
+ S.uid=u.uid;
+ try{localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}
+ $("acr").style.display="";cStat();
+ hud();render();aShow(false);
+ cPull().then(cRef);
+}
+$("af").onsubmit=async ev=>{
+ ev.preventDefault();
+ if(!FB){aMsg("Still loading, try again in a moment",1);return}
+ const u=$("au").value.trim().toLowerCase(),p=$("ap").value;
+ if(!/^[a-z0-9._-]+$/.test(u)||!p){aMsg("Enter a valid username (letters, digits . _ -) and a password",1);return}
+ $("ab").disabled=true;aMsg("Logging in…");
+ try{await FB.signInWithEmailAndPassword(FB.auth,u+"@"+EMAIL_DOMAIN,p);aMsg("")}
+ catch(e){const c=(e&&e.code)||"";aMsg(c==="auth/network-request-failed"?"No connection":c==="auth/too-many-requests"?"Too many attempts. Try again later":"Wrong username or password",1)}
+ $("ab").disabled=false;
+};
+$("lo").onclick=async()=>{
+ if(!confirm("Log out of this device?"))return;
+ await cPush();
+ if(cDirty&&!confirm("Some progress is not uploaded yet (offline?). Log out anyway and lose it?"))return;
+ try{await FB.signOut(FB.auth)}catch(e){}
+ const k={};DEVICE_KEYS.forEach(x=>{if(S[x]!==undefined)k[x]=S[x]});
+ try{localStorage.setItem("ebs",JSON.stringify(k))}catch(e){}
+ location.reload();
+};
+document.addEventListener("visibilitychange",()=>{
+ if(!cUser)return;
+ if(document.hidden){clearTimeout(pushT);pushT=0;cPush()}
+ else cPull().then(cRef);
+});
+addEventListener("pagehide",()=>{if(cUser){clearTimeout(pushT);pushT=0;cPush()}});
+addEventListener("online",()=>{if(cUser){cPush();cPull().then(cRef)}});
+(async function cBoot(){
+ if(!FIREBASE_CONFIG.apiKey||FIREBASE_CONFIG.apiKey==="PASTE_HERE"){aShow(false);return} // no config yet: app works locally as before
+ try{
+  const V="10.12.2",G="https://www.gstatic.com/firebasejs/"+V+"/";
+  const [a,au,fs]=await Promise.all([import(G+"firebase-app.js"),import(G+"firebase-auth.js"),import(G+"firebase-firestore.js")]);
+  const app=a.initializeApp(FIREBASE_CONFIG);
+  FB={auth:au.getAuth(app),db:fs.getFirestore(app),signInWithEmailAndPassword:au.signInWithEmailAndPassword,signOut:au.signOut,doc:fs.doc,getDoc:fs.getDoc,setDoc:fs.setDoc};
+  au.onAuthStateChanged(FB.auth,u=>{if(u)cStart(u);else{cUser=null;$("acr").style.display="none";aShow(true)}});
+ }catch(e){
+  if(S.uid)aShow(false);else aMsg("Can't load sign-in. Check your connection and reload.",1);
+ }
+})();
 </script>
 </body>
 </html>
