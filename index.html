@@ -260,6 +260,15 @@ function rFlash(){
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const byW=n=>W().find(x=>x[0]===n);
 function newRound(ph,names){const d=shuf(names||W().map(x=>x[0]));S.rd={ph:ph,deck:d,n:d.length,i:0,ok:0,wr:[],sub:!!names};save();hud()}
+function fixRound(){
+ const r=S.rd;if(!r||r.sub||r.i>=r.deck.length)return;
+ const all=W().map(x=>x[0]),names=new Set(all);
+ let i=r.i;const d=[];
+ r.deck.forEach((k,j)=>{if(names.has(k))d.push(k);else if(j<r.i)i--});
+ const have=new Set(d);
+ r.deck=d.concat(shuf(all.filter(k=>!have.has(k))));
+ r.i=i;r.n=r.deck.length;
+}
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
 function answered(w,okk){const r=S.rd;r.i++;if(okk){r.ok++;S.coins=(S.coins||0)+1}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1)}
 function rQuiz(){
@@ -349,7 +358,7 @@ function rAdd(){
   if(!rows.length){toast("No Sheet data received");return}
   const have=new Set(rows.map(r=>r[0].toLowerCase()));
   S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",x[4]||"",false]);
-  save();hud();toast("🔄 Synced "+rows.length+" words");rAdd()};
+  fixRound();save();hud();toast("🔄 Synced "+rows.length+" words");rAdd()};
  const cp=$("cp");if(cp)cp.onclick=()=>{
   const t=P.map(x=>x.slice(0,5).join("\t")).join("\n");
   const done=()=>{P.forEach(x=>x[5]=true);save();toast("Copied! Words moved to the Word List");rAdd()};
@@ -622,7 +631,7 @@ hud();render();
 /* ===== Cloud sync (Firebase) ===== */
 const FIREBASE_CONFIG={apiKey:"AIzaSyDuO0VWsiXij8lqBP-teQ-gz9hz-vSqC98",authDomain:"learning-english-79f0e.firebaseapp.com",projectId:"learning-english-79f0e",storageBucket:"learning-english-79f0e.firebasestorage.app",messagingSenderId:"507742159971",appId:"1:507742159971:web:a1eb3f39dad546ae6fe456"};
 const EMAIL_DOMAIN="learningenglish.app";
-const DEVICE_KEYS=["acc","rate","theme","gspd","glang"],LOCAL_KEYS=DEVICE_KEYS.concat(["rd"]);
+const DEVICE_KEYS=["acc","rate","theme","gspd","glang"],LOCAL_KEYS=DEVICE_KEYS;
 let FB=null;
 const aShow=on=>$("auth").classList.toggle("off",!on);
 const aMsg=(t,bad)=>{const e=$("am");e.textContent=t||"";e.style.color=bad?"var(--no)":"var(--mu)"};
