@@ -565,7 +565,7 @@ function waterPlant(word){
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q pb" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q pb" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
@@ -575,7 +575,9 @@ function waterPlant(word){
   const w0=!!(S.w&&S.w[word]),bp=pic(word);S.coins--;mark(word,okk?1:-1);
   if(okk){speak(word);gain(5)}else{b.classList.add("no");save()}
   const nm=Math.min(S.m[word]||0,5);
-  $("nx").innerHTML=`<div class="q" style="margin-top:10px;text-align:center">${okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…")} ${bp} ➜ ${pic(word)}</div><div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
+  $("pbx").innerHTML=pic(word);
+  toast(okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…"));
+  $("nx").innerHTML=`<div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
   $("bg").onclick=gGarden;
  });
 }
