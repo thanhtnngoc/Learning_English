@@ -149,6 +149,19 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 @keyframes fry{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
 .tw{transform-box:fill-box;transform-origin:center;animation:twy 1.8s ease-in-out infinite}
 @keyframes twy{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.08);filter:brightness(1.25)}}
+.sk{transform-box:fill-box;transform-origin:center;animation:skt 1.8s ease-in-out infinite}
+@keyframes skt{0%,100%{transform:scale(.2) rotate(0);opacity:0}50%{transform:scale(1.15) rotate(45deg);opacity:1}}
+.dr{transform-origin:50px 80px;transform:rotate(9deg)}
+.lwr{transform-box:fill-box;transform-origin:50% 100%;transform:rotate(42deg) scaleY(.75)}
+.lwl{transform-box:fill-box;transform-origin:50% 100%;transform:rotate(-42deg) scaleY(.75)}
+.wd{transform:translateY(5px)}
+.th{animation:thp 1.4s ease-in-out infinite}
+@keyframes thp{0%,100%{opacity:.3}50%{opacity:1}}
+.pp{display:block;font-size:8px;letter-spacing:1px;color:var(--ok);line-height:1;margin-top:2px}
+.st{animation:stk 2s ease-in-out infinite}
+@keyframes stk{0%{opacity:0;transform:translateY(4px)}50%{opacity:.9}100%{opacity:0;transform:translateY(-6px)}}
+.pl.wt{border-color:var(--no)}
+.pl.wt .pp{color:var(--no)}
 </style>
 </head>
 <body>
@@ -202,7 +215,12 @@ function qSpeak(btn,t){
   speechSynthesis.speak(u);
  }catch(e){}
 }
-function mark(w,d){S.m[w]=Math.max(0,Math.min(5,(S.m[w]||0)+d));S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
+function mark(w,d){
+ S.w=S.w||{};let m=S.m[w]||0,wl=!!S.w[w];
+ if(d>0){if(m<0){m=0;wl=false}else if(wl)wl=false;else m=Math.min(5,m+1)}
+ else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
+ S.m[w]=m;S.w[w]=wl?1:0;
+ S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
 const cnt=w=>{const c=(S.c||{})[w]||[0,0];return `<span class="cn" style="color:var(--ok)">✅${c[0]}</span><span class="cn" style="color:var(--no)">❌${c[1]}</span>`};
 function pick(){ // favor weaker words
  const w=W(),ws=w.map(x=>6-(S.m[x[0]]||0)),t=ws.reduce((a,b)=>a+b,0);let r=Math.random()*t;
@@ -345,25 +363,33 @@ function lgBind(cb){const b=$("lgb"),set=()=>{b.textContent="🌐 "+(S.glang==="
 const nW=t=>String(t).trim().split(/\s+/).length;
 const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15} 0`;return `<svg class="spk" id="spk" viewBox="0 0 390 16" preserveAspectRatio="none"><path d="${d}Z" fill="#64748b"/></svg>`})();
 const SN=["Seed","Sprout","Seedling","Leafy","Blooming","Fruiting"];
-const lf=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="lv" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-7-5-6-14 0-19C6-14 7-5 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".8" opacity=".55"/></g></g>`;
+let WL=0;
+const lf=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="${WL?(r>=0?"lwr":"lwl"):"lv"}" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-7-5-6-14 0-19C6-14 7-5 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".8" opacity=".55"/></g></g>`;
 const fw=(x,y,d)=>`<g class="fl" style="animation-delay:-${d}s"><circle cx="${x-3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x+3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y-3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y+3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y}" r="2.2" fill="#f59e0b"/></g>`;
 const fr=(x,y,d)=>`<g class="fr" style="animation-delay:-${d}s"><circle cx="${x}" cy="${y}" r="5" fill="#ef4444"/><circle cx="${x-1.6}" cy="${y-1.8}" r="1.3" fill="#fff" opacity=".5"/><path d="M${x-2.6} ${y-4.8}L${x} ${y-3.2}L${x+2.6} ${y-4.8}L${x} ${y-6.4}Z" fill="#16a34a"/></g>`;
 const LV=[[50,12,0,1.3],[50,12,-40,1.2],[50,12,40,1.2],[38,16,-30,1.3],[38,16,-75,1.2],[62,12,30,1.3],[62,12,75,1.2],[26,30,-50,1.3],[26,30,-95,1.2],[26,30,-10,1.1],[74,24,50,1.3],[74,24,95,1.2],[74,24,10,1.1],[22,50,-60,1.3],[22,50,-100,1.2],[22,50,-20,1.1],[78,44,60,1.3],[78,44,100,1.2],[78,44,20,1.1],[50,62,-70,1.1],[50,68,70,1.1],[50,56,70,1]];
-function plant(m){
- const G=["#4ade80","#22c55e","#16a34a"],dl=(Math.random()*3).toFixed(1);
+const sk=(x,y,s,d,c)=>`<path class="sk" style="animation-delay:-${d}s" d="M${x} ${y-s}Q${x} ${y} ${x+s} ${y}Q${x} ${y} ${x} ${y+s}Q${x} ${y} ${x-s} ${y}Q${x} ${y} ${x} ${y-s}Z" fill="${c}"/>`;
+const SK=[[10,18,5,0,"#fde047"],[90,28,4,.6,"#fff"],[13,58,3.5,1.2,"#fde047"],[88,62,5,.3,"#fde047"],[28,-10,3.5,.9,"#fff"],[74,-14,5,1.5,"#fde047"],[50,-22,3.5,.4,"#fff"],[94,4,3,1.1,"#fff"],[6,38,3,1.8,"#fff"]].map(a=>sk(a[0],a[1],a[2],a[3],a[4])).join("");
+const THIRSTY=`<g class="th"><path d="M86 -16Q95 -4 86 3Q77 -4 86 -16Z" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/><text x="86" y="0" text-anchor="middle" font-size="9" font-weight="800" fill="#38bdf8">!</text></g>`;
+function plant(m,wl){
+ WL=wl?1:0;
+ const G=wl?["#a8a85a","#8f8f45","#7a7a3a"]:["#4ade80","#22c55e","#16a34a"],dl=(Math.random()*3).toFixed(1),T=wl?"#6b5a2a":"#4d7c2a",ST=wl?"#6b6b2a":"#15803d";
  let p="";
  if(m===0)p=`<g class="tw"><ellipse cx="50" cy="76" rx="4" ry="5.5" fill="#e7b97a" stroke="#b9854a" stroke-width="1" transform="rotate(-15 50 76)"/><path d="M47 70l-3-4M53 70l3-4M50 68v-5" stroke="#fde047" stroke-width="1.2" stroke-linecap="round"/></g>`;
- else if(m===1)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80Q50 70 50 64" stroke="#15803d" stroke-width="2" fill="none" stroke-linecap="round"/>${lf(50,65,-60,.75,G[0])}${lf(50,65,60,.75,G[1])}</g>`;
- else if(m===2)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80V48" stroke="#15803d" stroke-width="2.2" stroke-linecap="round"/>${lf(50,72,-60,.65,G[0])}${lf(50,66,60,.65,G[1])}${lf(50,58,-50,.65,G[1])}${lf(50,52,50,.65,G[0])}${lf(50,48,0,.7,G[0])}</g>`;
+ else if(m===1)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80Q50 70 50 64" stroke="${ST}" stroke-width="2" fill="none" stroke-linecap="round"/>${lf(50,65,-60,.75,G[0])}${lf(50,65,60,.75,G[1])}</g>`;
+ else if(m===2)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80V48" stroke="${ST}" stroke-width="2.2" stroke-linecap="round"/>${lf(50,72,-60,.65,G[0])}${lf(50,66,60,.65,G[1])}${lf(50,58,-50,.65,G[1])}${lf(50,52,50,.65,G[0])}${lf(50,48,0,.7,G[0])}</g>`;
  else{
-  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M45 84L47.5 40L48.5 8L51.5 8L52.5 40L55 84Z" fill="#4d7c2a"/><path d="M50 62Q36 58 22 50M50 56Q64 52 78 44M50 42Q36 38 26 30M50 36Q64 30 74 24M50 26Q42 22 38 16M50 22Q58 18 62 12" stroke="#4d7c2a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`+LV.map((l,i)=>lf(l[0],l[1],l[2],l[3],G[i%3],(i*.37%3).toFixed(1))).join("");
+  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M45 84L47.5 40L48.5 8L51.5 8L52.5 40L55 84Z" fill="${T}"/><path d="M50 62Q36 58 22 50M50 56Q64 52 78 44M50 42Q36 38 26 30M50 36Q64 30 74 24M50 26Q42 22 38 16M50 22Q58 18 62 12" stroke="${T}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`+LV.map((l,i)=>lf(l[0],l[1],l[2],l[3],G[i%3],(i*.37%3).toFixed(1))).join("");
   if(m===4)p+=[[20,42,0],[80,36,.5],[24,22,1],[76,16,1.5],[36,8,2],[64,5,2.5],[40,32,.8],[60,44,1.8]].map(a=>fw(a[0],a[1],a[2])).join("");
   if(m===5)p+=[[19,46,0],[81,40,.5],[25,25,1],[75,19,1.5],[38,10,2],[63,7,2.5],[38,34,.8],[62,48,1.8],[44,52,2.2]].map(a=>fr(a[0],a[1],a[2])).join("");
   p+="</g>";
  }
- return `<svg viewBox="0 -30 100 130" aria-hidden="true">${m===5?'<circle cx="50" cy="50" r="46" fill="#fde047" opacity=".12"/>':""}<path d="M6 94Q50 62 94 94Z" fill="#8b5a2b"/><path d="M20 90Q50 72 80 90" fill="none" stroke="#6b4423" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="#6b4423"/><circle cx="62" cy="86" r="1.4" fill="#6b4423"/>${p}</svg>`;
+ if(wl)p=p.replace(/class="sw"/g,'class="dr"').replace(/class="(fl|fr|tw)"/g,'class="wd"').replace(/#fde047/g,"#c9b26a").replace(/#f59e0b/g,"#9c7a3c").replace(/#ef4444/g,"#a8554a").replace(/#16a34a/g,"#6f7a3a");
+ return `<svg viewBox="0 -30 100 130" aria-hidden="true"><path d="M6 94Q50 62 94 94Z" fill="#8b5a2b"/><path d="M20 90Q50 72 80 90" fill="none" stroke="#6b4423" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="#6b4423"/><circle cx="62" cy="86" r="1.4" fill="#6b4423"/>${p}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
 }
-const STG=[0,1,2,3,4,5].map(plant);
+const STG=[0,1,2,3,4,5].map(m=>plant(m,0)),STW=[0,1,2,3,4,5].map(m=>plant(m,1));
+const ROT=`<svg viewBox="0 -30 100 130" aria-hidden="true"><path d="M6 94Q50 62 94 94Z" fill="#8b5a2b"/><path d="M20 90Q50 72 80 90" fill="none" stroke="#6b4423" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="#6b4423"/><circle cx="62" cy="86" r="1.4" fill="#6b4423"/><ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${THIRSTY}</svg>`;
+const pic=w=>{const m=Math.min(S.m[w]||0,5);return m<0?ROT:((S.w&&S.w[w])?STW:STG)[m]};
 function gardenStat(){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"}
 function rGames(){
  gClean();
@@ -523,34 +549,34 @@ function gGarden(){
  gShell("🌱 Word Garden");
  const w=W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
  $("gs").textContent="💧 "+S.coins;
- const tot=w.reduce((a,x)=>a+Math.min(S.m[x[0]]||0,5),0),p=Math.round(tot/(5*w.length)*100);
- $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5);return `<button class="pl${m>=5?" full":""}" data-w="${esc(x[0])}" title="${SN[m]}"><i>${STG[m]}</i><span>${esc(x[0])}</span></button>`}).join("")}</div>`;
+ const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
+ $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${m<0?"Rotten seed":SN[m]}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>waterPlant(b.dataset.w));
 }
 function waterPlant(word){
  const x=byW(word);if(!x)return;
  const m=Math.min(S.m[word]||0,5);
- if(m>=5){toast("Already fully grown 🍎");return}
+ 
  if(S.coins<1){toast("No 💧 left — earn more in Quiz, Cards or Games");return}
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q pb" style="text-align:center;font-size:44px;line-height:1.2">${STG[m]}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q pb" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===word)z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
   const okk=b.dataset.w===word;
-  S.coins--;mark(word,okk?1:-1);
+  const w0=!!(S.w&&S.w[word]),bp=pic(word);S.coins--;mark(word,okk?1:-1);
   if(okk){speak(word);gain(5)}else{b.classList.add("no");save()}
   const nm=Math.min(S.m[word]||0,5);
-  $("nx").innerHTML=`<div class="q" style="margin-top:10px;text-align:center">${okk?"💧 It grew!":"🥀 It wilted…"} ${STG[m]} ➜ ${STG[nm]}</div><div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
+  $("nx").innerHTML=`<div class="q" style="margin-top:10px;text-align:center">${okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…")} ${bp} ➜ ${pic(word)}</div><div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
   $("bg").onclick=gGarden;
  });
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list and 💧 are kept.)"))return;S.xp=0;S.m={};S.c={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list and 💧 are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 function applyTheme(t){
  document.documentElement.dataset.theme=t;
  $("th").textContent=t==="dark"?"🌙":"☀️";
