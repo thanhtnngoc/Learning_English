@@ -194,6 +194,7 @@ S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
 const vd=x=>cl(x[4]);
+if(S.uid)document.getElementById("auth").classList.add("off");
 let cUser=null,pushT=0,cDirty=false;
 const save=()=>{try{S.ts=Date.now();localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}if(cUser){cDirty=true;cStat();cSoon()}};
 const B=()=>S.base||BASE;
@@ -270,7 +271,8 @@ function fixRound(){
  r.i=i;r.n=r.deck.length;
 }
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
-function answered(w,okk){const r=S.rd;r.i++;if(okk){r.ok++;S.coins=(S.coins||0)+1}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1)}
+let lastWt=0;
+function answered(w,okk){const r=S.rd;r.i++;lastWt=0;if(okk){const c=combo+1;lastWt=1+Math.floor(c/2);r.ok++;S.coins=(S.coins||0)+lastWt}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1)}
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
@@ -293,7 +295,7 @@ function rPick(x){
   const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
-  if(okk){combo++;speak(x[0]);const g=10+Math.min(combo,5)*2;gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP")}
+  if(okk){combo++;speak(x[0]);const g=10+Math.min(combo,5)*2;gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
   else{b.classList.add("no");combo=0;save();hud();toast("Not quite — we'll review it at the end 💪")}
   $("nx").innerHTML=nextBtn(r);$("nb").onclick=rQuiz;
  });
@@ -311,7 +313,7 @@ function rType(x){
   done=true;inp.disabled=true;$("ck").disabled=true;qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   const okk=v===x[0].toLowerCase();
   answered(x[0],okk);
-  if(okk){combo++;inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP")}
+  if(okk){combo++;speak(x[0]);inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
   else{combo=0;inp.style.borderColor="var(--no)";save();hud()}
   $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b> "+esc(x[1])}</div>`+nextBtn(r);
   $("nb").onclick=rQuiz;$("nb").focus();
