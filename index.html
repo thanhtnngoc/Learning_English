@@ -135,6 +135,20 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .tabs button span{font-size:17px;line-height:1.2}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.pl i{display:block;line-height:0}
+.pl svg{width:60px;height:60px}
+.q svg{width:76px;height:76px;vertical-align:middle}
+.q.pb svg{width:140px;height:140px}
+.sw{transform-origin:50px 80px;animation:swy 3.6s ease-in-out infinite}
+@keyframes swy{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.lv{transform-box:fill-box;transform-origin:50% 100%;animation:lvy 2.4s ease-in-out infinite}
+@keyframes lvy{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.fl{transform-box:fill-box;transform-origin:center;animation:fly 2.2s ease-in-out infinite}
+@keyframes fly{0%,100%{transform:scale(.88) rotate(-8deg)}50%{transform:scale(1.15) rotate(8deg)}}
+.fr{animation:fry 2.4s ease-in-out infinite}
+@keyframes fry{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+.tw{transform-box:fill-box;transform-origin:center;animation:twy 1.8s ease-in-out infinite}
+@keyframes twy{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.08);filter:brightness(1.25)}}
 </style>
 </head>
 <body>
@@ -330,7 +344,26 @@ const cq=x=>S.glang==="vi"?(vd(x)||vi(x)||x[2]):x[2];
 function lgBind(cb){const b=$("lgb"),set=()=>{b.textContent="🌐 "+(S.glang==="vi"?"VI":"EN");b.title=S.glang==="vi"?"Question language: Vietnamese (tap for English)":"Question language: English (tap for Vietnamese)"};set();b.onclick=()=>{S.glang=S.glang==="vi"?"en":"vi";save();set();cb()}}
 const nW=t=>String(t).trim().split(/\s+/).length;
 const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15} 0`;return `<svg class="spk" id="spk" viewBox="0 0 390 16" preserveAspectRatio="none"><path d="${d}Z" fill="#64748b"/></svg>`})();
-const STG=["🌰","🌱","🌿","🌷","🌳","🍎"],SN=["Seed","Sprout","Leafy","Blooming","Tree","Fruiting"];
+const SN=["Seed","Sprout","Seedling","Leafy","Blooming","Fruiting"];
+const lf=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="lv" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-7-5-6-14 0-19C6-14 7-5 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".8" opacity=".55"/></g></g>`;
+const fw=(x,y,d)=>`<g class="fl" style="animation-delay:-${d}s"><circle cx="${x-3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x+3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y-3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y+3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y}" r="2.2" fill="#f59e0b"/></g>`;
+const fr=(x,y,d)=>`<g class="fr" style="animation-delay:-${d}s"><circle cx="${x}" cy="${y}" r="5" fill="#ef4444"/><circle cx="${x-1.6}" cy="${y-1.8}" r="1.3" fill="#fff" opacity=".5"/><path d="M${x-2.6} ${y-4.8}L${x} ${y-3.2}L${x+2.6} ${y-4.8}L${x} ${y-6.4}Z" fill="#16a34a"/></g>`;
+const LV=[[50,12,0,1.3],[50,12,-40,1.2],[50,12,40,1.2],[38,16,-30,1.3],[38,16,-75,1.2],[62,12,30,1.3],[62,12,75,1.2],[26,30,-50,1.3],[26,30,-95,1.2],[26,30,-10,1.1],[74,24,50,1.3],[74,24,95,1.2],[74,24,10,1.1],[22,50,-60,1.3],[22,50,-100,1.2],[22,50,-20,1.1],[78,44,60,1.3],[78,44,100,1.2],[78,44,20,1.1],[50,62,-70,1.1],[50,68,70,1.1],[50,56,70,1]];
+function plant(m){
+ const G=["#4ade80","#22c55e","#16a34a"],dl=(Math.random()*3).toFixed(1);
+ let p="";
+ if(m===0)p=`<g class="tw"><ellipse cx="50" cy="76" rx="4" ry="5.5" fill="#e7b97a" stroke="#b9854a" stroke-width="1" transform="rotate(-15 50 76)"/><path d="M47 70l-3-4M53 70l3-4M50 68v-5" stroke="#fde047" stroke-width="1.2" stroke-linecap="round"/></g>`;
+ else if(m===1)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80Q50 70 50 64" stroke="#15803d" stroke-width="2" fill="none" stroke-linecap="round"/>${lf(50,65,-60,.75,G[0])}${lf(50,65,60,.75,G[1])}</g>`;
+ else if(m===2)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80V48" stroke="#15803d" stroke-width="2.2" stroke-linecap="round"/>${lf(50,72,-60,.65,G[0])}${lf(50,66,60,.65,G[1])}${lf(50,58,-50,.65,G[1])}${lf(50,52,50,.65,G[0])}${lf(50,48,0,.7,G[0])}</g>`;
+ else{
+  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M45 84L47.5 40L48.5 8L51.5 8L52.5 40L55 84Z" fill="#4d7c2a"/><path d="M50 62Q36 58 22 50M50 56Q64 52 78 44M50 42Q36 38 26 30M50 36Q64 30 74 24M50 26Q42 22 38 16M50 22Q58 18 62 12" stroke="#4d7c2a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`+LV.map((l,i)=>lf(l[0],l[1],l[2],l[3],G[i%3],(i*.37%3).toFixed(1))).join("");
+  if(m===4)p+=[[20,42,0],[80,36,.5],[24,22,1],[76,16,1.5],[36,8,2],[64,5,2.5],[40,32,.8],[60,44,1.8]].map(a=>fw(a[0],a[1],a[2])).join("");
+  if(m===5)p+=[[19,46,0],[81,40,.5],[25,25,1],[75,19,1.5],[38,10,2],[63,7,2.5],[38,34,.8],[62,48,1.8],[44,52,2.2]].map(a=>fr(a[0],a[1],a[2])).join("");
+  p+="</g>";
+ }
+ return `<svg viewBox="0 0 100 100" aria-hidden="true">${m===5?'<circle cx="50" cy="50" r="46" fill="#fde047" opacity=".12"/>':""}<path d="M6 94Q50 62 94 94Z" fill="#8b5a2b"/><path d="M20 90Q50 72 80 90" fill="none" stroke="#6b4423" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="#6b4423"/><circle cx="62" cy="86" r="1.4" fill="#6b4423"/>${p}</svg>`;
+}
+const STG=[0,1,2,3,4,5].map(plant);
 function gardenStat(){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"}
 function rGames(){
  gClean();
@@ -502,7 +535,7 @@ function waterPlant(word){
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q" style="text-align:center;font-size:44px;line-height:1.2">${STG[m]}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="chip">💧 ${S.coins}</span></div><div class="q pb" style="text-align:center;font-size:44px;line-height:1.2">${STG[m]}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
