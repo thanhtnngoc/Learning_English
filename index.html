@@ -139,6 +139,7 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 .pl i{display:block;line-height:0}
+.gg .pl{content-visibility:auto;contain-intrinsic-size:auto 125px}
 .pl svg{width:60px;height:78px;overflow:visible}
 .q svg{width:76px;height:99px;vertical-align:middle;overflow:visible}
 .q.pb svg{width:140px;height:182px}
@@ -504,7 +505,7 @@ function gBalloon(){
  spdBind();const ar=$("gar"),unfit=fitArena(ar,76),COL=["#dc2626","#d97706","#16a34a","#2563eb","#9333ea","#db2777"];
  let lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,bl=[],target=null,pen=false,roundOver=false,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit()};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over&&score>(S.gb.balloon||0)){S.gb.balloon=score;save()}};
  function end(){over=true;timer=setTimeout(()=>gOver("balloon",score,gBalloon),700)}
  function next(){
   bl.forEach(b=>b.el.remove());bl=[];pen=false;roundOver=false;
@@ -570,7 +571,7 @@ function gSpace(){
  spdBind();const ar=$("gar"),inp=$("gt"),unfit=fitArena(ar,132,()=>document.activeElement===inp);
  let hold=0,lastAng=999,lives=3,score=0,lvl=0,cmb=0,alive=true,over=false,en=[],spawnT=0,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit()};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over&&score>(S.gb.space||0)){S.gb.space=score;save()}};
  function end(){over=true;inp.disabled=true;timer=setTimeout(()=>gOver("space",score,gSpace),900)}
  function spawn(){
   const used=new Set(en.filter(e=>!e.dead&&e.y<e.el.offsetHeight+20).map(e=>e.lane));
