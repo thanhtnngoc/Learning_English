@@ -182,8 +182,8 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 <body>
 <main>
  <div class="top"><h1>📚 Learning English</h1><div class="vw"><button class="vp" id="vp" title="Settings" aria-label="Settings" style="width:36px;height:36px;padding:0;border-radius:50%;font-size:18px">⚙️</button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr"><label>Theme</label><button class="lg" id="th">☀️ Light</button></div><div class="vr"><label>Data</label><button class="lg" id="rs" title="Reset">↺ Reset</button></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div></div>
- <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="q"><span>🎯</span>Quiz</button><button data-t="g"><span>🎮</span>Games</button><button data-t="a"><span>📖</span>Word List</button></div>
- <div id="qp" style="display:none"><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="subrow"><div class="sub" id="ps"></div><button class="btn l rb" id="rb" style="display:none"></button></div></div>
+ <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="g"><span>🎮</span>Games</button><button data-t="n"><span>🌱</span>Garden</button><button data-t="a"><span>📖</span>Word List</button></div>
+ <div id="qp" style="display:none"><div class="gh"><button class="btn l" id="qb" style="flex:none;padding:6px 12px">← Back</button><b>🎯 Quiz</b><span></span></div><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="subrow"><div class="sub" id="ps"></div><button class="btn l rb" id="rb" style="display:none"></button></div></div>
  <div id="v"></div>
 </main>
 <div class="au" id="auth"><form class="aub" id="af"><h2>📚 Learning English</h2><input id="au" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username"><input id="ap" name="password" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" id="ab" type="submit">Log in</button><div class="hint" id="am"></div></form></div>
@@ -205,6 +205,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const day=()=>new Date().toISOString().slice(0,10);
 let viOn=false,fc=null,tab="f",fi=0,flip=false,combo=0,cur=null,tt;
+let inQ=false;
 function toast(t){const e=$("to");e.textContent=t;e.classList.add("s");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("s"),1300)}
 function gain(n,msg){
  const d=day();
@@ -215,9 +216,9 @@ function gain(n,msg){
 }
 function hud(){
  $("st").textContent="🔥 "+S.streak;$("xp").textContent=S.xp+" XP";
- const r=S.rd;let p=0,t="No round yet · Go to the 🎯 Quiz tab to start";
+ const r=S.rd;let p=0,t="No round yet · Open Games ➜ Quiz to start";
  if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(r.ph===1?"Round 1 · Multiple choice":"Round 2 · Spelling")+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
- const rb=$("rb");if(rb){if(r&&r.deck.length&&tab==="q"){const to=r.ph===1?2:1;rb.style.display="";rb.textContent=to===2?"✍️ Round 2":"↩️ Round 1";rb.onclick=()=>{newRound(to);rQuiz()}}else rb.style.display="none"}
+ const rb=$("rb");if(rb){if(r&&r.deck.length&&tab==="g"&&inQ){const to=r.ph===1?2:1;rb.style.display="";rb.textContent=to===2?"✍️ Round 2":"↩️ Round 1";rb.onclick=()=>{newRound(to);rQuiz()}}else rb.style.display="none"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
 function mkU(t){const u=new SpeechSynthesisUtterance(t),l=S.acc||"en-GB";u.lang=l;u.rate=S.rate||.85;try{const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")===l);if(v)u.voice=v}catch(e){}return u}
@@ -292,10 +293,10 @@ function pick(){ // favor weaker words
 }
 function render(){
  gClean();
- $("qp").style.display=tab==="q"?"":"none";
+ $("qp").style.display=(tab==="g"&&inQ)?"":"none";
  hud();
  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
- ({f:rFlash,q:rQuiz,g:rGames,a:rAdd})[tab]();
+ ({f:rFlash,g:()=>inQ?rQuiz():rGames(),n:gGarden,a:rAdd})[tab]();
 }
 function nextCard(x){let n;do{n=pick()}while(n===x&&W().length>1);fc=n;viOn=false}
 function rFlash(){
@@ -425,9 +426,9 @@ S.gb=S.gb||{};
 let gStop=null;
 function gClean(){if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}}
 const GAMES=[
+ {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: pick the word. Round 2: spell it."},
  {k:"balloon",e:"🎈",t:"Balloon Pop",d:"Read the definition and pop the right balloon before it floats away."},
- {k:"space",e:"🚀",t:"Space Typing",d:"Type the word that matches the clue before the alien lands."},
- {k:"garden",e:"🌱",t:"Word Garden",d:"Water your words with 💧 and watch them grow as you learn."}
+ {k:"space",e:"🚀",t:"Space Typing",d:"Type the word that matches the clue before the alien lands."}
 ];
 const SPD={slow:1.5,normal:1,fast:.7};
 const spdHTML=()=>`<div class="spd"><span>Speed</span><div class="rt"><div class="seg">${["slow","normal","fast"].map(k=>`<button data-s="${k}" class="${(S.gspd||"normal")===k?"on":""}">${{slow:"🐢 Slow",normal:"🚶 Normal",fast:"🐇 Fast"}[k]}</button>`).join("")}</div><button class="lg" id="lgb"></button></div></div>`;
@@ -469,10 +470,12 @@ const STG=[0,1,2,3,4,5].map(m=>plant(m,0)),STW=[0,1,2,3,4,5].map(m=>plant(m,1));
 const ROT=`<svg viewBox="0 -30 100 130" aria-hidden="true"><path d="M6 94Q50 62 94 94Z" fill="#8b5a2b"/><path d="M20 90Q50 72 80 90" fill="none" stroke="#6b4423" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="#6b4423"/><circle cx="62" cy="86" r="1.4" fill="#6b4423"/><ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${THIRSTY}</svg>`;
 const pic=w=>{const m=Math.min(S.m[w]||0,5);return m<0?ROT:((S.w&&S.w[w])?STW:STG)[m]};
 function gardenStat(){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"}
+function openQuiz(){inQ=true;$("qp").style.display="";hud();rQuiz()}
+function quizStat(){const r=S.rd;return r&&r.deck.length?(r.ph===1?"Round 1":"Round 2")+" · "+r.i+"/"+r.deck.length:"Not started"}
 function rGames(){
- gClean();
- $("v").innerHTML=`<div class="gh"><b>🎮 Games</b><span class="chip">💧 ${S.coins}</span></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="garden"?gardenStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("")+`<div class="hint" style="text-align:center">Earn 💧 from games, quizzes and cards. Everything you learn counts in every mode.</div>`;
- document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({balloon:gBalloon,space:gSpace,garden:gGarden})[c.dataset.g]());
+ gClean();inQ=false;$("qp").style.display="none";hud();
+ $("v").innerHTML=`<div class="gh"><b>🎮 Games</b></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="quiz"?quizStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("");
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({quiz:openQuiz,balloon:gBalloon,space:gSpace})[c.dataset.g]());
 }
 function gShell(title){
  gClean();
@@ -631,11 +634,10 @@ function gSpace(){
 
 /* ---- Word Garden ---- */
 function gGarden(){
- gShell("🌱 Word Garden");
+ gClean();
  const w=W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
- $("gs").textContent="💧 "+S.coins;
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
- $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${m<0?"Rotten seed":SN[m]}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>`;
+ $("v").innerHTML=`<div class="gh"><b>🌱 Word Garden</b><span class="chip">💧 ${S.coins}</span></div><div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${m<0?"Rotten seed":SN[m]}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>waterPlant(b.dataset.w));
 }
 function waterPlant(word){
@@ -663,7 +665,8 @@ function waterPlant(word){
   $("bg").onclick=gGarden;
  });
 }
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;render()});
+$("qb").onclick=()=>rGames();
 $("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list and 💧 are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 function applyTheme(t){
  document.documentElement.dataset.theme=t;
