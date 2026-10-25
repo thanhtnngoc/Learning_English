@@ -293,6 +293,7 @@ function pick(){ // favor weaker words
 function render(){
  gClean();
  $("qp").style.display=tab==="q"?"":"none";
+ hud();
  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
  ({f:rFlash,q:rQuiz,g:rGames,a:rAdd})[tab]();
 }
