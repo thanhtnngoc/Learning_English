@@ -326,8 +326,9 @@ function rPick(x){
 }
 function rType(x){
  const r=S.rd;
- $("v").innerHTML=`<div class="combo">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}<span class="hint" style="display:block">${x[0].length} letters</span></span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><input id="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the English word…"><div class="row"><button class="btn l" id="hr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="ck">Check</button></div><div id="nx"></div>`;
+ $("v").innerHTML=`<button class="btn l" id="b1" style="flex:none;width:auto;padding:6px 12px;margin-bottom:8px">↩️ Round 1</button><div class="combo">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}<span class="hint" style="display:block">${x[0].length} letters</span></span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><input id="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the English word…"><div class="row"><button class="btn l" id="hr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="ck">Check</button></div><div id="nx"></div>`;
  const inp=$("ty");inp.focus();
+ $("b1").onclick=()=>{if(confirm("Go back to Round 1? Round 2 progress will be lost.")){newRound(1);rQuiz()}};
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  $("hr").onclick=()=>speak(x[0]);
  let done=false;
@@ -348,19 +349,22 @@ function rType(x){
 function rEnd(){
  const r=S.rd,n=r.deck.length,w=r.wr;
  const lst=w.map(k=>{const z=byW(k);return z?`<div class="it"><b>${esc(z[0])}${cnt(z[0])}</b><small>${esc(z[2])}</small></div>`:""}).join("");
+ const to1=()=>{newRound(1);rQuiz()};
  if(r.ph===1){
   const pf=!w.length;
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${pf?"🎯":"📝"}</div><b>${r.sub?"Review of wrong words done!":"Round 1 complete!"}</b><br>${r.ok}/${n} correct.</div>${pf?"":`<div class="list"><b>Wrong words (${w.length})</b>${lst}</div>`}<div class="row">${pf?"":`<button class="btn" id="rt">🔁 Review wrong words</button>`}<button class="btn${pf?"":" l"}" id="go">✍️ Go to Round 2 (spelling)</button></div>`;
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${pf?"🎯":"📝"}</div><b>${pf?(r.sub?"You fixed all the wrong words!":"Perfect! 100% correct!"):"Round 1 complete!"}</b><br>${r.ok}/${n} correct.${pf?"":"<br>You need 100% to unlock Round 2."}</div>${pf?"":`<div class="list"><b>Wrong words (${w.length})</b>${lst}</div>`}<div class="row">${pf?`<button class="btn l" id="r1">🔁 Back to Round 1</button><button class="btn" id="go">✍️ Go to Round 2</button>`:`<button class="btn" id="rt">🔁 Redo wrong words</button>`}</div>`;
   const rt=$("rt");if(rt)rt.onclick=()=>{newRound(1,w.slice());rQuiz()};
-  $("go").onclick=()=>{newRound(2);rQuiz()};
+  const r1=$("r1");if(r1)r1.onclick=to1;
+  const go=$("go");if(go)go.onclick=()=>{newRound(2);rQuiz()};
  }else if(!w.length){
   if(!r.cel){r.cel=1;save();confetti();gain(r.sub?20:50,"🏆 Perfect! +"+(r.sub?20:50)+" XP")}
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:52px">🏆</div><b>${r.sub?"You fixed all the wrong words!":"Amazing! "+n+"/"+n+" spelled correctly!"}</b><br>${r.sub?"Start a new round to keep practicing.":"You've conquered the whole list."}</div><div class="row"><button class="btn" id="go">🔁 New round</button></div>`;
-  $("go").onclick=()=>{newRound(1);rQuiz()};
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:52px">🏆</div><b>${r.sub?"You fixed all the wrong words!":"Amazing! "+n+"/"+n+" spelled correctly!"}</b><br>${r.sub?"Keep practicing!":"You've conquered the whole list."}</div><div class="row"><button class="btn l" id="r1">↩️ Back to Round 1</button><button class="btn" id="go">🔁 New Round 2</button></div>`;
+  $("r1").onclick=to1;
+  $("go").onclick=()=>{newRound(2);rQuiz()};
  }else{
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">✍️</div><b>Round 2 complete!</b><br>${r.ok}/${n} correct.</div><div class="list"><b>Misspelled words (${w.length})</b>${lst}</div><div class="row"><button class="btn" id="rt">🔁 Review wrong words</button><button class="btn l" id="go">🏁 New round</button></div>`;
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">✍️</div><b>Round 2 complete!</b><br>${r.ok}/${n} correct.</div><div class="list"><b>Misspelled words (${w.length})</b>${lst}</div><div class="row"><button class="btn" id="rt">🔁 Redo wrong words</button><button class="btn l" id="r1">↩️ Back to Round 1</button></div>`;
   $("rt").onclick=()=>{newRound(2,w.slice());rQuiz()};
-  $("go").onclick=()=>{newRound(1);rQuiz()};
+  $("r1").onclick=to1;
  }
 }
 function rAdd(){
