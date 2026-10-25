@@ -247,18 +247,40 @@ function dailyCheck(){
  const t=ld();
  if(!S.dd){S.dd=t;save();return false}
  if(S.dd>=t)return false;
- const ws=W(),c0=S.coins||0;let days=0;
+ const ws=W(),c0=S.coins||0;let days=0,missed=0,pct=0,keepC=0,greenC=0,lost=0;
+ S.w=S.w||{};
  const d=new Date(S.dd+"T12:00:00");
  for(let i=0;i<400;i++){
   const k=dstr(d);if(k>=t)break;
   days++;
-  if(k!==S.td)S.coins=Math.max(0,(S.coins||0)-Math.ceil((S.coins||0)*.1));
+  if(k!==S.td){
+   missed++;
+   const cut=Math.ceil((S.coins||0)*.1);pct+=cut;
+   S.coins=Math.max(0,(S.coins||0)-cut);
+   let pool=S.coins;
+   const act=ws.filter(x=>(S.m[x[0]]||0)>=0).sort((a,b)=>(S.m[b[0]]||0)-(S.m[a[0]]||0));
+   const kept=new Set();
+   act.forEach(x=>{if(pool>=2){pool-=2;keepC+=2;kept.add(x[0]);S.w[x[0]]=1}});
+   act.forEach(x=>{if(kept.has(x[0])&&pool>=4){pool-=4;greenC+=4;S.w[x[0]]=0}});
+   lost+=act.length-kept.size;
+   S.coins=pool;
+   ws.forEach(x=>{if(!kept.has(x[0]))mark(x[0],-1,1)});
+  }else{
+   ws.forEach(x=>mark(x[0],-1,1));
+  }
   d.setDate(d.getDate()+1)}
- const n=Math.min(days,30);
- ws.forEach(x=>{for(let i=0;i<n;i++)mark(x[0],-1,1)});
  S.dd=t;save();
- toast("🌙 "+(days>1?days+" days passed":"New day")+": plants are thirsty"+(c0>S.coins?" · −"+(c0-S.coins)+" 💧":""));
+ if(missed){
+  const alive=ws.filter(x=>(S.m[x[0]]||0)>=0);
+  showReport({days:missed,pct:pct,keepC:keepC,greenC:greenC,total:c0-S.coins,green:alive.filter(x=>!S.w[x[0]]).length,wilt:alive.filter(x=>S.w[x[0]]).length,lost:lost,left:S.coins});
+ }else toast("🌙 "+(days>1?days+" days passed":"New day")+": plants are thirsty");
  return true;
+}
+function showReport(r){
+ const o=document.createElement("div");o.className="au";
+ o.innerHTML=`<div class="aub" style="text-align:left"><h2 style="text-align:center">🌙 You missed ${r.days} day${r.days>1?"s":""}</h2><div style="font-size:15px;line-height:1.7">💧 Total spent: <b>${r.total}</b><br>· 10% loss: ${r.pct}<br>· Keep level (2 each): ${r.keepC}<br>· Make green (4 each): ${r.greenC}<br>🌿 Green plants: <b>${r.green}</b><br>🥀 Wilted but kept: <b>${r.wilt}</b><br>${r.lost?`⚠️ Not enough 💧, plants neglected: <b>${r.lost}</b> (plant-days)<br>`:""}💧 Left: <b>${r.left}</b></div><button class="btn" id="rpok">OK</button></div>`;
+ document.body.appendChild(o);
+ o.querySelector("#rpok").onclick=()=>{o.remove();if(!gStop)render()};
 }
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!S.uid&&dailyCheck()){hud();if(!gStop)render()}});
 const cnt=w=>{const c=(S.c||{})[w]||[0,0];return `<span class="cn" style="color:var(--ok)">✅${c[0]}</span><span class="cn" style="color:var(--no)">❌${c[1]}</span>`};
@@ -612,7 +634,7 @@ function gGarden(){
  const w=W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
  $("gs").textContent="💧 "+S.coins;
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
- $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a whole day and you lose 10% 💧.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${m<0?"Rotten seed":SN[m]}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>`;
+ $("ga").innerHTML=`<div class="q" style="font-size:14px;text-align:center">${gardenStat()} · ${p}% grown<br><span style="color:var(--mu);font-size:12px">Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.</span></div><div class="gg">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${m<0?"Rotten seed":SN[m]}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>waterPlant(b.dataset.w));
 }
 function waterPlant(word){
