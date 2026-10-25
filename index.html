@@ -23,7 +23,7 @@ h1{font-size:20px;margin:0}
 .bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:12px 0 4px}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),var(--ac));transition:width .4s}
 .sub{font-size:12px;color:var(--mu);margin-bottom:12px}
-.rb{flex:none;width:auto;padding:4px 10px;font-size:12px;border-radius:99px;white-space:nowrap}
+.btn.rb{flex:none;width:auto;padding:6px 12px;font-size:15px;white-space:nowrap}
 .tabs{display:flex;gap:6px;margin-bottom:14px}
 .tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
 .tabs button.on{background:var(--pr);color:var(--bt);border-color:var(--pr)}
@@ -335,9 +335,8 @@ function rPick(x){
  const r=S.rd,w=W();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<button class="btn l" id="b2" style="flex:none;width:auto;padding:6px 12px;margin-bottom:0">✍️ Round 2</button><div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
- $("b2").onclick=()=>{newRound(2);rQuiz()};
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
@@ -351,9 +350,8 @@ function rPick(x){
 }
 function rType(x){
  const r=S.rd;
- $("v").innerHTML=`<button class="btn l" id="b1" style="flex:none;width:auto;padding:6px 12px;margin-bottom:0">↩️ Round 1</button><div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}<span class="hint" style="display:block">${x[0].length} letters</span></span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><input id="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the English word…"><div class="row"><button class="btn l" id="hr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="ck">Check</button></div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}<span class="hint" style="display:block">${x[0].length} letters</span></span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><input id="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the English word…"><div class="row"><button class="btn l" id="hr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="ck">Check</button></div><div id="nx"></div>`;
  const inp=$("ty");inp.focus();
- $("b1").onclick=()=>{newRound(1);rQuiz()};
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  $("hr").onclick=()=>speak(x[0]);
  let done=false;
