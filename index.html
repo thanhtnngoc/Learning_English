@@ -23,6 +23,7 @@ h1{font-size:20px;margin:0}
 .bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:12px 0 4px}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),var(--ac));transition:width .4s}
 .sub{font-size:12px;color:var(--mu);margin-bottom:12px}
+.rb{flex:none;width:auto;padding:4px 10px;font-size:12px;border-radius:99px;white-space:nowrap}
 .tabs{display:flex;gap:6px;margin-bottom:14px}
 .tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
 .tabs button.on{background:var(--pr);color:var(--bt);border-color:var(--pr)}
@@ -182,7 +183,7 @@ details{margin-top:14px;font-size:14px}summary{cursor:pointer;font-weight:700}
 <main>
  <div class="top"><h1>📚 Learning English</h1><div class="vw"><button class="vp" id="vp" title="Settings" aria-label="Settings" style="width:36px;height:36px;padding:0;border-radius:50%;font-size:18px">⚙️</button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr"><label>Theme</label><button class="lg" id="th">☀️ Light</button></div><div class="vr"><label>Data</label><button class="lg" id="rs" title="Reset">↺ Reset</button></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div></div>
  <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="q"><span>🎯</span>Quiz</button><button data-t="g"><span>🎮</span>Games</button><button data-t="a"><span>📖</span>Word List</button></div>
- <div id="qp" style="display:none"><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="sub" id="ps"></div></div>
+ <div id="qp" style="display:none"><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="subrow"><div class="sub" id="ps"></div><button class="btn l rb" id="rb" style="display:none"></button></div></div>
  <div id="v"></div>
 </main>
 <div class="au" id="auth"><form class="aub" id="af"><h2>📚 Learning English</h2><input id="au" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username"><input id="ap" name="password" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" id="ab" type="submit">Log in</button><div class="hint" id="am"></div></form></div>
@@ -216,6 +217,7 @@ function hud(){
  $("st").textContent="🔥 "+S.streak;$("xp").textContent=S.xp+" XP";
  const r=S.rd;let p=0,t="No round yet · Go to the 🎯 Quiz tab to start";
  if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(r.ph===1?"Round 1 · Multiple choice":"Round 2 · Spelling")+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
+ const rb=$("rb");if(rb){if(r&&r.deck.length&&tab==="q"){const to=r.ph===1?2:1;rb.style.display="";rb.textContent=to===2?"✍️ Round 2":"↩️ Round 1";rb.onclick=()=>{newRound(to);rQuiz()}}else rb.style.display="none"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
 function mkU(t){const u=new SpeechSynthesisUtterance(t),l=S.acc||"en-GB";u.lang=l;u.rate=S.rate||.85;try{const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")===l);if(v)u.voice=v}catch(e){}return u}
