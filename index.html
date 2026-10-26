@@ -207,6 +207,9 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .bf.bee.rest .bw{animation-duration:.5s}
 .bf.bee.fly svg{animation-duration:.18s}
 .gg.still .pl svg *{animation:none!important}
+.gg.potv .pl svg{height:74px}
+.potv .q svg,.q.pb.potv svg{height:auto}
+.q.pb.potv svg{height:170px}
 </style>
 </head>
 <body>
@@ -497,6 +500,9 @@ function takeLife(){if(S.inv&&S.inv.life>0){S.inv.life--;save();setTimeout(()=>t
 const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15} 0`;return `<svg class="spk" id="spk" viewBox="0 0 390 16" preserveAspectRatio="none"><path d="${d}Z" fill="#64748b"/></svg>`})();
 const SN=["Seed","Sprout","Seedling","Leafy","Blooming","Fruiting"];
 const SOIL={default:["#8b5a2b","#6b4423"],soilg:["#c9a227","#8a6d0a"],soiln:["#3d7a32","#2f6b2a"]};
+const POTV="0 -14 100 124";
+const VB=()=>S.soil==="pot"?POTV:"0 -30 100 130";
+const VT=()=>S.soil==="pot"?14:30;
 let WL=0;
 const lf=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="${WL?(r>=0?"lwr":"lwl"):"lv"}" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-7-5-6-14 0-19C6-14 7-5 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".8" opacity=".55"/></g></g>`;
 const fw=(x,y,d)=>`<g class="fl" style="animation-delay:-${d}s"><circle cx="${x-3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x+3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y-3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y+3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y}" r="2.2" fill="#f59e0b"/></g>`;
@@ -506,7 +512,7 @@ const sk=(x,y,s,d,c)=>`<path class="sk" style="animation-delay:-${d}s" d="M${x} 
 const SK=[[10,18,5,0,"#fde047"],[90,28,4,.6,"#fff"],[13,58,3.5,1.2,"#fde047"],[88,62,5,.3,"#fde047"],[28,-10,3.5,.9,"#fff"],[74,-14,5,1.5,"#fde047"],[50,-22,3.5,.4,"#fff"],[94,4,3,1.1,"#fff"],[6,38,3,1.8,"#fff"]].map(a=>sk(a[0],a[1],a[2],a[3],a[4])).join("");
 const THIRSTY=`<g class="th"><path d="M86 -16Q95 -4 86 3Q77 -4 86 -16Z" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/><text x="86" y="0" text-anchor="middle" font-size="9" font-weight="800" fill="#38bdf8">!</text></g>`;
 const soilSvg=()=>{
- if(S.soil==="pot")return `<path d="M30 84Q50 71 70 84Z" fill="#6b4423"/><circle cx="42" cy="81" r="1.4" fill="#4a2f18"/><circle cx="58" cy="80" r="1.3" fill="#4a2f18"/><path d="M33 90H67L62 100H38Z" fill="#c2410c"/><path d="M62 90H67L62 100H58Z" fill="#9a3412" opacity=".55"/><rect x="27" y="84" width="46" height="7" rx="2.5" fill="#ea580c"/><rect x="29" y="85" width="42" height="2" rx="1" fill="#fff" opacity=".22"/>`;
+ if(S.soil==="pot")return `<path d="M27 84Q50 70 73 84Z" fill="#6b4423"/><circle cx="40" cy="81" r="1.4" fill="#4a2f18"/><circle cx="60" cy="80" r="1.3" fill="#4a2f18"/><path d="M30 91H70L64 109H36Z" fill="#c2410c"/><path d="M64 91H70L64 109H60Z" fill="#9a3412" opacity=".55"/><rect x="23" y="84" width="54" height="8" rx="3" fill="#ea580c"/><rect x="25" y="85.5" width="50" height="2" rx="1" fill="#fff" opacity=".22"/>`;
  const c=SOIL[S.soil||"default"]||SOIL.default;
  return `<path d="M6 94Q50 62 94 94Z" fill="${c[0]}"/><path d="M20 90Q50 72 80 90" fill="none" stroke="${c[1]}" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="${c[1]}"/><circle cx="62" cy="86" r="1.4" fill="${c[1]}"/>`
 };
@@ -524,11 +530,11 @@ function plant(m,wl){
   p+="</g>";
  }
  if(wl)p=p.replace(/class="sw"/g,'class="dr"').replace(/class="(fl|fr|tw)"/g,'class="wd"').replace(/#fde047/g,"#c9b26a").replace(/#f59e0b/g,"#9c7a3c").replace(/#ef4444/g,"#a8554a").replace(/#16a34a/g,"#6f7a3a");
- return `<svg viewBox="0 -30 100 130" aria-hidden="true">${soilSvg()}${p}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
+ return `<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}${p}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
 }
 const PC={};
 const pk=(m,wl)=>{const k=(S.soil||"default")+"|"+m+"|"+wl;return PC[k]||(PC[k]=plant(m,wl))};
-function rot(){const k=(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="0 -30 100 130" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${THIRSTY}</svg>`)}
+function rot(){const k=(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${THIRSTY}</svg>`)}
 const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=f===2?5:f===1?4:3}return pk(v,wt)};
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
@@ -709,7 +715,7 @@ function gGarden(){
  const bf=S.bf&&S.own&&S.own.bfly?`<div class="bfs" id="bfs"></div>`:"";
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}${S.nosway?" still":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}${S.nosway?" still":""}${S.soil==="pot"?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
@@ -773,7 +779,7 @@ function pickSlot(g,me,dmin,ok){
   const sv=p.querySelector("svg");if(!sv)return;
   const r=sv.getBoundingClientRect(),k=r.width/100,ox=r.left-gr.left,oy=r.top-gr.top;
   const sl=LS.map(s=>{
-   const x=ox+s[0]*k,y=oy+(s[1]+30)*k;let m=60;
+   const x=ox+s[0]*k,y=oy+(s[1]+VT())*k;let m=60;
    for(const v of others){const d=Math.hypot(v.x-x,v.y-y);if(d<m)m=d}
    return{x,y,m};
   }).filter(s=>s.m>=dmin);
@@ -987,7 +993,7 @@ function waterPlant(word){
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="q pb" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="q pb${S.soil==="pot"?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
