@@ -856,8 +856,38 @@ function swarmWake(g,key,wake){
 const BFC=[["#f472b6","#fbcfe8"],["#fb923c","#fde68a"],["#60a5fa","#bfdbfe"],["#a78bfa","#ddd6fe"]];
 const bfWing=c=>`<path d="M11.6 11.2C9 9 5 4.5 1.6 3.6C.6 3.4 .3 4.4 .9 6C2 9 4.5 11.8 7 12.6C8.8 13 10.4 12.4 11.6 11.8Z" fill="${c[0]}" stroke="#111" stroke-width=".6" stroke-linejoin="round"/><path d="M11.6 12.2C9.5 12.6 6.5 12.4 4.6 14.2C3.6 16 4.6 18 5.2 19.4C5.4 20.6 4.4 21.8 3.4 22.6C5 22.4 6.6 21.2 7.6 19.4C9.6 17.6 11 14.8 11.6 12.8Z" fill="${c[0]}" stroke="#111" stroke-width=".6" stroke-linejoin="round"/><path d="M10.4 11.3C8.4 9.3 6.2 8.2 5.4 9C5.2 10.4 7.6 11.7 10.4 11.7Z" fill="${c[1]}" fill-opacity=".75" stroke="#111" stroke-width=".35"/><path d="M10.6 12.8C8.4 12.6 6.4 13.6 6.8 15.2C8 16 9.8 14.6 10.6 12.8Z" fill="${c[1]}" fill-opacity=".75" stroke="#111" stroke-width=".35"/><path d="M11 11.6C8.5 10.4 5.5 9 2.6 6.4M11 12.1C8 12 5 11.2 2.4 8.2M11 13C9 14.4 7 17 6 20" stroke="#111" stroke-width=".3" fill="none" stroke-linecap="round"/>`;
 const bfSvg=c=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><g>${bfWing(c)}</g></g><g class="bw"><g transform="translate(24 0) scale(-1 1)">${bfWing(c)}</g></g><path d="M11 8.6C10 6.4 9.8 4.8 10.3 3.6" stroke="#111" stroke-width=".4" fill="none" stroke-linecap="round"/><circle cx="10.5" cy="3.1" r=".7" fill="none" stroke="#111" stroke-width=".35"/><path d="M13 8.6C14 6.4 14.2 4.8 13.7 3.6" stroke="#111" stroke-width=".4" fill="none" stroke-linecap="round"/><circle cx="13.5" cy="3.1" r=".7" fill="none" stroke="#111" stroke-width=".35"/><ellipse cx="12" cy="14" rx=".85" ry="4.6" fill="#111"/><circle cx="12" cy="9.3" r="1.2" fill="#111"/></svg>`;
-const BRSVG=`<svg class="br" viewBox="0 0 150 48" aria-hidden="true"><path d="M0 31C35 25 90 32 146 23" stroke="#8b5a2b" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M0 28C35 22 90 29 146 20" stroke="#a8692f" stroke-width="1.5" fill="none" opacity=".6"/><path d="M60 29C66 38 74 42 82 43" stroke="#8b5a2b" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M82 43c6-6 14-4 16 0c-6 5-12 5-16 0Z" fill="#22c55e"/><path d="M112 27C116 34 121 38 127 38" stroke="#8b5a2b" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M127 38c5-5 12-3 14 1c-5 4-10 4-14-1Z" fill="#16a34a"/></svg>`;
-const HVSVG=`<svg class="hv" viewBox="0 0 44 48" aria-hidden="true"><path d="M22 0V6" stroke="#8b5a2b" stroke-width="2"/><path d="M22 6C34 6 40 16 40 28C40 40 32 46 22 46C12 46 4 40 4 28C4 16 10 6 22 6Z" fill="#f5b335" stroke="#a16207" stroke-width="1.5"/><path d="M8 16Q22 22 36 16M5 24Q22 31 39 24M7 38Q22 45 37 38" fill="none" stroke="#b45309" stroke-width="1.5"/><ellipse cx="22" cy="32" rx="6" ry="4.5" fill="#3b2410"/></svg>`;
+const bl=(x,y,r,s,c)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="M0 0C-6-4-6-13 0-18C6-13 6-4 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".7" opacity=".5"/></g>`;
+
+/* Nhành cây cho bướm */
+const BRSVG=`<svg class="br" viewBox="0 0 150 48" aria-hidden="true">
+<path d="M38 28Q46 22 54 12" stroke="#7a4a1e" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+<path d="M95 25Q102 19 108 12" stroke="#7a4a1e" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M60 30Q70 38 84 40" stroke="#7a4a1e" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+<path d="M0 20L0 37C24 35 50 32 85 28C110 26 130 22 150 19C130 19 110 21 88 22C60 24 30 23 0 20Z" fill="#9a5a2b"/>
+<path d="M0 37C24 35 50 32 85 28C110 26 130 22 150 19" stroke="#6b3a17" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M4 25C30 27 60 25 100 22" stroke="#c27a3e" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".8"/>
+<ellipse cx="0" cy="28.5" rx="3.2" ry="8.5" fill="#c9884a" stroke="#6b3a17" stroke-width="1"/>
+<path d="M30 31Q40 29 55 30M70 26Q82 25 95 24" stroke="#6b3a17" stroke-width="1" fill="none" opacity=".5"/>
+${bl(54,12,-35,1,"#4ade80")}${bl(54,12,30,1,"#22c55e")}${bl(54,12,-3,.85,"#16a34a")}
+${bl(108,12,-30,.9,"#22c55e")}${bl(108,12,35,1,"#4ade80")}
+${bl(147,19,60,1,"#4ade80")}${bl(147,19,95,.9,"#22c55e")}
+${bl(84,40,115,.9,"#22c55e")}${bl(84,40,155,.9,"#4ade80")}
+${bl(22,26,-30,.7,"#16a34a")}
+</svg>`;
+
+/* Tổ ong treo trên cành, không có ong */
+const HVSVG=`<svg class="hv" viewBox="0 0 44 48" aria-hidden="true">
+<path d="M-14 4Q8 0 24 3T54 1" stroke="#7a4a1e" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+${bl(-4,3,-40,.8,"#4ade80")}${bl(-4,3,25,.8,"#22c55e")}${bl(46,2,-30,.8,"#22c55e")}${bl(46,2,35,.8,"#4ade80")}
+<path d="M22 2V8" stroke="#8b5a2b" stroke-width="2" stroke-linecap="round"/>
+<path d="M22 7C32 7 35 12 36 17C41 20 40 28 37 32C40 36 36 41 31 42C29 46 15 46 13 42C8 41 4 36 7 32C4 28 3 20 8 17C9 12 12 7 22 7Z" fill="#f5b335" stroke="#c2610c" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M9 17Q22 21 35 17M6 25Q22 29 38 25M7 33Q22 37 37 33M12 40Q22 43 32 40" fill="none" stroke="#c2610c" stroke-width="1.2" stroke-linecap="round"/>
+<ellipse cx="17" cy="11" rx="4" ry="1.6" fill="#fde68a" opacity=".9"/>
+<ellipse cx="13" cy="21" rx="2.2" ry="1" fill="#fde68a" opacity=".8"/>
+<ellipse cx="32" cy="37" rx="1.8" ry="1" fill="#fde68a" opacity=".7"/>
+<ellipse cx="22" cy="30" rx="5.6" ry="6.6" fill="#8a3f14"/>
+<ellipse cx="23" cy="31" rx="4" ry="5.6" fill="#1c0f05"/>
+</svg>`;
 function bfInit(){const h=$("bfs");if(!h)return;const n=((S.own&&+S.own.bfly)||1)*4;for(let i=0;i<n;i++)bfNew(h,h.parentNode,i)}
 const bfBloom=w=>{const m=S.m[w]||0;return m>=4&&(m===4||fstate(w)>=1)};
 function bfFresh(p){
@@ -983,7 +1013,7 @@ function beeNew(h,g,i){
  const seen=p=>{const r=p.getBoundingClientRect(),c=r.top+r.height*.4;return c>40&&c<innerHeight-40&&r.right>0&&r.left<innerWidth};
  const spots=()=>[...g.querySelectorAll(".pl")].filter(p=>beeOk(p.dataset.w)&&seen(p));
  function fly(tx,ty,p){
-  flyCurve(o,x,y,tx,ty,hd,80,1.2,360,!!p,hh=>{
+  flyCurve(o,x,y,tx,ty,hd,65,1.5,360,!!p,hh=>{
    if(!el.isConnected)return;
    x=tx;y=ty;el.classList.remove("fly");
    if(p){
@@ -1004,7 +1034,7 @@ function beeNew(h,g,i){
  function goHome(){
   cur=null;g.__lp&&g.__lp.delete(el);
   const [hx,hy]=hp();
-  flyCurve(o,x,y,hx,hy,hd,80,1.2,360,true,()=>{
+  flyCurve(o,x,y,hx,hy,hd,65,1.5,360,true,()=>{
    if(!el.isConnected)return;
    x=hx;y=hy;hd=null;miss=0;
    el.classList.remove("fly");el.classList.add("rest","hid");
@@ -1014,7 +1044,7 @@ function beeNew(h,g,i){
  function wake(){
   if(!el.isConnected)return;
   if(sd!==ld()){sd=ld();spent=false;el.classList.remove("spent")}
-  miss=0;need=(2+Math.floor(Math.random()*2))*2;
+  miss=0;need=(4+Math.floor(Math.random()*2))*2;
   [x,y]=hp();el.style.transform=`translate(${x}px,${y}px)`;
   el.classList.remove("hid");step();
  }
