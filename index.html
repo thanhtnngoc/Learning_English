@@ -212,6 +212,17 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .q.pb.potv svg{height:170px}
 .bk{transform-box:fill-box;transform-origin:center;animation:bkk 4s ease-in-out infinite}
 @keyframes bkk{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.shelf{margin-bottom:20px}
+.sh-t{font-size:13px;font-weight:800;color:var(--mu);margin:0 0 6px 4px}
+.sh-r{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding:4px 8px 0;border-bottom:10px solid #a8692f;border-radius:0 0 6px 6px;box-shadow:0 7px 8px -5px rgba(0,0,0,.3),inset 0 -2px 0 rgba(255,255,255,.18);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sh-r::-webkit-scrollbar{display:none}
+.si{flex:none;width:124px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:10px 7px;background:var(--card);border:1px solid var(--bd);border-bottom:0;border-radius:12px 12px 0 0}
+.si .se{font-size:34px;line-height:1.1}
+.si b{font-size:14px}
+.si .sd{font-size:10.5px;line-height:1.35;color:var(--mu)}
+.si em{font-style:normal;font-size:11px;color:var(--pr);font-weight:700}
+.si .sb{margin-top:auto;width:100%;padding-top:4px}
+.si .btn{width:100%;flex:none;padding:7px 4px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -967,25 +978,26 @@ const SHOP=[
  {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:100,type:"deco",flag:"bf",per:4},
  {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:150,type:"deco",flag:"be",per:2}
 ];
-function shopRow(it,g){
+function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
  if(it.type==="cons"){const n=(S.inv&&S.inv[it.id])||0;st=n?"You have "+n:"";btn=`<button class="btn" data-id="${it.id}"${g<it.p?" disabled":""}>🪙 ${it.p}</button>`}
  else if(it.type==="soil"){const eq=(S.soil||"default")===it.id;if(it.id==="default"||own){st=eq?"Equipped":"Owned";btn=`<button class="btn${eq?" l":""}" data-id="${it.id}"${eq?" disabled":""}>${eq?"✓ On":"Equip"}</button>`}else btn=`<button class="btn" data-id="${it.id}"${g<it.p?" disabled":""}>🪙 ${it.p}</button>`}
  else{
   const fl=it.flag,on=!!S[fl],lv=own?(+S.own[it.id]||1):0,mx=5,np=Math.round(it.p*Math.pow(1.5,lv));
-  st=lv?"Level "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"";
+  st=lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"";
   const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
   const tg=lv?`<button class="btn l${on?" on":""}" data-id="${it.id}" data-a="tg">${on?"On":"Off"}</button>`:"";
   btn=`<div style="display:flex;flex-direction:column;gap:6px">${up}${tg}</div>`;
  }
- return `<div class="shi"><div class="ge">${it.e}</div><div class="gi"><b>${it.t}</b><span>${it.d}</span>${st?`<em>${st}</em>`:""}</div>${btn}</div>`;
+ return `<div class="si"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["✨ Garden friends",["bfly","bee"]]];
 function gShop(){
  gClean();
  const g=S.gold||0;
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${g}</span></span></div>${SHOP.map(it=>shopRow(it,g)).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${g}</span></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
  $("gb").onclick=gGarden;
- document.querySelectorAll(".shi .btn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".si .btn").forEach(b=>b.onclick=()=>{
   const it=SHOP.find(x=>x.id===b.dataset.id);if(!it)return;
   const own=!!(S.own&&S.own[it.id]);S.own=S.own||{};S.inv=S.inv||{};
   if(it.type==="cons"){if((S.gold||0)<it.p)return;S.gold-=it.p;S.inv[it.id]=(S.inv[it.id]||0)+1;toast(it.e+" "+it.t+" bought")}
