@@ -241,7 +241,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 </head>
 <body>
 <main>
- <div class="top"><h1>📚 Learning English</h1><div class="vw"><button class="vp" id="vp" title="Settings" aria-label="Settings" style="width:36px;height:36px;padding:0;border-radius:50%;font-size:18px">⚙️</button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr"><label>Theme</label><button class="lg" id="th">☀️ Light</button></div><div class="vr"><label>Data</label><button class="lg" id="rs" title="Reset">↺ Reset</button></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div></div>
+ <div class="top"><h1>📚 Learning English</h1><div class="vw"><button class="vp" id="vp" title="Settings" aria-label="Settings" style="width:36px;height:36px;padding:0;border-radius:50%;font-size:18px">⚙️</button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr"><label>Theme</label><button class="lg" id="th">☀️ Light</button></div><div class="vr"><label>Data</label><button class="lg" id="rs" title="Reset">↺ Reset</button><button class="lg" id="rsf" title="Full reset">🗑 Full reset</button></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div></div>
  <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="g"><span>🎮</span>Games</button><button data-t="n"><span>🌱</span>Garden</button><button data-t="a"><span>📖</span>Word List</button></div>
  <div id="qp" style="display:none"><div class="gh qh"><button class="btn l" id="qb" style="flex:none;padding:6px 12px">← Back</button><b>🎯 Quiz</b><button class="btn l rb" id="rb" style="display:none"></button></div><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="sub" id="ps"></div></div>
  <div id="v"></div>
@@ -1214,6 +1214,24 @@ function waterPlant(word){
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{gwDrop();tab=b.dataset.t;inQ=false;render()});
 $("qb").onclick=()=>rGames();
 $("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.fr={};S.hv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
+$("rsf").onclick=()=>{
+ if(!confirm("FULL RESET?\n\nThis erases EVERYTHING: 💧, 🪙, shop items, soil/pots, bees & butterflies, XP, streak, garden growth, scores and counts.\n\nOnly your Word List is kept.\n\nThis cannot be undone."))return;
+ if(!confirm("Are you really sure? Last chance."))return;
+ try{speechSynthesis.cancel()}catch(e){}
+ gwDrop();
+ const k={};
+ ["custom","base","uid","acc","rate","theme","gspd","glang"].forEach(x=>{if(S[x]!==undefined)k[x]=S[x]});
+ Object.keys(S).forEach(x=>delete S[x]);
+ Object.assign(S,{xp:0,streak:0,last:"",custom:[],m:{},coins:5,gb:{}},k);
+ ens();
+ for(const x in PC)delete PC[x];
+ fc=null;combo=0;fi=0;flip=false;hm=false;
+ S.dd=ld();
+ save();
+ if(cUser)cPush();
+ hud();render();
+ toast("🗑 Full reset done");
+};
 function applyTheme(t){
  document.documentElement.dataset.theme=t;
  $("th").textContent=t==="dark"?"🌙 Dark":"☀️ Light";
