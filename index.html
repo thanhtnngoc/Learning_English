@@ -233,7 +233,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .gw{position:relative;margin-top:12px}
 .gw .gg{margin-top:0}
 .hvs{position:relative;height:48px;pointer-events:none}
-.hvs svg{position:absolute;top:0;overflow:visible}
+.hvs svg{position:absolute;top:-8px;overflow:visible}
 .hvs .br{left:0;width:150px;height:48px}
 .hvs .hv{right:10px;width:44px;height:48px}
 .bf.hid{opacity:0}
@@ -757,7 +757,7 @@ function gGarden(){
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const strip=(bf||be)?`<div class="hvs">${bf?BRSVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><<div class="gw">${strip}<div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>${bf}${be}</div>`;
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gw">${strip}<div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>${bf}${be}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
@@ -859,8 +859,8 @@ function bfNew(h,g,i){
  const set=p=>occ.get(p)||(occ.set(p,new Set()),occ.get(p));
  const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2&&bfDay().n<bfTotal()){S.w[w]=0;bfDay().n++;save();bfFresh(p)}};
  const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
- const hp=()=>[12+(i%6)*20-sz/2,19+(i%2)*6-Math.floor(i/6)*2-sz/2]; // chỗ đậu trên nhánh
- let [x,y]=hp(),ang=rnd(-25,25),cur=null,prev=null,leaveAt=0,hd=null,miss=0;
+ const hp=()=>[12+(i%6)*20-sz/2,11+(i%2)*6-Math.floor(i/6)*2-sz/2];
+ let [x,y]=hp(),ang=rnd(-25,25),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
@@ -888,30 +888,31 @@ function bfNew(h,g,i){
   if(now>=leaveAt){if(cur){set(cur).delete(el);prev=cur;cur=null}g.__lp&&g.__lp.delete(el);step();return}
   setTimeout(watch,400);
  }
- function goHome(){
+  function goHome(){
   cur=null;g.__lp&&g.__lp.delete(el);
   const [hx,hy]=hp();
   flyCurve(o,x,y,hx,hy,hd,35,2.2,160,true,()=>{
    if(!el.isConnected)return;
    x=hx;y=hy;hd=null;miss=0;
    el.classList.remove("fly");el.classList.add("rest");bi.style.transition="";face(rnd(-25,25));
-   setTimeout(wake,rnd(25000,35000));
+   setTimeout(wake,rnd(18000,22000));
   });
  }
  function wake(){
   if(!el.isConnected)return;
-  if(!spots().length){setTimeout(wake,rnd(8000,12000));return}
+  miss=0;need=(2+Math.floor(Math.random()*2))*2; // 2-3 vòng, mỗi vòng 2 lần bay
   step();
  }
  function step(){
   if(!el.isConnected)return;
   const [t,b]=vis(),w=g.clientWidth,any=spots().length>0;
-  if(any)miss=0;else if(++miss>2){goHome();return}
+  if(any)miss=0;
   const s=Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&bfBloom(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>bfBloom(p.dataset.w)&&seen(p))):null;
   if(s){
    cur=s.p;
    fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
   }else{
+   if(!any){if(miss>=need){goHome();return}miss++}
    cur=null;
    fly(rnd(0,Math.max(1,w-sz)),t+rnd(0,Math.max(1,b-t-sz)),null);
   }
@@ -957,8 +958,8 @@ function beeNew(h,g,i){
  el.classList.toggle("spent",spent);
  const done=()=>spent||beeDay().used>=beeTotal();
  const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
- const hp=()=>[g.clientWidth-32-sz/2,30-sz/2]; // cửa tổ ong
- let [x,y]=hp(),ang=rnd(-30,30),cur=null,prev=null,leaveAt=0,hd=null,miss=0;
+ const hp=()=>[g.clientWidth-32-sz/2,22-sz/2];
+ let [x,y]=hp(),ang=rnd(-30,30),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4,first=true;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
@@ -989,27 +990,28 @@ function beeNew(h,g,i){
   flyCurve(o,x,y,hx,hy,hd,80,1.2,360,true,()=>{
    if(!el.isConnected)return;
    x=hx;y=hy;hd=null;miss=0;
-   el.classList.remove("fly");el.classList.add("rest","hid"); // chui vào tổ
-   setTimeout(wake,rnd(25000,35000));
+   el.classList.remove("fly");el.classList.add("rest","hid");
+   setTimeout(wake,rnd(18000,22000));
   });
  }
  function wake(){
   if(!el.isConnected)return;
-  if(sd!==ld()){sd=ld();spent=false;el.classList.remove("spent")} // sang ngày mới
-  if(done()||!spots().length){setTimeout(wake,rnd(25000,35000));return}
+  if(sd!==ld()){sd=ld();spent=false;el.classList.remove("spent");first=true}
+  if(done()&&!first){setTimeout(wake,rnd(18000,22000));return} // đã xong việc và đã ra tìm 1 lần: ngủ luôn
+  first=false;miss=0;need=(2+Math.floor(Math.random()*2))*2;
   [x,y]=hp();el.style.transform=`translate(${x}px,${y}px)`;
   el.classList.remove("hid");step();
  }
  function step(){
   if(!el.isConnected)return;
-  if(done()){goHome();return}
-  const [t,b]=vis(),w=g.clientWidth,any=spots().length>0;
-  if(any)miss=0;else if(++miss>2){goHome();return}
-  const s=Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&beeOk(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>beeOk(p.dataset.w)&&seen(p))):null;
+  const [t,b]=vis(),w=g.clientWidth,any=!done()&&spots().length>0;
+  if(any)miss=0;
+  const s=any&&Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&beeOk(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>beeOk(p.dataset.w)&&seen(p))):null;
   if(s){
    cur=s.p;
    fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
   }else{
+   if(!any){if(miss>=need){goHome();return}miss++}
    cur=null;
    fly(rnd(0,Math.max(1,w-sz)),t+rnd(0,Math.max(1,b-t-sz)),null);
   }
