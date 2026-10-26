@@ -206,7 +206,6 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .bf.bee .bw{animation-duration:.07s}
 .bf.bee.rest .bw{animation-duration:.5s}
 .bf.bee.fly svg{animation-duration:.18s}
-.bf.spent{opacity:.45}
 </style>
 </head>
 <body>
@@ -704,13 +703,26 @@ function gGarden(){
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
  const bf=S.bf&&S.own&&S.own.bfly?`<div class="bfs" id="bfs"></div>`:"";
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
- $("v").innerHTML=`<div class="gh"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button></span><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
+ const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  bfInit();beeInit();
+ if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
  $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
  $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
+}
+function progInfo(){
+ const o=[];
+ if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝 "+Math.min(u,t)+"/"+t,d:"🐝 Bees: "+Math.min(u,t)+"/"+t+" jobs done today"+(u>=t?" ✓ all done (resets tomorrow)":"")})}
+ if(S.bf&&S.own&&S.own.bfly){const n=W().filter(x=>(S.m[x[0]]||0)>=0&&S.w&&S.w[x[0]]).length;o.push({s:"🦋 "+(n?n:"✓"),d:"🦋 Butterflies: "+(n?n+" wilted plant"+(n>1?"s":"")+" still waiting (2 butterflies on one plant revive it)":"no wilted plants left ✓")})}
+ return o;
+}
+function progUpd(){
+ const e=$("prg");if(!e)return;
+ const a=progInfo();e.textContent=a.map(x=>x.s).join("  ");
+ const b=$("prb");if(b)b.innerHTML=a.map(x=>x.d).join("<br>");
 }
 /* ---- Butterflies ---- */
 const BFC=[["#f472b6","#fbcfe8"],["#fb923c","#fde68a"],["#60a5fa","#bfdbfe"],["#a78bfa","#ddd6fe"]];
@@ -721,7 +733,7 @@ function bfFresh(p){
  const w=p.dataset.w,m=Math.min(S.m[w]||0,5);
  p.querySelector("i").innerHTML=pic(w);
  p.classList.remove("wt");p.classList.toggle("full",m>=5);p.classList.toggle("rp",ripe(w));p.title=stName(w);
- toast("🦋 \""+w+"\" is fresh again");
+ toast("🦋 \""+w+"\" is fresh again");progUpd();
 }
 function bfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf rest";
@@ -807,7 +819,7 @@ function beeAct(p){
   S.w[w]=1;
   toast("🐝 stung \""+w+"\" — it wilted");
  }
- save();beeUpd(p);
+ save();beeUpd(p);progUpd();
  return true;
 }
 function beeInit(){const h=$("bes");if(!h)return;const n=beeTotal();for(let i=0;i<n;i++)beeNew(h,h.parentNode,i)}
