@@ -496,7 +496,7 @@ function rAdd(){
 if(S.coins==null)S.coins=5;
 S.gb=S.gb||{};
 let gStop=null;
-function gClean(){if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}}
+function gClean(){gwStash();if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}}
 const GAMES=[
  {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: pick the word. Round 2: spell it."},
  {k:"balloon",e:"🎈",t:"Balloon Pop",d:"Read the definition and pop the right balloon before it floats away."},
@@ -745,6 +745,12 @@ function gSpace(){
 }
 
 /* ---- Word Garden ---- */
+let GW=null;
+const KEEP=document.createElement("div");
+KEEP.style.cssText="position:fixed;left:0;top:0;width:100%;max-width:528px;visibility:hidden;pointer-events:none;z-index:-1";
+document.body.appendChild(KEEP);
+function gwDrop(){if(GW){GW.remove();GW=null}}                 // huỷ => lần sau bắt đầu từ tổ
+function gwStash(){if(GW&&GW.parentNode!==KEEP)KEEP.appendChild(GW)} // cất đi, vẫn bay ngầm
 let hm=false;
 const SICKLE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21l5-7"/><path d="M10 14c-4-3-5-8-1-10 5-2 11 1 11 7-2-3-6-4-9-2"/></svg>`;
 function coinFly(x,y,t){const s=document.createElement("span");s.className="cfly";s.textContent=t;s.style.cssText=`left:${x}px;top:${y}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}
@@ -757,11 +763,22 @@ function gGarden(){
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const strip=(bf||be)?`<div class="hvs">${bf?BRSVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gw">${strip}<div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>${bf}${be}</div>`;
+ const cells=w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("");
+ const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee].join("|");
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
+ let fresh=false;
+ if(!GW||GW.dataset.sig!==sig){
+  gwDrop();GW=document.createElement("div");GW.className="gw";GW.dataset.sig=sig;
+  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}`;fresh=true;
+ }
+ const gg=GW.querySelector(".gg");
+ gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"");
+ gg.innerHTML=cells;
+ $("gwslot").replaceWith(GW);
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
- bfInit();beeInit();
+ if(fresh){bfInit();beeInit()}
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
  $("gx").onclick=()=>gExchange(gGarden);
@@ -1194,7 +1211,7 @@ function waterPlant(word){
   $("bg").onclick=gGarden;
  });
 }
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;render()});
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{gwDrop();tab=b.dataset.t;inQ=false;render()});
 $("qb").onclick=()=>rGames();
 $("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.fr={};S.hv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 function applyTheme(t){
