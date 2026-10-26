@@ -715,10 +715,12 @@ function gGarden(){
 }
 function progInfo(){
  const o=[];
- if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝 "+Math.min(u,t)+"/"+t,d:"🐝 Bees: "+Math.min(u,t)+"/"+t+" jobs done today"+(u>=t?" ✓ all done (resets tomorrow)":"")})}
- if(S.bf&&S.own&&S.own.bfly){const n=W().filter(x=>(S.m[x[0]]||0)>=0&&S.w&&S.w[x[0]]).length;o.push({s:"🦋 "+(n?n:"✓"),d:"🦋 Butterflies: "+(n?n+" wilted plant"+(n>1?"s":"")+" still waiting (2 butterflies on one plant revive it)":"no wilted plants left ✓")})}
+ if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝",d:"🐝 Bees: "+Math.min(u,t)+"/"+t+(u>=t?" ✓ all done (resets tomorrow)":"")})}
+ if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
  return o;
 }
+function bfDay(){const t=ld();if(!S.bfr||S.bfr.d!==t)S.bfr={d:t,n:0};return S.bfr}
+const bfTotal=()=>((S.own&&+S.own.bfly)||1)*2;
 function progUpd(){
  const e=$("prg");if(!e)return;
  const a=progInfo();e.textContent=a.map(x=>x.s).join("  ");
@@ -741,7 +743,7 @@ function bfNew(h,g,i){
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
  const occ=g.__bo||(g.__bo=new Map()); // cây -> các con đang đậu
  const set=p=>occ.get(p)||(occ.set(p,new Set()),occ.get(p));
- const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2){S.w[w]=0;save();bfFresh(p)}};
+ const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2&&bfDay().n<bfTotal()){S.w[w]=0;bfDay().n++;save();bfFresh(p)}};
  const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
  let [t0,b0]=vis(),x=Math.random()*Math.max(1,g.clientWidth-sz),y=t0+Math.random()*Math.max(1,b0-t0-sz);
  let ang=rnd(-30,30),cur=null,prev=null,leaveAt=0;
@@ -793,7 +795,7 @@ function bfNew(h,g,i){
  setTimeout(step,rnd(300,1500));
 }
 /* ---- Bees ---- */
-const beeSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><ellipse cx="6.5" cy="9" rx="5" ry="3" fill="#bae6fd" opacity=".85" transform="rotate(-25 6.5 9)"/><ellipse cx="17.5" cy="9" rx="5" ry="3" fill="#bae6fd" opacity=".85" transform="rotate(25 17.5 9)"/></g><ellipse cx="12" cy="14" rx="4.2" ry="6.5" fill="#facc15"/><path d="M8 12.5h8M8 15.5h8M9.2 18.5h5.6" stroke="#1f2937" stroke-width="1.8"/><circle cx="12" cy="6.5" r="3" fill="#1f2937"/></svg>`;
+const beeSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 4.3Q9.6 2.6 8.2 2.1M13.2 4.3Q14.4 2.6 15.8 2.1" stroke="#111" stroke-width=".7" stroke-linecap="round" fill="none"/><circle cx="8" cy="2" r=".85" fill="#111"/><circle cx="16" cy="2" r=".85" fill="#111"/><circle cx="12" cy="6" r="2.6" fill="#111"/><clipPath id="beeb"><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z"/></clipPath><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="#f5b335"/><g clip-path="url(#beeb)"><rect x="6" y="11.6" width="12" height="1.5" fill="#111"/><rect x="6" y="14.4" width="12" height="1.5" fill="#111"/><rect x="6" y="17.2" width="12" height="1.5" fill="#111"/><rect x="6" y="20.2" width="12" height="4" fill="#111"/></g><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="none" stroke="#111" stroke-width=".8"/><circle cx="12" cy="9.4" r="3" fill="#f5b335" stroke="#111" stroke-width=".8"/><g class="bw"><path d="M9.6 8.6C7 5.6 3.6 5.1 1.8 6.6C2.5 9.6 6 11.1 9.6 10.6Z" fill="#333" fill-opacity=".92" stroke="#111" stroke-width=".7"/><path d="M14.4 8.6C17 5.6 20.4 5.1 22.2 6.6C21.5 9.6 18 11.1 14.4 10.6Z" fill="#333" fill-opacity=".92" stroke="#111" stroke-width=".7"/><path d="M9.5 11.2C6.4 10.6 3 12.1 2.5 15.6C3 18.1 6.5 17.6 9.2 15Z" fill="#f5b335" fill-opacity=".92" stroke="#111" stroke-width=".7"/><path d="M14.5 11.2C17.6 10.6 21 12.1 21.5 15.6C21 18.1 17.5 17.6 14.8 15Z" fill="#f5b335" fill-opacity=".92" stroke="#111" stroke-width=".7"/></g></svg>`;
 const beeOk=w=>bfBloom(w)&&!(S.w&&S.w[w]);
 const beeTotal=()=>((S.own&&+S.own.bee)||1)*2;
 function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}};return S.bee}
