@@ -501,8 +501,10 @@ const SPK=(()=>{let d="M0 0";for(let i=0;i<26;i++)d+=`L${i*15+7.5} 16L${(i+1)*15
 const SN=["Seed","Sprout","Seedling","Leafy","Blooming","Fruiting"];
 const SOIL={default:["#8b5a2b","#6b4423"],soilg:["#c9a227","#8a6d0a"],soiln:["#3d7a32","#2f6b2a"]};
 const POTV="0 -14 100 124";
-const VB=()=>S.soil==="pot"?POTV:"0 -30 100 130";
-const VT=()=>S.soil==="pot"?14:30;
+const POTS=["pot","potm","potw","potf"];
+const isPot=()=>POTS.includes(S.soil);
+const VB=()=>isPot()?POTV:"0 -30 100 130";
+const VT=()=>isPot()?14:30;
 let WL=0;
 const lf=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="${WL?(r>=0?"lwr":"lwl"):"lv"}" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-7-5-6-14 0-19C6-14 7-5 0 0Z" fill="${c}"/><path d="M0-1V-14" stroke="#15803d" stroke-width=".8" opacity=".55"/></g></g>`;
 const fw=(x,y,d)=>`<g class="fl" style="animation-delay:-${d}s"><circle cx="${x-3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x+3.4}" cy="${y}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y-3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y+3.4}" r="3" fill="#fde047"/><circle cx="${x}" cy="${y}" r="2.2" fill="#f59e0b"/></g>`;
@@ -512,9 +514,21 @@ const sk=(x,y,s,d,c)=>`<path class="sk" style="animation-delay:-${d}s" d="M${x} 
 const SK=[[10,18,5,0,"#fde047"],[90,28,4,.6,"#fff"],[13,58,3.5,1.2,"#fde047"],[88,62,5,.3,"#fde047"],[28,-10,3.5,.9,"#fff"],[74,-14,5,1.5,"#fde047"],[50,-22,3.5,.4,"#fff"],[94,4,3,1.1,"#fff"],[6,38,3,1.8,"#fff"]].map(a=>sk(a[0],a[1],a[2],a[3],a[4])).join("");
 const THIRSTY=`<g class="th"><path d="M86 -16Q95 -4 86 3Q77 -4 86 -16Z" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/><text x="86" y="0" text-anchor="middle" font-size="9" font-weight="800" fill="#38bdf8">!</text></g>`;
 const soilSvg=()=>{
- if(S.soil==="pot")return `<path d="M27 84Q50 70 73 84Z" fill="#6b4423"/><circle cx="40" cy="81" r="1.4" fill="#4a2f18"/><circle cx="60" cy="80" r="1.3" fill="#4a2f18"/><path d="M30 91H70L64 109H36Z" fill="#c2410c"/><path d="M64 91H70L64 109H60Z" fill="#9a3412" opacity=".55"/><rect x="23" y="84" width="54" height="8" rx="3" fill="#ea580c"/><rect x="25" y="85.5" width="50" height="2" rx="1" fill="#fff" opacity=".22"/>`;
- const c=SOIL[S.soil||"default"]||SOIL.default;
+ const s=S.soil;
+ if(s==="pot")return `<path d="M30 91H70L64 109H36Z" fill="#c2410c"/><path d="M64 91H70L64 109H60Z" fill="#9a3412" opacity=".55"/>`;
+ if(s==="potm")return `<path d="M43 100H57L61 107Q50 110 39 107Z" fill="#f59e0b"/><path d="M33 107Q50 111 67 107Q50 105 33 107Z" fill="#fbbf24"/>`;
+ if(s==="potw")return `<ellipse cx="50" cy="85" rx="27" ry="8" fill="#0284c7"/><ellipse cx="50" cy="85" rx="23" ry="6" fill="#22d3ee"/><path d="M34 85Q42 83 48 85" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/>`;
+ if(s==="potf")return `<path d="M18 100Q16 86 24 80Q25 88 31 88Q29 78 36 72Q38 82 44 84Q46 76 50 72Q54 76 56 84Q62 82 64 72Q71 78 69 88Q75 88 76 80Q84 86 82 100Z" fill="#f97316"/><path d="M30 100Q30 90 36 86Q38 92 43 92Q46 84 50 82Q54 84 57 92Q62 92 64 86Q70 90 70 100Z" fill="#fbbf24"/>`;
+ const c=SOIL[s||"default"]||SOIL.default;
  return `<path d="M6 94Q50 62 94 94Z" fill="${c[0]}"/><path d="M20 90Q50 72 80 90" fill="none" stroke="${c[1]}" stroke-width="1.5" opacity=".5"/><circle cx="34" cy="88" r="1.6" fill="${c[1]}"/><circle cx="62" cy="86" r="1.4" fill="${c[1]}"/>`
+};
+const soilFront=()=>{
+ const s=S.soil;
+ if(s==="pot")return `<path d="M27 86Q50 70 73 86Z" fill="#6b4423"/><circle cx="40" cy="82" r="1.4" fill="#4a2f18"/><circle cx="60" cy="81" r="1.3" fill="#4a2f18"/><rect x="23" y="84" width="54" height="8" rx="3" fill="#ea580c"/><rect x="25" y="85.5" width="50" height="2" rx="1" fill="#fff" opacity=".22"/>`;
+ if(s==="potm")return `<path d="M30 83Q50 72 70 83Z" fill="#6b4423"/><path d="M22 76C23 96 38 103 50 103C62 103 77 96 78 76C68 85 58 84 50 84C42 84 32 85 22 76Z" fill="#60a5fa" stroke="#1d4ed8" stroke-width="1"/><path d="M28 82C32 94 42 98 50 98C58 98 68 94 72 82" fill="none" stroke="#bfdbfe" stroke-width="1.2" opacity=".85"/><path d="M34 92q4-4 8 0q3 3 6-1M54 95q4-3 7 0q3 2 5-2" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".9"/><path d="M22 76C32 85 42 84 50 84C58 84 68 85 78 76" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/><path d="M80 70l1.2 3 3 1.2-3 1.2-1.2 3-1.2-3-3-1.2 3-1.2z" fill="#fde047"/>`;
+ if(s==="potw")return `<path d="M23 85C23 102 36 109 50 109C64 109 77 102 77 85C70 91 60 93 50 93C40 93 30 91 23 85Z" fill="#38bdf8" stroke="#0369a1" stroke-width=".8"/><path d="M30 92Q36 100 46 100M54 104Q62 104 68 96" stroke="#e0f2fe" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".85"/><circle cx="32" cy="99" r="3" fill="none" stroke="#fff" stroke-width="1"/><circle cx="67" cy="101" r="4" fill="none" stroke="#fff" stroke-width="1"/><circle cx="58" cy="105" r="2" fill="none" stroke="#fff" stroke-width="1"/><ellipse cx="45" cy="102" rx="4" ry="2.4" fill="#fb923c"/><path d="M41 102L37 99.5V104.5Z" fill="#f97316"/><circle cx="47" cy="101.4" r=".7" fill="#111"/><path d="M38 88Q44 80 50 84Q56 80 62 88Q50 91 38 88Z" fill="#bae6fd"/><circle cx="43" cy="84" r="2" fill="#fff" opacity=".7"/><circle cx="58" cy="83" r="1.6" fill="#fff" opacity=".7"/>`;
+ if(s==="potf")return `<path d="M27 90L26 77L37 86Z" fill="#dc2626" stroke="#991b1b" stroke-width=".8"/><path d="M73 90L74 77L63 86Z" fill="#dc2626" stroke="#991b1b" stroke-width=".8"/><path d="M25 101Q24 88 36 86Q50 82 64 86Q76 88 75 101Q72 109 50 109Q28 109 25 101Z" fill="#ef4444" stroke="#991b1b" stroke-width="1"/><circle cx="40" cy="98" r="3.4" fill="#fde047"/><circle cx="60" cy="98" r="3.4" fill="#fde047"/><circle cx="40.5" cy="98.4" r="1.4" fill="#111"/><circle cx="59.5" cy="98.4" r="1.4" fill="#111"/><path d="M34 93L44 96.5M66 93L56 96.5" stroke="#7f1d1d" stroke-width="1.6" stroke-linecap="round"/><path d="M44 103Q50 108 56 103" stroke="#7f1d1d" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M46 104.5L47.5 107L49 105M54 104.5L52.5 107L51 105" fill="#fff"/>`;
+ return "";
 };
 function plant(m,wl){
  WL=wl?1:0;
@@ -530,11 +544,11 @@ function plant(m,wl){
   p+="</g>";
  }
  if(wl)p=p.replace(/class="sw"/g,'class="dr"').replace(/class="(fl|fr|tw)"/g,'class="wd"').replace(/#fde047/g,"#c9b26a").replace(/#f59e0b/g,"#9c7a3c").replace(/#ef4444/g,"#a8554a").replace(/#16a34a/g,"#6f7a3a");
- return `<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}${p}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
+ return `<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}${p}${soilFront()}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
 }
 const PC={};
 const pk=(m,wl)=>{const k=(S.soil||"default")+"|"+m+"|"+wl;return PC[k]||(PC[k]=plant(m,wl))};
-function rot(){const k=(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${THIRSTY}</svg>`)}
+function rot(){const k=(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${soilFront()}${THIRSTY}</svg>`)}
 const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=f===2?5:f===1?4:3}return pk(v,wt)};
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
@@ -715,7 +729,7 @@ function gGarden(){
  const bf=S.bf&&S.own&&S.own.bfly?`<div class="bfs" id="bfs"></div>`:"";
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}${S.nosway?" still":""}${S.soil==="pot"?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}${bf}${be}</div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
@@ -943,8 +957,11 @@ const SHOP=[
  {id:"life",e:"❤️",t:"Extra Life",d:"+1 life in your next Balloon Pop or Space Typing game.",p:30,type:"cons"},
  {id:"default",e:"🟫",t:"Brown Soil",d:"The classic look.",p:0,type:"soil"},
  {id:"soilg",e:"🟨",t:"Golden Soil",d:"Shiny golden soil for every plant.",p:60,type:"soil"},
-  {id:"soiln",e:"🟩",t:"Green Soil",d:"Lush green soil, like a real garden.",p:60,type:"soil"},
+ {id:"soiln",e:"🟩",t:"Green Soil",d:"Lush green soil, like a real garden.",p:60,type:"soil"},
  {id:"pot",e:"🪴",t:"Flower Pot",d:"Plant everything in a cute terracotta pot instead of a soil mound.",p:80,type:"soil"},
+ {id:"potm",e:"🌙",t:"Moon Pot",d:"A glowing crescent moon on a golden stand.",p:120,type:"soil"},
+ {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:120,type:"soil"},
+ {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:150,type:"soil"},
  {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:100,type:"deco",flag:"bf",per:4},
  {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:150,type:"deco",flag:"be",per:2}
 ];
@@ -993,7 +1010,7 @@ function waterPlant(word){
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="q pb${S.soil==="pot"?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="q pb${isPot()?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
