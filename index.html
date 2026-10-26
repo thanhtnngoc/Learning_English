@@ -245,6 +245,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
  <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="g"><span>🎮</span>Games</button><button data-t="n"><span>🌱</span>Garden</button><button data-t="a"><span>📖</span>Word List</button></div>
  <div id="qp" style="display:none"><div class="gh qh"><button class="btn l" id="qb" style="flex:none;padding:6px 12px">← Back</button><b>🎯 Quiz</b><button class="btn l rb" id="rb" style="display:none"></button></div><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="sub" id="ps"></div></div>
  <div id="v"></div>
+ <div id="gk" style="position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(100vw,560px);height:100vh;padding:16px;box-sizing:border-box;overflow:hidden;visibility:hidden;pointer-events:none;z-index:-1"></div>
 </main>
 <div class="au" id="auth"><form class="aub" id="af"><h2>📚 Learning English</h2><input id="au" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username"><input id="ap" name="password" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" id="ab" type="submit">Log in</button><div class="hint" id="am"></div></form></div>
 <div class="toast" id="to"></div>
@@ -364,7 +365,7 @@ function pick(){ // favor weaker words
  for(let i=0;i<w.length;i++){r-=ws[i];if(r<=0)return w[i]}return w[0];
 }
 function render(){
- gClean();
+ gClean();$("gk").innerHTML="";
  $("qp").style.display=(tab==="g"&&inQ)?"":"none";
  hud();
  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
@@ -746,10 +747,22 @@ function gSpace(){
 
 /* ---- Word Garden ---- */
 let hm=false;
+function gStash(){const r=$("gr");if(r)$("gk").appendChild(r)}
+function gBack(){const r=$("gk").firstChild;if(r){gClean();$("v").innerHTML="";$("v").appendChild(r);gRefresh()}else gGarden()}
+function gRefresh(){
+ const w=W(),rp=w.filter(x=>ripe(x[0])).length;
+ const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
+ $("gco").textContent="💧 "+S.coins;$("gx").textContent="🪙 "+(S.gold||0)+" ⇄";
+ $("ghint").textContent=gardenStat(rp)+" · "+p+"% grown";
+ $("skl").classList.toggle("on",hm);document.querySelector("#gr .gg").classList.toggle("hm",hm);
+ const hv=$("hva");hv.textContent="🧺 All ("+rp+")";hv.disabled=!rp;
+ document.querySelectorAll("#gr .pl").forEach(beeUpd);
+ progUpd();
+}
 const SICKLE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21l5-7"/><path d="M10 14c-4-3-5-8-1-10 5-2 11 1 11 7-2-3-6-4-9-2"/></svg>`;
 function coinFly(x,y,t){const s=document.createElement("span");s.className="cfly";s.textContent=t;s.style.cssText=`left:${x}px;top:${y}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}
 function gGarden(){
- gClean();
+ gClean();$("gk").innerHTML="";
  const w=W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
  const rp=w.filter(x=>ripe(x[0])).length;
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
@@ -757,16 +770,16 @@ function gGarden(){
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const strip=(bf||be)?`<div class="hvs">${bf?BRSVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gw">${strip}<div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>${bf}${be}</div>`;
+ $("v").innerHTML=`<div id="gr"><div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="gco">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" id="ghint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div class="gw">${strip}<div class="gg${hm?" hm":""}${S.nosway?" still":""}${isPot()?" potv":""}">${w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("")}</div>${bf}${be}</div></div>`;
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
  bfInit();beeInit();
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
- $("gx").onclick=()=>gExchange(gGarden);
- $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
- $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
+ gExchange(gRefresh)
+ $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gRefresh()};
+ $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gRefresh()}};
 }
 function progInfo(){
  const o=[];
@@ -1071,7 +1084,7 @@ function beeNew(h,g,i){
  setTimeout(wake,rnd(300,2000));
 }
 function harvestOne(w,btn){
- if(ripe(w)){const r=btn.getBoundingClientRect();const n=harvest(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gGarden();return}
+ if(ripe(w)){const r=btn.getBoundingClientRect();const n=harvest(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gRefresh();return}
  const m=S.m[w]||0;
  toast(m<5?"Only fully grown plants bear fruit":(S.hv&&S.hv[w]===ld())?"Already harvested today":(S.w&&S.w[w])?"Thirsty — water it first":"No fruit yet — answer correctly in Quiz or games");
 }
@@ -1127,7 +1140,7 @@ function gShop(){
  gClean();
  const g=S.gold||0;
  $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
- $("gb").onclick=gGarden;
+ $("gb").onclick=gBack;
   $("gx").onclick=()=>gExchange(gShop);
  let lp=0,ht=0,tip=null,shown=0;
  const hideTip=()=>{clearTimeout(lp);clearTimeout(ht);if(tip){tip.remove();tip=null}};
@@ -1174,11 +1187,11 @@ function waterPlant(word){
  const m=Math.min(S.m[word]||0,5);
  
  if(S.coins<1){toast("No 💧 left — earn more in Quiz, Cards or Games");return}
- gClean();
+ gStash();gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
  $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="q pb${isPot()?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
- $("gb").onclick=gGarden;
+ $("gb").onclick=gBack;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
@@ -1191,7 +1204,7 @@ function waterPlant(word){
   const msg=okk?(m<0?"🌰 New seed!":w0?"💧 It recovered!":m>=5?"🍎 Still fully grown!":"💧 It grew!"):((S.m[word]||0)<0?"💀 The seed rotted…":"🥀 It wilted…");
   $("pbx").insertAdjacentHTML("beforeend",`<span class="pbt">${msg}</span>`);
   $("nx").innerHTML=`<div class="row"><button class="btn" id="bg">🌱 Back to garden</button></div>`;
-  $("bg").onclick=gGarden;
+  $("bg").onclick=gBack;
  });
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;render()});
