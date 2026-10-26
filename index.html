@@ -860,19 +860,23 @@ const bl=(x,y,r,s,c)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s
 
 /* Nhành cây cho bướm */
 const BRSVG=`<svg class="br" viewBox="0 0 150 48" aria-hidden="true">
-<path d="M38 28Q46 22 54 12" stroke="#7a4a1e" stroke-width="3.6" stroke-linecap="round" fill="none"/>
-<path d="M95 25Q102 19 108 12" stroke="#7a4a1e" stroke-width="3" stroke-linecap="round" fill="none"/>
-<path d="M60 30Q70 38 84 40" stroke="#7a4a1e" stroke-width="3.2" stroke-linecap="round" fill="none"/>
-<path d="M0 20L0 37C24 35 50 32 85 28C110 26 130 22 150 19C130 19 110 21 88 22C60 24 30 23 0 20Z" fill="#9a5a2b"/>
-<path d="M0 37C24 35 50 32 85 28C110 26 130 22 150 19" stroke="#6b3a17" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M4 25C30 27 60 25 100 22" stroke="#c27a3e" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".8"/>
-<ellipse cx="0" cy="28.5" rx="3.2" ry="8.5" fill="#c9884a" stroke="#6b3a17" stroke-width="1"/>
-<path d="M30 31Q40 29 55 30M70 26Q82 25 95 24" stroke="#6b3a17" stroke-width="1" fill="none" opacity=".5"/>
-${bl(54,12,-35,1,"#4ade80")}${bl(54,12,30,1,"#22c55e")}${bl(54,12,-3,.85,"#16a34a")}
-${bl(108,12,-30,.9,"#22c55e")}${bl(108,12,35,1,"#4ade80")}
-${bl(147,19,60,1,"#4ade80")}${bl(147,19,95,.9,"#22c55e")}
-${bl(84,40,115,.9,"#22c55e")}${bl(84,40,155,.9,"#4ade80")}
-${bl(22,26,-30,.7,"#16a34a")}
+<g fill="#3b2314">
+<path d="M0 8C14 8 24 11 34 19C44 27 54 31 68 30C88 29 110 21 128 19C136 18 144 19 150 21C144 21.6 136 21.5 128 22.5C110 24.5 90 35 68 37C50 38.5 36 34 26 27C18 21 10 18 0 18Z"/>
+<path d="M22 11C34 6 52 4 66 8C70 9 74 11 77 14C72 12 68 11.5 64 11C50 9 38 12 26 17Z"/>
+<path d="M40 24C48 30 56 34 58 40C59 43 61 45 62 47C58 45 55 44 54 41C53 36 47 31 38 29Z"/>
+<path d="M99 22C105 22 110 18 113 12C108 17 104 19 98 20Z"/>
+</g>
+${bl(63,7,-8,.95,"#4d8f26")}
+${bl(54,9.5,165,.8,"#3f7d1f")}
+${bl(74,13,-160,.7,"#4d8f26")}
+${bl(112,13,-8,.9,"#3f7d1f")}
+${bl(147,20,85,.8,"#4d8f26")}
+${bl(114,22,105,.9,"#3f7d1f")}
+${bl(98,28,155,.9,"#4d8f26")}
+${bl(52,30,-100,.85,"#4d8f26")}
+${bl(58,36,100,.9,"#3f7d1f")}
+${bl(57,43,-125,.8,"#4d8f26")}
+${bl(62,47,170,.8,"#3f7d1f")}
 </svg>`;
 
 /* Tổ ong treo trên cành, không có ong */
