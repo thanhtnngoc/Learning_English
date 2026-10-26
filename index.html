@@ -224,6 +224,12 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .si .sb{margin-top:auto;width:100%;padding-top:4px}
 .si .btn{width:100%;min-width:0;flex:none;padding:6px 2px;font-size:11px;border-radius:9px}
 @media (max-width:480px){.si .sd{display:none}}
+.si{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tip{position:fixed;z-index:40;max-width:230px;padding:10px 12px;background:var(--tx);color:var(--bg);border-radius:12px;font-size:13px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.3);pointer-events:none;transform:translateX(-50%);animation:vfi .15s ease}
+.tip b{display:block;margin-bottom:3px;font-size:14px}
+.xq{display:flex;align-items:center;justify-content:center;gap:14px;font-size:20px;margin-top:6px}
+.xq .sp{margin:0;width:40px;height:40px;font-size:20px}
+.aub .btn.l{margin-top:8px}
 </style>
 </head>
 <body>
@@ -750,6 +756,7 @@ function gGarden(){
  bfInit();beeInit();
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
+ $("gx").onclick=()=>gExchange(gGarden);
  $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
  $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
 }
@@ -990,30 +997,72 @@ function shopItem(it,g){
   const tg=lv?`<button class="btn l${on?" on":""}" data-id="${it.id}" data-a="tg">${on?"On":"Off"}</button>`:"";
   btn=`<div style="display:flex;flex-direction:column;gap:6px">${up}${tg}</div>`;
  }
- return `<div class="si" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
+ return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
 const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["✨ Garden friends",["bfly","bee"]]];
+const XRATE=5; // 5 💧 = 1 🪙, đổi số này nếu muốn
+function gExchange(done){
+ const o=document.createElement("div");o.className="au";let q=1;
+ const close=()=>{o.remove();if(done)done()};
+ const draw=()=>{
+  const mx=Math.floor(S.coins/XRATE);
+  if(q>mx)q=Math.max(1,mx);
+  o.innerHTML=`<div class="aub"><h2>💧 ➜ 🪙 Exchange</h2><div style="font-size:14px;color:var(--mu)">${XRATE} 💧 = 1 🪙</div><div style="margin:10px 0;font-size:15px">You have 💧 <b>${S.coins}</b> · 🪙 <b>${S.gold||0}</b></div><div class="xq"><button class="sp" id="xm">−</button><b>${q} 🪙</b><button class="sp" id="xp">+</button></div><div style="font-size:14px;margin-top:8px">Cost: <b>${q*XRATE} 💧</b></div><button class="btn" id="xo"${mx<1?" disabled":""}>Exchange</button><button class="btn l" id="xx">Max (${mx} 🪙)</button><button class="btn l" id="xc">Close</button>${mx<1?`<div class="hint">You need at least ${XRATE} 💧</div>`:""}</div>`;
+  o.querySelector("#xm").onclick=()=>{if(q>1){q--;draw()}};
+  o.querySelector("#xp").onclick=()=>{if(q<mx){q++;draw()}};
+  o.querySelector("#xx").onclick=()=>{if(mx>0){q=mx;draw()}};
+  o.querySelector("#xc").onclick=close;
+  o.querySelector("#xo").onclick=()=>{
+   const c=q*XRATE;if(mx<1||S.coins<c)return;
+   S.coins-=c;S.gold=(S.gold||0)+q;save();
+   toast("💱 +"+q+" 🪙");q=1;draw();
+  };
+ };
+ document.body.appendChild(o);draw();
+}
 function gShop(){
  gClean();
  const g=S.gold||0;
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${g}</span></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
  $("gb").onclick=gGarden;
-  document.querySelectorAll(".si .btn").forEach(b=>b.onclick=()=>{
+  $("gx").onclick=()=>gExchange(gShop);
+ let lp=0,ht=0,tip=null,shown=0;
+ const hideTip=()=>{clearTimeout(lp);clearTimeout(ht);if(tip){tip.remove();tip=null}};
+ document.querySelectorAll(".si").forEach(c=>{
+  const it=SHOP.find(x=>x.id===c.dataset.sid);if(!it)return;
+  c.addEventListener("pointerdown",()=>{
+   hideTip();shown=0;
+   lp=setTimeout(()=>{
+    shown=1;
+    tip=document.createElement("div");tip.className="tip";
+    tip.innerHTML=`<b>${it.e} ${it.t}</b>${it.d}`;
+    document.body.appendChild(tip);
+    const r=c.getBoundingClientRect(),w=tip.offsetWidth;
+    tip.style.left=Math.max(w/2+8,Math.min(innerWidth-w/2-8,r.left+r.width/2))+"px";
+    tip.style.top=Math.max(8,r.top-tip.offsetHeight-8)+"px";
+    if(navigator.vibrate)navigator.vibrate(15);
+   },400);
+  });
+  ["pointerup","pointercancel","pointerleave"].forEach(ev=>c.addEventListener(ev,()=>{clearTimeout(lp);clearTimeout(ht);ht=setTimeout(hideTip,ev==="pointerup"?1500:0)}));
+  c.addEventListener("contextmenu",e=>e.preventDefault());
+  c.addEventListener("click",e=>{if(shown){e.stopPropagation();e.preventDefault();shown=0}},true);
+ });
+ document.querySelectorAll(".si .btn").forEach(b=>b.onclick=()=>{
   const it=SHOP.find(x=>x.id===b.dataset.id);if(!it)return;
   const own=!!(S.own&&S.own[it.id]);S.own=S.own||{};S.inv=S.inv||{};
   if(it.type==="cons"){if((S.gold||0)<it.p)return;S.gold-=it.p;S.inv[it.id]=(S.inv[it.id]||0)+1;toast(it.e+" "+it.t+" bought")}
   else if(it.type==="soil"){if(it.id!=="default"&&!own){if((S.gold||0)<it.p)return;S.gold-=it.p;S.own[it.id]=1}S.soil=it.id;toast(it.e+" "+it.t)}
   else{
-  const fl=it.flag,lv=own?(+S.own[it.id]||1):0;
-  if(b.dataset.a==="tg"){S[fl]=S[fl]?0:1}
-  else{
-   if(lv>=5)return;
-   const np=Math.round(it.p*Math.pow(1.5,lv));
-   if((S.gold||0)<np)return;
-   S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
-   toast(it.e+" Level "+(lv+1)+" · "+(lv+1)*it.per+" "+it.e);
+   const fl=it.flag,lv=own?(+S.own[it.id]||1):0;
+   if(b.dataset.a==="tg"){S[fl]=S[fl]?0:1}
+   else{
+    if(lv>=5)return;
+    const np=Math.round(it.p*Math.pow(1.5,lv));
+    if((S.gold||0)<np)return;
+    S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
+    toast(it.e+" Level "+(lv+1)+" · "+(lv+1)*it.per+" "+it.e);
+   }
   }
- }
   save();gShop();
  });
 }
@@ -1025,7 +1074,7 @@ function waterPlant(word){
  gClean();
  const w=W();let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><span class="chip">🪙 ${S.gold||0}</span></span></div><div class="q pb${isPot()?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>💧 Water this plant</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="q pb${isPot()?" potv":""}" id="pbx" style="text-align:center;font-size:44px;line-height:1.2">${pic(word)}</div><div class="q qq" style="margin-top:10px"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("gb").onclick=gGarden;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
