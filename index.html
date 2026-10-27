@@ -238,6 +238,9 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .hvs .br2{right:0px;width:150px;height:48px}
 .hvs .hv{right:52px;top:3px;width:44px;height:56px}
 .bf.hid{opacity:0}
+.nxs{position:sticky;bottom:0;z-index:6;margin:0 -16px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 28%)}
+.nxs .row{margin-top:0}
+#v:has(.nxs){padding-bottom:8px}
 </style>
 </head>
 <body>
@@ -405,7 +408,7 @@ function rQuiz(){
  if(!x){r.deck.splice(r.i,1);if(r.n)r.n--;save();return rQuiz()}
  return r.ph===1?rPick(x):rType(x);
 }
-function nextBtn(r){return `<div class="row"><button class="btn" id="nb">${r.i>=r.deck.length?"See results ➜":"Next ➜"}</button></div>`}
+function nextBtn(r){return `<div class="nxs"><div class="row"><button class="btn" id="nb">${r.i>=r.deck.length?"See results ➜":"Next ➜"}</button></div></div>`}
 function rPick(x){
  const r=S.rd,w=W();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
