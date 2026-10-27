@@ -1117,17 +1117,17 @@ function harvestOne(w,btn){
 }
 /* ---- Shop ---- */
 const SHOP=[
- {id:"shield",e:"🛡️",t:"Thirst Shield",d:"Saves you from one missed day: no 10% 💧 loss and no 💧 to pay. Plants only get thirsty.",p:49,type:"cons"},
+ {id:"shield",e:"🛡️",t:"Thirst Shield",d:"Saves you from one missed day: no 10% 💧 loss and no 💧 to pay. Plants only get thirsty.",p:39,type:"cons"},
  {id:"life",e:"❤️",t:"Extra Life",d:"+1 life in your next Balloon Pop or Space Typing game.",p:19,type:"cons"},
  {id:"default",e:"🟫",t:"Brown Soil",d:"The classic look.",p:0,type:"soil"},
- {id:"soilg",e:"🟨",t:"Golden Soil",d:"Shiny golden soil for every plant.",p:49,type:"soil"},
- {id:"soiln",e:"🟩",t:"Green Soil",d:"Lush green soil, like a real garden.",p:49,type:"soil"},
- {id:"pot",e:"🪴",t:"Flower Pot",d:"Plant everything in a cute terracotta pot instead of a soil mound.",p:79,type:"soil"},
- {id:"potm",e:"🌙",t:"Moon Pot",d:"A glowing crescent moon on a golden stand.",p:99,type:"soil"},
- {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:119,type:"soil"},
- {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:139,type:"soil"},
- {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:99,type:"deco",flag:"bf",per:4},
- {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:139,type:"deco",flag:"be",per:3}
+ {id:"soilg",e:"🟨",t:"Golden Soil",d:"Shiny golden soil for every plant.",p:59,type:"soil"},
+ {id:"soiln",e:"🟩",t:"Green Soil",d:"Lush green soil, like a real garden.",p:59,type:"soil"},
+ {id:"pot",e:"🪴",t:"Flower Pot",d:"Plant everything in a cute terracotta pot instead of a soil mound.",p:99,type:"soil"},
+ {id:"potm",e:"🌙",t:"Moon Pot",d:"A glowing crescent moon on a golden stand.",p:199,type:"soil"},
+ {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:299,type:"soil"},
+ {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"soil"},
+ {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:109,type:"deco",flag:"bf",per:4},
+ {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:209,type:"deco",flag:"be",per:3}
 ];
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
