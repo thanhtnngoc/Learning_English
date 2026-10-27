@@ -383,7 +383,7 @@ function rFlash(){
  <div class="hint" style="text-align:center">Random cards · ${fi} reviewed</div>`;
  $("cd").onclick=e=>{if(e.target.closest("#vt")){viOn=!viOn;rFlash();return}if(e.target.id==="sp"){speak(x[0]);return}flip=!flip;rFlash()};
  $("hd").onclick=()=>{mark(x[0],-1);gain(1);fi++;nextCard(x);flip=false;rFlash()};
- $("ez").onclick=()=>{mark(x[0],1);S.coins=(S.coins||0)+1;gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
+ $("ez").onclick=()=>{mark(x[0],1);gain(5,"+5 XP");fi++;nextCard(x);flip=false;rFlash()};
 }
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const byW=n=>W().find(x=>x[0]===n);
@@ -399,7 +399,7 @@ function fixRound(){
 }
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
 let lastWt=0;
-function answered(w,okk){const r=S.rd;r.i++;lastWt=0;if(okk){const c=combo+1;lastWt=1+Math.floor(c/2);r.ok++;S.coins=(S.coins||0)+lastWt}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1);if(okk)fruitUp(w)}
+function answered(w,okk){const r=S.rd;r.i++;lastWt=0;if(okk){const c=combo+1;lastWt=1+Math.floor(c/4);r.ok++;S.coins=(S.coins||0)+lastWt}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1);if(okk)fruitUp(w)}
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
@@ -1143,7 +1143,7 @@ function shopItem(it,g){
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
 const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["✨ Garden friends",["bfly","bee"]]];
-const XRATE=5; // 5 💧 = 1 🪙, đổi số này nếu muốn
+const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
  const close=()=>{o.remove();if(done)done()};
