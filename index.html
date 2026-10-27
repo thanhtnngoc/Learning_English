@@ -236,7 +236,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .hvs svg{position:absolute;top:-8px;overflow:visible}
 .hvs .br{left:0;width:150px;height:48px}
 .hvs .br2{right:0px;width:150px;height:48px}
-.hvs .hv{right:52px;top:3px;width:44px;height:62px}
+.hvs .hv{right:52px;top:3px;width:44px;height:56px}
 .bf.hid{opacity:0}
 </style>
 </head>
@@ -914,9 +914,9 @@ ${bl(93,5,55,.8,"#4d8f26")}
 ${bl(88,1,-10,.8,"#3f7d1f")}
 </svg>`;
 /* Tổ ong treo trên cành, không có ong */
-const HVSVG=`<svg class="hv" viewBox="0 0 44 62" aria-hidden="true">
-<path d="M22 0V24" stroke="#8b5a2b" stroke-width="2" stroke-linecap="round"/>
-<g transform="translate(0 14)">
+const HVSVG=`<svg class="hv" viewBox="0 0 44 56" aria-hidden="true">
+<path d="M22 0V18" stroke="#7a4a1e" stroke-width="2" stroke-linecap="round"/>
+<g transform="translate(0 8)">
 <path d="M22 7C32 7 35 12 36 17C41 20 40 28 37 32C40 36 36 41 31 42C29 46 15 46 13 42C8 41 4 36 7 32C4 28 3 20 8 17C9 12 12 7 22 7Z" fill="#f5b335" stroke="#c2610c" stroke-width="1.5" stroke-linejoin="round"/>
 <path d="M9 17Q22 21 35 17M6 25Q22 29 38 25M7 33Q22 37 37 33M12 40Q22 43 32 40" fill="none" stroke="#c2610c" stroke-width="1.2" stroke-linecap="round"/>
 <ellipse cx="17" cy="11" rx="4" ry="1.6" fill="#fde68a" opacity=".9"/>
@@ -925,7 +925,7 @@ const HVSVG=`<svg class="hv" viewBox="0 0 44 62" aria-hidden="true">
 <ellipse cx="22" cy="30" rx="5.6" ry="6.6" fill="#8a3f14"/>
 <ellipse cx="23" cy="31" rx="4" ry="5.6" fill="#1c0f05"/>
 </g>
-<circle cx="22" cy="21" r="2.2" fill="#8b5a2b"/>
+<circle cx="22" cy="15" r="2.2" fill="#7a4a1e"/>
 </svg>`;
  
 function bfInit(){const h=$("bfs");if(!h)return;const n=((S.own&&+S.own.bfly)||1)*4;for(let i=0;i<n;i++)bfNew(h,h.parentNode,i)}
@@ -1045,7 +1045,7 @@ function beeNew(h,g,i){
  el.classList.toggle("spent",spent);
  const done=()=>spent||beeDay().used>=beeTotal();
  const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
- const hp=()=>[g.clientWidth-74-sz/2,47-sz/2];
+ const hp=()=>[g.clientWidth-74-sz/2,41-sz/2];
  let [x,y]=hp(),ang=rnd(-30,30),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4,sw;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
