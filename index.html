@@ -244,6 +244,8 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 #nx{display:contents}
 .vsw{transform-box:fill-box;transform-origin:50% 0;animation:vsy 3s ease-in-out infinite}
 @keyframes vsy{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.xq input{width:84px;margin:0;padding:8px 6px;text-align:center;font-size:18px;font-weight:800;border-radius:10px}
+.xq .u{font-size:18px;font-weight:800}
 </style>
 </head>
 <body>
@@ -1230,12 +1232,30 @@ function gExchange(done){
  const draw=()=>{
   const mx=Math.floor(S.coins/XRATE);
   if(q>mx)q=Math.max(1,mx);
-  o.innerHTML=`<div class="aub"><h2>💧 ➜ 🪙 Exchange</h2><div style="font-size:14px;color:var(--mu)">${XRATE} 💧 = 1 🪙</div><div style="margin:10px 0;font-size:15px">You have 💧 <b>${S.coins}</b> · 🪙 <b>${S.gold||0}</b></div><div class="xq"><button class="sp" id="xm">−</button><b>${q} 🪙</b><button class="sp" id="xp">+</button></div><div style="font-size:14px;margin-top:8px">Cost: <b>${q*XRATE} 💧</b></div><button class="btn" id="xo"${mx<1?" disabled":""}>Exchange</button><button class="btn l" id="xx">Max (${mx} 🪙)</button><button class="btn l" id="xc">Close</button>${mx<1?`<div class="hint">You need at least ${XRATE} 💧</div>`:""}</div>`;
+  o.innerHTML=`<div class="aub"><h2>💧 ➜ 🪙 Exchange</h2><div style="font-size:14px;color:var(--mu)">${XRATE} 💧 = 1 🪙</div><div style="margin:10px 0;font-size:15px">You have 💧 <b>${S.coins}</b> · 🪙 <b>${S.gold||0}</b></div><div class="xq"><button class="sp" id="xm">−</button><input id="xi" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${q}"><span class="u">🪙</span><button class="sp" id="xp">+</button></div><div style="font-size:14px;margin-top:8px">Cost: <b id="xcost">${q*XRATE} 💧</b></div><button class="btn" id="xo"${mx<1?" disabled":""}>Exchange</button><button class="btn l" id="xx">Max (${mx} 🪙)</button><button class="btn l" id="xc">Close</button>${mx<1?`<div class="hint">You need at least ${XRATE} 💧</div>`:""}</div>`;
   o.querySelector("#xm").onclick=()=>{if(q>1){q--;draw()}};
   o.querySelector("#xp").onclick=()=>{if(q<mx){q++;draw()}};
   o.querySelector("#xx").onclick=()=>{if(mx>0){q=mx;draw()}};
+  const xi=o.querySelector("#xi");
+  // chỉ cho nhập số, và cập nhật phần "Cost" ngay khi gõ
+  xi.oninput=()=>{
+   xi.value=xi.value.replace(/\D/g,"");
+   const n=Math.min(mx,parseInt(xi.value||"0",10));
+   o.querySelector("#xcost").textContent=(Math.max(n,0)*XRATE)+" 💧";
+  };
+  // gõ xong (Enter hoặc bỏ focus) thì chốt số và vẽ lại
+  const commit=()=>{
+   let n=parseInt(xi.value||"1",10);
+   if(isNaN(n)||n<1)n=1;
+   q=Math.min(n,Math.max(1,mx));
+   draw();
+  };
+  xi.onchange=commit;
+  xi.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();xi.blur()}};
+  xi.onfocus=()=>xi.select();
   o.querySelector("#xc").onclick=close;
   o.querySelector("#xo").onclick=()=>{
+   q=Math.max(1,Math.min(parseInt(xi.value||"1",10)||1,Math.max(1,mx)));
    const c=q*XRATE;if(mx<1||S.coins<c)return;
    S.coins-=c;S.gold=(S.gold||0)+q;save();
    toast("💱 +"+q+" 🪙");q=1;draw();
