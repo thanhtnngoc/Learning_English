@@ -444,9 +444,7 @@ function rType(x){
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
   else{combo=0;inp.style.borderColor="var(--no)";save();hud()}
-  const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
-  const wv=vi(x);
-  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b>"} ${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${wv?`<span class="vi">${esc(wv)}</span>`:""}</div>`+nextBtn(r);
+  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b> "+esc(x[1])}</div>`+nextBtn(r);
   $("nb").onclick=rQuiz;$("nb").focus();
  };
  $("ck").onclick=check;
@@ -1218,7 +1216,7 @@ function gExchange(done){
 function gShop(){
  gClean();
  const g=S.gold||0;
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>SHOP.find(x=>x.id===id)).sort((a,b)=>a.p-b.p).map(it=>shopItem(it,g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
  $("gb").onclick=gGarden;
   $("gx").onclick=()=>gExchange(gShop);
  let lp=0,ht=0,tip=null,shown=0;
@@ -1362,7 +1360,7 @@ const cRef=ch=>{if(dailyCheck())ch=1;if(ch){hud();if(!gStop)render()}};
 function cStat(){if(cUser)$("acn").textContent=cUser.name+" "+(cDirty?"⏳":"☁️")}
 function cSoon(ms){if(!pushT)pushT=setTimeout(()=>{pushT=0;cPush()},ms||4000)}
 async function cPush(){
- if(!cUser||!cDirty)return;
+ if(!cUser||!cDirty||!pulled)return;
  cDirty=false;
  try{const p=cPay(S);await cUser.fb.setDoc(cUser.ref,{data:JSON.stringify(p),ts:p.ts||Date.now()})}
  catch(e){cDirty=true;cSoon(15000)}
@@ -1391,6 +1389,9 @@ async function cPull(){
  try{const s=await cUser.fb.getDoc(cUser.ref);if(s.exists())R=JSON.parse(s.data().data);pulled=true}
  catch(e){cStat();return false}
  const L=cPay(S);
+ // Local trống (vừa đăng xuất / thiết bị mới) thì luôn để dữ liệu cloud thắng
+ const blank=!(L.xp>0||L.streak>0||Object.keys(L.m||{}).length||(L.custom||[]).length);
+ if(blank&&R)L.ts=0;
  if(!R){cDirty=true;S.ts=S.ts||Date.now();cStat();cSoon(500);return false}
  const M=cMerge(L,R),ch=cmp(M)!==cmp(L),up=cmp(M)!==cmp(R);
  if(up)M.ts=Date.now();
