@@ -547,8 +547,27 @@ const fr=(x,y,d)=>`<g class="fr" style="animation-delay:-${d}s"><circle cx="${x}
 const LV=[[50,12,0,1.3],[50,12,-40,1.2],[50,12,40,1.2],[38,16,-30,1.3],[38,16,-75,1.2],[62,12,30,1.3],[62,12,75,1.2],[26,30,-50,1.3],[26,30,-95,1.2],[26,30,-10,1.1],[74,24,50,1.3],[74,24,95,1.2],[74,24,10,1.1],[22,50,-60,1.3],[22,50,-100,1.2],[22,50,-20,1.1],[78,44,60,1.3],[78,44,100,1.2],[78,44,20,1.1],[50,62,-70,1.1],[50,68,70,1.1],[50,56,70,1]];
 // ===== Cây cam: lá rộng bầu, tán tròn, quả cam =====
 const lo=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="${WL?(r>=0?"lwr":"lwl"):"lv"}" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-10-3-10-13-1-17L0-20L1-17C10-13 10-3 0 0Z" fill="${c}"/><path d="M0-1V-15" stroke="#166534" stroke-width=".8" opacity=".5"/></g></g>`;
-const og=(x,y,d)=>`<g class="fr" style="animation-delay:-${d}s"><circle cx="${x}" cy="${y}" r="5.6" fill="#f97316" stroke="#ea580c" stroke-width=".6"/><circle cx="${x-1.8}" cy="${y-2}" r="1.5" fill="#fff" opacity=".45"/><path d="M${x-2} ${y-5.2}L${x} ${y-3.8}L${x+2} ${y-5.2}L${x} ${y-6.6}Z" fill="#16a34a"/></g>`;
-const OLV=[[50,14,0,1],[38,16,-20,1],[62,16,20,1],[50,22,0,1.2],[42,24,-30,1.2],[58,24,30,1.2],[34,30,-55,1.2],[66,30,55,1.2],[50,34,0,1.1],[40,34,-20,1.1],[60,34,20,1.1],[24,42,-75,1.2],[76,42,75,1.2],[34,44,-45,1.1],[66,44,45,1.1],[50,46,0,1],[42,48,-30,1],[58,48,30,1],[26,54,-100,1.1],[74,54,100,1.1],[36,56,-70,1.05],[64,56,70,1.05],[46,58,-40,1],[54,58,40,1]];
+const og=(x,y,d)=>`<g class="fr" style="animation-delay:-${d}s"><circle cx="${x}" cy="${y}" r="6" fill="#f97316" stroke="#c2410c" stroke-width=".7"/><circle cx="${x+1.5}" cy="${y+2}" r="3.6" fill="#c2410c" opacity=".18"/><ellipse cx="${x-2}" cy="${y-2.2}" rx="2.1" ry="1.3" fill="#fff" opacity=".55" transform="rotate(-35 ${x-2} ${y-2.2})"/><circle cx="${x+2}" cy="${y-.5}" r=".5" fill="#c2410c" opacity=".5"/><circle cx="${x+.5}" cy="${y+3}" r=".5" fill="#c2410c" opacity=".5"/><path d="M${x-2.4} ${y-5.6}L${x} ${y-4}L${x+2.4} ${y-5.6}L${x} ${y-7.2}Z" fill="#16a34a"/></g>`;
+// ===== Dưa hấu: lá xẻ thùy, hoa vàng, quả sọc =====
+const ml=(x,y,r,s,c,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><g class="${WL?(r>=0?"lwr":"lwl"):"lv"}" style="animation-delay:-${d==null?(Math.random()*3).toFixed(1):d}s"><path d="M0 0C-6-2-13-4-13-10C-13-14-9-15-8-18C-7-23-2-24 0-21C2-24 7-23 8-18C9-15 13-14 13-10C13-4 6-2 0 0Z" fill="${c}"/><path d="M0-1V-19M0-7L-8-11M0-7L8-11M0-13L-5-17M0-13L5-17" stroke="#9be7c4" stroke-width=".7" fill="none" opacity=".55"/></g></g>`;
+const fwm=(x,y,d)=>`<g transform="translate(${x} ${y}) scale(1.5)">${fw(0,0,d)}</g>`;
+const wm=(x,y,d)=>{
+ const rx=17,ry=20;
+ // sọc: đường cong từ cuống xuống đáy, phình theo thân quả
+ const st=[-.85,-.45,.05,.45,.85].map(t=>{
+  const a=t*rx;                        // vị trí ngang của sọc ở giữa quả
+  const top=x+a*.45, bot=x+a*.45;      // điểm đầu/cuối: giữ khoảng cách, không dồn về 1 điểm
+  const yt=y-ry*1.05, yb=y+ry*1.05;    // vượt ra ngoài mép, clip sẽ cắt gọn
+  return `<path d="M${top.toFixed(1)} ${yt.toFixed(1)}Q${(x+a*1.35).toFixed(1)} ${y} ${bot.toFixed(1)} ${yb.toFixed(1)}" stroke="#1f6b3a" stroke-width="3" fill="none"/>`;
+ }).join("");
+ return `<g class="fr" style="animation-delay:-${d}s"><defs><clipPath id="wmc${d}"><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"/></clipPath></defs><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#8fd09a"/><g clip-path="url(#wmc${d})">${st}</g><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="none" stroke="#1f5f35" stroke-width=".8"/><ellipse cx="${x-6}" cy="${y-9}" rx="3.6" ry="6" fill="#fff" opacity=".3" transform="rotate(-15 ${x-6} ${y-9})"/><path d="M${x} ${y-ry}Q${x+1} ${y-ry-5} ${x+5} ${y-ry-6}" stroke="#4d7c2a" stroke-width="2" fill="none" stroke-linecap="round"/></g>`;
+};
+// Lá xếp thành 3 vòng tròn đồng tâm, lá hướng ra ngoài => tán tròn đều
+const OLV=(()=>{const a=[];[[22,16,.95,0],[13,11,1.05,.5],[5,5,1,0]].forEach(([R,n,s,ph])=>{for(let i=0;i<n;i++){const th=(i+ph)/n*2*Math.PI,c=Math.cos(th),sn=Math.sin(th),ry=c>0?.85:.7;a.push([+(50+R*1.15*sn).toFixed(1),+(32-R*ry*c).toFixed(1),+(th*180/Math.PI+10*Math.sin(i*2.7)).toFixed(0),s+.08*Math.sin(i*1.9)])}});return a})();
+// Vị trí quả/hoa: rải đều trong tán
+const OFP=[[36,20],[56,15],[72,27],[47,31],[26,35],[63,43],[38,46],[77,45],[52,55]];
+// Vài lá phía trước che nhẹ quả cho tự nhiên
+const OFL=[[31,43,-55,.9],[68,36,60,.9],[45,23,-25,.85]];
 const sk=(x,y,s,d,c)=>`<path class="sk" style="animation-delay:-${d}s" d="M${x} ${y-s}Q${x} ${y} ${x+s} ${y}Q${x} ${y} ${x} ${y+s}Q${x} ${y} ${x-s} ${y}Q${x} ${y} ${x} ${y-s}Z" fill="${c}"/>`;
 const SK=[[10,18,5,0,"#fde047"],[90,28,4,.6,"#fff"],[13,58,3.5,1.2,"#fde047"],[88,62,5,.3,"#fde047"],[28,-10,3.5,.9,"#fff"],[74,-14,5,1.5,"#fde047"],[50,-22,3.5,.4,"#fff"],[94,4,3,1.1,"#fff"],[6,38,3,1.8,"#fff"]].map(a=>sk(a[0],a[1],a[2],a[3],a[4])).join("");
 const THIRSTY=`<g class="th"><path d="M86 -16Q95 -4 86 3Q77 -4 86 -16Z" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/><text x="86" y="0" text-anchor="middle" font-size="9" font-weight="800" fill="#38bdf8">!</text></g>`;
@@ -599,10 +618,19 @@ function plant(m,wl){
  else if(m===1)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80Q50 70 50 64" stroke="${ST}" stroke-width="2" fill="none" stroke-linecap="round"/>${lf(50,65,-60,.75,G[0])}${lf(50,65,60,.75,G[1])}</g>`;
  else if(m===2)p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M50 80V48" stroke="${ST}" stroke-width="2.2" stroke-linecap="round"/>${lf(50,72,-60,.65,G[0])}${lf(50,66,60,.65,G[1])}${lf(50,58,-50,.65,G[1])}${lf(50,52,50,.65,G[0])}${lf(50,48,0,.7,G[0])}</g>`;
  else if(S.pt==="orange"){
-  const OG=wl?G:["#3aa655","#278a3f","#5cb85c"];
-  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M44 84Q47 70 47.5 54L52.5 54Q53 70 56 84Z" fill="${T}"/><path d="M50 62Q40 56 33 46M50 58Q60 52 67 44M50 54Q50 46 50 38" stroke="${T}" stroke-width="3" fill="none" stroke-linecap="round"/>`+OLV.map((l,i)=>lo(l[0],l[1],l[2],l[3],OG[i%3],(i*.37%3).toFixed(1))).join("");
-  if(m===4)p+=[[28,40,0],[72,38,.5],[40,28,1],[60,30,1.5],[50,44,.8],[34,52,1.8],[66,52,2.2]].map(a=>fwv(a[0],a[1],a[2])).join("");
-  if(m===5)p+=[[30,42,0],[70,40,.5],[42,30,1],[60,32,1.5],[50,46,.8],[34,54,1.8],[66,54,2.2],[22,50,1.1]].map(a=>og(a[0],a[1],a[2])).join("");
+  const OG=wl?G:["#2f9e4f","#278a3f","#4cbf5b","#6fcf6a"],OD=wl?"#6b6b30":"#1c6b34",OM=wl?"#7d7d3a":"#2a8a42";
+  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M41 85Q46 83 46.8 72L47.5 52L52.5 52L53.2 72Q54 83 59 85Z" fill="${T}"/><ellipse cx="50" cy="33" rx="34" ry="27" fill="${OD}"/><g fill="${OM}" opacity=".8"><circle cx="38" cy="26" r="11"/><circle cx="62" cy="28" r="12"/><circle cx="50" cy="43" r="13"/><circle cx="44" cy="16" r="9"/><circle cx="67" cy="45" r="9"/><circle cx="30" cy="42" r="8"/></g><path d="M50 66Q49 58 41 50M50 64Q52 56 60 49" stroke="${T}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`+OLV.map((l,i)=>lo(l[0],l[1],l[2],l[3],OG[i%OG.length],(i*.37%3).toFixed(1))).join("");
+  if(m===4)p+=OFP.map((a,i)=>fwv(a[0],a[1],(i*.3).toFixed(1))).join("");
+  if(m===5)p+=OFP.map((a,i)=>og(a[0],a[1],(i*.3).toFixed(1))).join("");
+  p+=OFL.map((l,i)=>lo(l[0],l[1],l[2],l[3],OG[(i+1)%OG.length],i)).join("");
+  p+="</g>";
+ }
+ else if(S.pt==="melon"){
+  const MG=wl?G:["#1f7a55","#18694a","#2a8f63"],MS=wl?"#6b6b2a":"#2f8f5b";
+  p=`<g class="sw" style="animation-delay:-${dl}s"><path d="M48 82Q36 88 26 83Q19 79 22 73Q26 70 28 74" stroke="${MS}" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M50 82Q47 68 38 60Q29 52 29 40" stroke="${MS}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M50 82Q60 77 74 73Q82 70 85 63" stroke="${MS}" stroke-width="2" fill="none" stroke-linecap="round"/>`+
+   [[50,80,-40,.9],[38,60,-75,1],[33,50,20,1],[29,40,-20,1.15],[44,64,40,.9],[74,73,60,.95],[85,63,25,.8]].map((l,i)=>ml(l[0],l[1],l[2],l[3],MG[i%3],(i*.43%3).toFixed(1))).join("");
+  if(m===4)p+=fwm(62,70,0)+fwm(42,30,1);
+  if(m===5)p+=wm(60,64,0);
   p+="</g>";
  }
  else{
@@ -1168,7 +1196,8 @@ const SHOP=[
  {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:209,type:"deco",flag:"be",per:3},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
- {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"}
+ {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
+ {id:"melon",e:"🍉",t:"Watermelon",d:"A creeping vine with big lobed leaves, yellow flowers and one huge striped watermelon.",p:399,type:"plant"}
 ];
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
@@ -1193,7 +1222,7 @@ function shopItem(it,g){
  }
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
-const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine"]],["✨ Garden friends",["bfly","bee"]]];
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee"]]];
 const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
