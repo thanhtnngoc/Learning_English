@@ -304,7 +304,7 @@ function qSpeak(btn,t){
   speechSynthesis.speak(u);
  }catch(e){}
 }
-function mark(w,d,q){if(!q)dailyCheck();
+function mark(w,d,q,nc){if(!q)dailyCheck();
  S.w=S.w||{};let m=S.m[w]||0,m0=m,wl=!!S.w[w];
  if(d>0){if(m<0){m=0;wl=false}else if(wl)wl=false;else m=Math.min(5,m+1)}
  else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
@@ -312,6 +312,7 @@ function mark(w,d,q){if(!q)dailyCheck();
  S.fr=S.fr||{};S.hv=S.hv||{};
  if(m<5)delete S.fr[w];else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
  if(q)return;S.td=ld();
+ if(nc)return;
  S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
 /* ===== Fruit & harvest ===== */
 function fstate(w){if((S.m[w]||0)<5)return 0;const f=S.fr&&S.fr[w];return f==null?2:f}
@@ -1290,7 +1291,7 @@ function waterPlant(word){
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===word)z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
   const okk=b.dataset.w===word;
-  const w0=!!(S.w&&S.w[word]),bp=pic(word);S.coins--;mark(word,okk?1:-1);
+  const w0=!!(S.w&&S.w[word]),bp=pic(word);S.coins--;mark(word,okk?1:-1,0,1);
   if(okk){speak(word);gain(5)}else{b.classList.add("no");save()}
   const nm=Math.min(S.m[word]||0,5);
   $("pbx").innerHTML=pic(word);
