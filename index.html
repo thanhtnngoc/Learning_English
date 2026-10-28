@@ -444,7 +444,9 @@ function rType(x){
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
   else{combo=0;inp.style.borderColor="var(--no)";save();hud()}
-  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b> "+esc(x[1])}</div>`+nextBtn(r);
+  const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
+  const wv=vi(x);
+  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b>"} ${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${wv?`<span class="vi">${esc(wv)}</span>`:""}</div>`+nextBtn(r);
   $("nb").onclick=rQuiz;$("nb").focus();
  };
  $("ck").onclick=check;
@@ -1216,7 +1218,7 @@ function gExchange(done){
 function gShop(){
  gClean();
  const g=S.gold||0;
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>SHOP.find(x=>x.id===id)).sort((a,b)=>a.p-b.p).map(it=>shopItem(it,g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
  $("gb").onclick=gGarden;
   $("gx").onclick=()=>gExchange(gShop);
  let lp=0,ht=0,tip=null,shown=0;
