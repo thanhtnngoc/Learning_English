@@ -246,6 +246,9 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 @keyframes vsy{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 .xq input{width:84px;margin:0;padding:8px 6px;text-align:center;font-size:18px;font-weight:800;border-radius:10px}
 .xq .u{font-size:18px;font-weight:800}
+.bf.dfl .bw{animation-duration:.05s}
+.bf.dfl.rest .bw{animation:none}
+.bf.dfl.fly svg{animation-duration:.2s}
 </style>
 </head>
 <body>
@@ -835,15 +838,16 @@ function gGarden(){
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
  const bf=S.bf&&S.own&&S.own.bfly?`<div class="bfs" id="bfs"></div>`:"";
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
- const strip=(bf||be)?`<div class="hvs">${bf?BRSVG:""}${be?BR2SVG+HVSVG:""}</div>`:"";
+ const df=S.df&&S.own&&S.own.dfly?`<div class="bfs" id="dfs"></div>`:"";
+ const strip=(bf||be||df)?`<div class="hvs">${bf?BRSVG:""}${(be||df)?BR2SVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
  const cells=w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("");
- const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee].join("|");
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
+ const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee,S.df,S.own&&S.own.dfly].join("|");
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
  let fresh=false;
  if(!GW||GW.dataset.sig!==sig){
   gwDrop();GW=document.createElement("div");GW.className="gw";GW.dataset.sig=sig;
-  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}`;fresh=true;
+  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}`;fresh=true;
  }
  const gg=GW.querySelector(".gg");
  gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"");
@@ -852,7 +856,7 @@ function gGarden(){
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
- if(fresh){bfInit();beeInit()}
+ if(fresh){bfInit();beeInit();dfInit()}
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
  $("gx").onclick=()=>gExchange(gGarden);
@@ -863,6 +867,7 @@ function progInfo(){
  const o=[];
  if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝",d:"🐝 Bees: "+Math.min(u,t)+"/"+t+(u>=t?" ✓ all done (resets tomorrow)":"")})}
  if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
+ if(S.df&&S.own&&S.own.dfly){const n=dfDay().n,t=dfTotal();o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" 💧 dew collected today"+(n>=t?" ✓":"")})}
  return o;
 }
 function bfDay(){const t=ld();if(!S.bfr||S.bfr.d!==t)S.bfr={d:t,n:0};return S.bfr}
@@ -1179,6 +1184,88 @@ function beeNew(h,g,i){
  sw=swarmWake(g,"__esw",wake);
  setTimeout(wake,rnd(300,2000));
 }
+/* ---- Dragonflies ---- */
+const dfWing=`<path d="M11.4 7.4C8.6 3.4 3.8 1.6 1 2.6C1.2 5.6 5.4 8.2 11.4 8.2Z" fill="#7dd3fc" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11.4 8.6C7.4 8.2 2.6 9.8 2 12.2C3.8 14.4 8.8 13 11.4 9.8Z" fill="#38bdf8" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11 7.6C8 5.4 4.4 3.6 1.8 3M10 8C7 7.6 4.6 7 2.6 5.4M11 9C8 9.6 5 10.6 2.8 12" stroke="#0369a1" stroke-width=".25" fill="none" opacity=".7"/>`;
+const dfSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><g>${dfWing}</g></g><g class="bw"><g transform="translate(24 0) scale(-1 1)">${dfWing}</g></g><path d="M12 10.2V22.6" stroke="#0e7490" stroke-width="1.5" stroke-linecap="round"/><path d="M12 11V22" stroke="#22d3ee" stroke-width=".7" stroke-dasharray="1.6 1.2"/><ellipse cx="12" cy="7.4" rx="1.7" ry="2.6" fill="#0891b2"/><circle cx="12" cy="4" r="1.6" fill="#0e7490"/><circle cx="10.7" cy="3.6" r=".9" fill="#155e75"/><circle cx="13.3" cy="3.6" r=".9" fill="#155e75"/></svg>`;
+const dfDay=()=>{const t=ld();if(!S.dfr||S.dfr.d!==t)S.dfr={d:t,n:0,seen:{}};return S.dfr};
+const dfTotal=()=>((S.own&&+S.own.dfly)||1)*6;
+const dfOk=w=>(S.m[w]||0)>=0&&!dfDay().seen[w];
+function dfAct(p,el){
+ const w=p.dataset.w,d=dfDay();
+ if(!dfOk(w)||d.n>=dfTotal())return false;
+ d.seen[w]=1;d.n++;S.coins=(S.coins||0)+1;save();
+ const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+1 💧");
+ const c=$("wc");if(c)c.textContent="💧 "+S.coins;
+ progUpd();return true;
+}
+function dfInit(){const h=$("dfs");if(!h)return;const n=((S.own&&+S.own.dfly)||1)*2;for(let i=0;i<n;i++)dfNew(h,h.parentNode,i)}
+const DFS=[[3,27],[22,26],[32,25.5],[50,23.5],[79,21.5],[95,19.5]]; // điểm đậu trên nhành (toạ độ SVG nhành ong)
+function dfNew(h,g,i){
+ const sz=24,el=document.createElement("div");el.className="bf dfl rest";
+ el.innerHTML=`<div class="bi">${dfSvg()}</div>`;h.appendChild(el);
+ const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
+ const done=()=>dfDay().n>=dfTotal();
+ const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
+ const hp=()=>{const s=DFS[i%6],e=Math.floor(i/6);return [g.clientWidth-150+s[0]+e*6-12,s[1]-e*3-8-3-12]};
+ const pa=()=>(i%2?10:15)+rnd(-6,6); // nằm ngang dọc theo cành
+ let [x,y]=hp(),ang=pa(),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=6,sw;
+ el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
+ const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
+ const o={el,bi,face,getAng:()=>ang};
+ const seen=p=>{const r=p.getBoundingClientRect(),c=r.top+r.height*.4;return c>40&&c<innerHeight-40&&r.right>0&&r.left<innerWidth};
+ const spots=()=>[...g.querySelectorAll(".pl")].filter(p=>dfOk(p.dataset.w)&&seen(p));
+ function fly(tx,ty,p){
+  flyCurve(o,x,y,tx,ty,hd,90,1.1,500,!!p,hh=>{
+   if(!el.isConnected)return;
+   x=tx;y=ty;el.classList.remove("fly");
+   if(p){
+    hd=null;bi.style.transition="";
+    el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(2500,6000);
+    if(dfOk(p.dataset.w))dfAct(p,el);
+    watch();
+   }else{hd=hh;step()}
+  });
+ }
+ function watch(){
+  if(!el.isConnected)return;
+  const now=Date.now();
+  if(cur&&!(cur.isConnected&&dfOk(cur.dataset.w)&&seen(cur))&&leaveAt>now+1500)leaveAt=now+rnd(400,1200);
+  if(now>=leaveAt){if(cur){prev=cur;cur=null}g.__lp&&g.__lp.delete(el);step();return}
+  setTimeout(watch,400);
+ }
+ function goHome(){
+  cur=null;g.__lp&&g.__lp.delete(el);
+  const [hx,hy]=hp();
+  flyCurve(o,x,y,hx,hy,hd,90,1.1,500,true,()=>{
+   if(!el.isConnected)return;
+   x=hx;y=hy;hd=null;miss=0;
+   el.classList.remove("fly");el.classList.add("rest");bi.style.transition="";face(pa());
+   sw.rest();
+  });
+ }
+ function wake(){
+  if(!el.isConnected)return;
+  miss=0;need=(3+Math.floor(Math.random()*2))*2;
+  [x,y]=hp();el.style.transform=`translate(${x}px,${y}px)`;
+  step();
+ }
+ function step(){
+  if(!el.isConnected)return;
+  const [t,b]=vis(),w=g.clientWidth,any=!done()&&spots().length>0;
+  if(any)miss=0;
+  const s=any&&Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&dfOk(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>dfOk(p.dataset.w)&&seen(p))):null;
+  if(s){
+   cur=s.p;
+   fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
+  }else{
+   if(!any){if(miss>=need){goHome();return}miss++}
+   cur=null;
+   fly(rnd(0,Math.max(1,w-sz)),t+rnd(0,Math.max(1,b-t-sz)),null);
+  }
+ }
+ sw=swarmWake(g,"__dsw",wake);
+ setTimeout(wake,rnd(300,2000));
+}
 function harvestOne(w,btn){
  if(ripe(w)){const r=btn.getBoundingClientRect();const n=harvest(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gGarden();return}
  const m=S.m[w]||0;
@@ -1197,6 +1284,7 @@ const SHOP=[
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
  {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:109,type:"deco",flag:"bf",per:4},
  {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:209,type:"deco",flag:"be",per:3},
+ {id:"dfly",e:"🪽",t:"Dragonflies",d:"Skim over the garden and drop dew: +1 💧 per plant landing (once per plant per day).",p:149,type:"deco",flag:"df",per:2},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
@@ -1225,7 +1313,7 @@ function shopItem(it,g){
  }
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
-const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee"]]];
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly"]]];
 const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
