@@ -664,9 +664,10 @@ function gShell(title){
  $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Back</button><b>${title}</b><span class="chip" id="gs"></span></div><div id="ga"></div>`;
  $("gb").onclick=rGames;
 }
+function payout(score){const w=Math.ceil(score/30);if(w>0){S.coins=(S.coins||0)+w;save()}return w}
 function gOver(key,score,again){
  const best=S.gb[key]||0,nb=score>best;if(nb)S.gb[key]=score;
- const w=Math.ceil(score/30);S.coins+=w;save();
+ const w=payout(score);
  $("ga").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:48px">${nb&&score>0?"🏆":"🎮"}</div><b>${nb&&score>0?"New best!":"Game over"}</b><br>Score ${score} · Best ${Math.max(best,score)}<br><span style="color:var(--pr);font-weight:700">+${w} 💧</span></div><div class="row"><button class="btn" id="ag">🔁 Play again</button><button class="btn l" id="bk">← Games</button></div>`;
  $("ag").onclick=again;$("bk").onclick=rGames;
 }
@@ -685,7 +686,7 @@ function gBalloon(){
  spdBind();const ar=$("gar"),unfit=fitArena(ar,76),COL=["#dc2626","#d97706","#16a34a","#2563eb","#9333ea","#db2777"];
  let lives=3+takeLife(),score=0,lvl=0,cmb=0,alive=true,over=false,bl=[],target=null,pen=false,roundOver=false,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over&&score>(S.gb.balloon||0)){S.gb.balloon=score;save()}};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over){if(score>(S.gb.balloon||0))S.gb.balloon=score;const w=payout(score);if(w)toast("+"+w+" 💧");save()}};
  function end(){over=true;timer=setTimeout(()=>gOver("balloon",score,gBalloon),700)}
  function next(){
   bl.forEach(b=>b.el.remove());bl=[];pen=false;roundOver=false;
@@ -752,7 +753,7 @@ function gSpace(){
  spdBind();const ar=$("gar"),inp=$("gt"),unfit=fitArena(ar,132,()=>document.activeElement===inp&&matchMedia("(pointer:coarse)").matches,(o,n)=>{const r=n/o;en.forEach(e=>{if(!e.dead){e.y*=r;e.v*=r}})});
  let hold=0,lastAng=999,lives=3+takeLife(),score=0,lvl=0,cmb=0,alive=true,over=false,spawnT=0,last=performance.now(),raf=0,timer=0;
  const upd=()=>{$("gs").textContent="❤️".repeat(Math.max(lives,0))+" ⭐ "+score};
- gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over&&score>(S.gb.space||0)){S.gb.space=score;save()}};
+ gStop=()=>{alive=false;cancelAnimationFrame(raf);clearTimeout(timer);unfit();if(!over){if(score>(S.gb.space||0))S.gb.space=score;const w=payout(score);if(w)toast("+"+w+" 💧");save()}};
  function end(){over=true;inp.disabled=true;timer=setTimeout(()=>gOver("space",score,gSpace),900)}
  function spawn(){
   const used=new Set(en.filter(e=>!e.dead&&e.y<e.el.offsetHeight+20).map(e=>e.lane));
