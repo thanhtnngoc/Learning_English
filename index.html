@@ -140,7 +140,6 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:10;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 .pl i{display:block;line-height:0}
-.gg .pl{content-visibility:auto;contain-intrinsic-size:auto 125px}
 .pl svg{width:60px;height:78px;overflow:visible}
 .q svg{width:76px;height:99px;vertical-align:middle;overflow:visible}
 .q.pb svg{width:140px;height:182px}
@@ -192,7 +191,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 @keyframes cfy{to{transform:translate(-50%,-50px);opacity:0}}
 .shi{display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:10px;background:var(--card);border:1px solid var(--bd);border-radius:16px}
 .shi .btn{flex:none;padding:8px 12px;font-size:14px;min-width:78px}
-.bfs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.bfs{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:2}
 .bf{position:absolute;left:0;top:0;width:24px;height:24px;will-change:transform}
 .bf .bi{width:100%;height:100%;transition:transform .7s}
 .bf svg{width:100%;height:100%;display:block;overflow:visible}
@@ -309,38 +308,43 @@ function qSpeak(btn,t){
   speechSynthesis.speak(u);
  }catch(e){}
 }
+let RV=null;
 function mark(w,d,q,nc){if(!q)dailyCheck();
  S.w=S.w||{};let m=S.m[w]||0,m0=m,wl=!!S.w[w];
+ RV=(d>0&&wl&&m>=0)?w:null;
  if(d>0){if(m<0){m=0;wl=false}else if(wl)wl=false;else m=Math.min(5,m+1)}
  else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
  S.m[w]=m;S.w[w]=wl?1:0;
  S.fr=S.fr||{};S.hv=S.hv||{};
  if(m<5)delete S.fr[w];else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
  if(q)return;S.td=ld();
+ S.pd=S.pd||{};S.pd[ld()]=1;
+ Object.keys(S.pd).sort().slice(0,-10).forEach(k=>delete S.pd[k]);
  if(nc)return;
  S.c=S.c||{};const c=S.c[w]=S.c[w]||[0,0];c[d>0?0:1]++}
 /* ===== Fruit & harvest ===== */
-function fstate(w){if((S.m[w]||0)<5)return 0;const f=S.fr&&S.fr[w];return f==null?2:f}
+function fstate(w){if((S.m[w]||0)<5)return 0;const f=S.fr&&S.fr[w];return f==null?((S.hv&&S.hv[w]===ld())?1:2):f}
 function ripe(w){return (S.m[w]||0)>=5&&fstate(w)===2&&!(S.w&&S.w[w])&&((S.hv||{})[w]!==ld())}
-function fruitUp(w){if((S.m[w]||0)<5)return;S.fr=S.fr||{};S.hv=S.hv||{};if(S.hv[w]===ld())return;const f=fstate(w);if(f<2)S.fr[w]=f+1}
-function harvest(w){if(!ripe(w))return 0;S.fr[w]=0;S.hv[w]=ld();S.gold=(S.gold||0)+9;return 9}
+function fruitUp(w){if(RV===w){RV=null;return}if((S.m[w]||0)<5)return;S.fr=S.fr||{};S.hv=S.hv||{};if(S.hv[w]===ld())return;const f=fstate(w);if(f<2)S.fr[w]=f+1}
+function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.gold=(S.gold||0)+9;return 9}
 /* ===== Daily thirst ===== */
 const dstr=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ld=()=>dstr(new Date());
 function dailyCheck(){
  if(cUser&&!pulled)return false;
  const t=ld();
- if(!S.dd){S.dd=t;save();return false}
+ if(!S.dd){S.dd=t;S.td=t;save();return false}
  if(S.dd>=t)return false;
  const ws=W(),c0=S.coins||0;let days=0,missed=0,pct=0,keepC=0,greenC=0,lost=0,shUsed=0;
  S.w=S.w||{};
+ const did=k=>k===S.td||!!(S.pd&&S.pd[k]);
  const d=new Date(S.dd+"T12:00:00");
  for(let i=0;i<400;i++){
   const k=dstr(d);if(k>=t)break;
   days++;
   let useSh=false;
-  if(k!==S.td&&S.inv&&S.inv.shield>0){S.inv.shield--;shUsed++;useSh=true}
-  if(k!==S.td&&!useSh){
+  if(!did(k)&&S.inv&&S.inv.shield>0){S.inv.shield--;shUsed++;useSh=true}
+  if(!did(k)&&!useSh){
    missed++;
    const cut=Math.ceil((S.coins||0)*.1);pct+=cut;
    S.coins=Math.max(0,(S.coins||0)-cut);
@@ -1021,14 +1025,14 @@ function bfNew(h,g,i){
  const occ=g.__bo||(g.__bo=new Map());
  const set=p=>occ.get(p)||(occ.set(p,new Set()),occ.get(p));
  const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2&&bfDay().n<bfTotal()){S.w[w]=0;bfDay().n++;save();bfFresh(p)}};
- const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
+ const vis=()=>[0,g.clientHeight];
  const hp=()=>[12+(i%6)*20-sz/2,11+(i%2)*6-Math.floor(i/6)*2-sz/2];
  let [x,y]=hp(),ang=rnd(-25,25),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4;
  let sw;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
- const seen=p=>{const r=p.getBoundingClientRect(),c=r.top+r.height*.4;return c>40&&c<innerHeight-40&&r.right>0&&r.left<innerWidth};
+ const seen=p=>p.isConnected;
  const spots=()=>[...g.querySelectorAll(".pl")].filter(p=>bfBloom(p.dataset.w)&&seen(p));
  function fly(tx,ty,p){
   flyCurve(o,x,y,tx,ty,hd,35,2.2,160,!!p,hh=>{
@@ -1122,13 +1126,13 @@ function beeNew(h,g,i){
  let spent=i<beeDay().used,sd=ld();
  el.classList.toggle("spent",spent);
  const done=()=>spent||beeDay().used>=beeTotal();
- const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
+ const vis=()=>[0,g.clientHeight];
  const hp=()=>[g.clientWidth-74-sz/2,41-sz/2];
  let [x,y]=hp(),ang=rnd(-30,30),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4,sw;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
- const seen=p=>{const r=p.getBoundingClientRect(),c=r.top+r.height*.4;return c>40&&c<innerHeight-40&&r.right>0&&r.left<innerWidth};
+ const seen=p=>p.isConnected;
  const spots=()=>[...g.querySelectorAll(".pl")].filter(p=>beeOk(p.dataset.w)&&seen(p));
  function fly(tx,ty,p){
   flyCurve(o,x,y,tx,ty,hd,65,1.5,360,!!p,hh=>{
@@ -1199,20 +1203,20 @@ function dfAct(p,el){
  progUpd();return true;
 }
 function dfInit(){const h=$("dfs");if(!h)return;const n=((S.own&&+S.own.dfly)||1)*2;for(let i=0;i<n;i++)dfNew(h,h.parentNode,i)}
-const DFS=[[3,27],[22,26],[32,25.5],[50,23.5],[79,21.5],[95,19.5]]; // điểm đậu trên nhành (toạ độ SVG nhành ong)
+const DFS=[[0,27],[14,26],[48,23],[102,22],[116,21],[130,21],[158,20],[188,19.5]]; // điểm đậu rải đều trên cành (toạ độ SVG nhành ong) // điểm đậu trên nhành (toạ độ SVG nhành ong)
 function dfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf dfl rest";
  el.innerHTML=`<div class="bi">${dfSvg()}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
  const done=()=>dfDay().n>=dfTotal();
- const vis=()=>{const r=g.getBoundingClientRect(),t=Math.max(0,-r.top),b=Math.min(r.height,innerHeight-r.top);return b-t>80?[t,b]:[0,Math.min(r.height,320)]};
+ const vis=()=>[0,g.clientHeight];
  const hp=()=>{const s=DFS[i%6],e=Math.floor(i/6);return [g.clientWidth-150+s[0]+e*6-12,s[1]-e*3-8-3-12]};
  const pa=()=>(i%2?10:15)+rnd(-6,6); // nằm ngang dọc theo cành
  let [x,y]=hp(),ang=pa(),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=6,sw;
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
- const seen=p=>{const r=p.getBoundingClientRect(),c=r.top+r.height*.4;return c>40&&c<innerHeight-40&&r.right>0&&r.left<innerWidth};
+ const seen=p=>p.isConnected;
  const spots=()=>[...g.querySelectorAll(".pl")].filter(p=>dfOk(p.dataset.w)&&seen(p));
  function fly(tx,ty,p){
   flyCurve(o,x,y,tx,ty,hd,90,1.1,500,!!p,hh=>{
@@ -1284,7 +1288,7 @@ const SHOP=[
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
  {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:109,type:"deco",flag:"bf",per:4},
  {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:209,type:"deco",flag:"be",per:3},
- {id:"dfly",e:"🪽",t:"Dragonflies",d:"Skim over the garden and drop dew: +1 💧 per plant landing (once per plant per day).",p:149,type:"deco",flag:"df",per:2},
+ {id:"dfly",e:"🪽",t:"Dragonflies",d:"Skim over the garden and drop dew: +1 💧 per plant landing (once per plant per day).",p:209,type:"deco",flag:"df",per:2},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
@@ -1454,7 +1458,7 @@ $("rsf").onclick=()=>{
  ens();
  for(const x in PC)delete PC[x];
  fc=null;combo=0;fi=0;flip=false;hm=false;
- S.dd=ld();
+ S.dd=ld();S.td=ld();
  save();
  if(cUser)cPush();
  hud();render();
@@ -1512,6 +1516,8 @@ function cMerge(L,R){
  Object.keys(n.gb||{}).forEach(k=>{M.gb[k]=Math.max(M.gb[k]||0,n.gb[k]||0)});
  const have=new Set((M.base||BASE).concat(M.custom).map(x=>x[0].toLowerCase()));
  (o.custom||[]).forEach(x=>{const k=x[0].toLowerCase();if(!have.has(k)){have.add(k);M.custom.push(clone(x))}});
+ M.td=[n.td,o.td].filter(Boolean).sort().pop();
+ M.pd=Object.assign({},o.pd,n.pd);
  return M;
 }
 function applyS(M){
