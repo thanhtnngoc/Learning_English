@@ -664,7 +664,7 @@ function gShell(title){
  $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Back</button><b>${title}</b><span class="chip" id="gs"></span></div><div id="ga"></div>`;
  $("gb").onclick=rGames;
 }
-function payout(score){const w=Math.ceil(score/30);if(w>0){S.coins=(S.coins||0)+w;save()}return w}
+function payout(score){const w=Math.ceil(score/10);if(w>0){S.coins=(S.coins||0)+w;save()}return w}
 function gOver(key,score,again){
  const best=S.gb[key]||0,nb=score>best;if(nb)S.gb[key]=score;
  const w=payout(score);
