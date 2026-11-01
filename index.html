@@ -248,6 +248,20 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .bf.dfl .bw{animation-duration:.05s}
 .bf.dfl.rest .bw{animation:none}
 .bf.dfl.fly svg{animation-duration:.2s}
+.bf.gho{width:18px;height:18px}
+.gho .gj{display:none}
+.gho.jmp .gj{display:inline}
+.gho.jmp .gs{display:none}
+.bf.gho .bi{transition:none}
+.hvs .gt{left:calc(50% - 25px);top:38px;width:50px;height:26px}
+.gbi{transform-box:fill-box;transform-origin:50% 100%}
+.gb{transform-box:fill-box;transform-origin:50% 100%;animation:gby 4s ease-in-out infinite}
+@keyframes gby{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.gbm{transform-box:fill-box;transform-origin:50% 100%;opacity:0}
+.gg.grow .gbi{animation:gbg 1s cubic-bezier(.2,1.4,.4,1) both}
+.gg.grow .gbm{animation:gbm .9s ease-out}
+@keyframes gbg{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes gbm{0%{transform:scale(.2);opacity:1}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:0}}
 </style>
 </head>
 <body>
@@ -264,7 +278,7 @@ const BASE=[["police","/pəˈliːs/","the official organization that is responsi
 let S={xp:0,streak:0,last:"",custom:[],m:{}};
 try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3]]:typeof x[4]==="boolean"?[x[0],x[1],x[2],x[3]||"","",x[4]]:x);
-function ens(){S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
+function ens(){S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
 ens();
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
@@ -311,12 +325,15 @@ function qSpeak(btn,t){
 let RV=null;
 function mark(w,d,q,nc){if(!q)dailyCheck();
  S.w=S.w||{};let m=S.m[w]||0,m0=m,wl=!!S.w[w];
+ S.wp=S.wp||{};
+ if(!wl)delete S.wp[w];
  RV=(d>0&&wl&&m>=0)?w:null;
  if(d>0){if(m<0){m=0;wl=false}else if(wl)wl=false;else m=Math.min(5,m+1)}
  else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
  S.m[w]=m;S.w[w]=wl?1:0;
  S.fr=S.fr||{};S.hv=S.hv||{};
  if(m<5)delete S.fr[w];else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
+ if(!q||!S.w[w])delete S.wp[w];
  if(q)return;S.td=ld();
  S.pd=S.pd||{};S.pd[ld()]=1;
  Object.keys(S.pd).sort().slice(0,-10).forEach(k=>delete S.pd[k]);
@@ -350,14 +367,16 @@ function dailyCheck(){
    S.coins=Math.max(0,(S.coins||0)-cut);
    let pool=S.coins;
    const act=ws.filter(x=>(S.m[x[0]]||0)>=0).sort((a,b)=>(S.m[b[0]]||0)-(S.m[a[0]]||0));
+   const wil=act.filter(x=>S.w[x[0]]);          // chỉ cây đang héo mới cần cứu
    const kept=new Set();
-   act.forEach(x=>{if(pool>=2){pool-=2;keepC+=2;kept.add(x[0]);S.w[x[0]]=1}});
-   act.forEach(x=>{if(kept.has(x[0])&&pool>=4){pool-=4;greenC+=4;S.w[x[0]]=0}});
-   lost+=act.length-kept.size;
+   // 1) 2 💧 giữ cấp cho cây héo, cấp cao trước
+   wil.forEach(x=>{if(pool>=2){pool-=2;keepC+=2;kept.add(x[0]);delete S.wp[x[0]]}});
+   // 2) 4 💧 làm xanh lại, chỉ cho cây héo đã được giữ cấp
+   wil.forEach(x=>{if(kept.has(x[0])&&pool>=4){pool-=4;greenC+=4;S.w[x[0]]=0}});
+   lost+=wil.filter(x=>!kept.has(x[0])).length;
    S.coins=pool;
-   ws.forEach(x=>{if(!kept.has(x[0]))mark(x[0],-1,1)});
-  }else{
-   ws.forEach(x=>mark(x[0],-1,1));
+   // cây xanh: không đụng tới. Cây héo không được giữ cấp: tụt 1 cấp
+   wil.forEach(x=>{if(!kept.has(x[0]))mark(x[0],-1,1)});
   }
   d.setDate(d.getDate()+1)}
  S.dd=t;save();
@@ -365,7 +384,7 @@ function dailyCheck(){
   const alive=ws.filter(x=>(S.m[x[0]]||0)>=0);
   showReport({days:missed,pct:pct,keepC:keepC,greenC:greenC,total:c0-S.coins,green:alive.filter(x=>!S.w[x[0]]).length,wilt:alive.filter(x=>S.w[x[0]]).length,lost:lost,left:S.coins,sh:shUsed});
  }else if(shUsed)toast("🛡️ Shield saved your garden"+(shUsed>1?" ("+shUsed+" days)":""));
- else toast("🌙 "+(days>1?days+" days passed":"New day")+": plants are thirsty");
+ else toast("🌙 New day");
  return true;
 }
 function showReport(r){
@@ -454,7 +473,7 @@ function rType(x){
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);inp.style.borderColor="var(--ok)";const g=15+Math.min(combo,5)*2;gain(g,"Correct! +"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
   else{combo=0;inp.style.borderColor="var(--no)";save();hud()}
-  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct!":"❌ Correct answer: <b>"+esc(x[0])+"</b> "+esc(x[1])}</div>`+nextBtn(r);
+  $("nx").innerHTML=`<div class="q" style="margin-top:10px">${okk?"✅ Correct! "+esc(x[1]):"❌ Correct answer: <b>"+esc(x[0])+"</b> "+esc(x[1])}</div>`+nextBtn(r);
   $("nb").onclick=rQuiz;$("nb").focus();
  };
  $("ck").onclick=check;
@@ -583,7 +602,7 @@ const THIRSTY=`<g class="th"><path d="M86 -16Q95 -4 86 3Q77 -4 86 -16Z" fill="no
 const soilSvg=()=>{
  const s=S.pot||S.soil;
  if(s==="pot")return `<path d="M30 91H70L64 109H36Z" fill="#c2410c"/><path d="M64 91H70L64 109H60Z" fill="#9a3412" opacity=".55"/>`;
- if(s==="potm")return `<defs><linearGradient id="mgi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1f5c"/><stop offset=".6" stop-color="#1d3fa8"/><stop offset="1" stop-color="#3b6fe0"/></linearGradient></defs><g transform="rotate(-16 50 72)"><path d="M12 64Q50 50 88 60Q50 94 12 64Z" fill="url(#mgi)" stroke="#7cc3f5" stroke-width="1" stroke-linejoin="round"/><path d="M28 64v6M36 62v9M44 61v10M52 60v10M60 60v9M68 60v7M76 61v4" stroke="#60a5fa" stroke-width="1" opacity=".45"/><path d="M22 66Q50 58 80 62Q50 82 22 66Z" fill="${(SOIL[S.soil||"default"]||SOIL.default)[1]}"<circle cx="40" cy="68" r="1.2" fill="#4a2f18"/><circle cx="60" cy="67" r="1.1" fill="#4a2f18"/></g>`;
+ if(s==="potm")return `<defs><linearGradient id="mgi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1f5c"/><stop offset=".6" stop-color="#1d3fa8"/><stop offset="1" stop-color="#3b6fe0"/></linearGradient></defs><g transform="rotate(-16 50 72)"><path d="M12 64Q50 50 88 60Q50 94 12 64Z" fill="url(#mgi)" stroke="#7cc3f5" stroke-width="1" stroke-linejoin="round"/><path d="M28 64v6M36 62v9M44 61v10M52 60v10M60 60v9M68 60v7M76 61v4" stroke="#60a5fa" stroke-width="1" opacity=".45"/><path d="M22 66Q50 58 80 62Q50 82 22 66Z" fill="${(SOIL[S.soil||"default"]||SOIL.default)[1]}"/><circle cx="40" cy="68" r="1.2" fill="#4a2f18"/><circle cx="60" cy="67" r="1.1" fill="#4a2f18"/></g>`;
  if(s==="potw")return `<ellipse cx="50" cy="90" rx="42" ry="20" fill="#22d3ee" opacity=".18"/><ellipse cx="50" cy="82" rx="34" ry="10.5" fill="#075985"/><ellipse cx="50" cy="82.5" rx="31" ry="8.6" fill="#06b6d4"/><ellipse cx="50" cy="82.8" rx="26" ry="7" fill="#0e7490"/><ellipse cx="50" cy="83" rx="20" ry="5.2" fill="none" stroke="#67e8f9" stroke-width="1.2"/><ellipse cx="50" cy="83.2" rx="14" ry="3.6" fill="#155e75"/><ellipse cx="50" cy="83.3" rx="14" ry="3.6" fill="none" stroke="#e0f2fe" stroke-width="1" stroke-dasharray="14 5"/><ellipse cx="50" cy="83.5" rx="8" ry="2.1" fill="#083344"/><ellipse cx="50" cy="83.5" rx="8" ry="2.1" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray="9 4"/><path d="M26 80Q36 76 48 77M74 85Q64 89 52 88M30 86Q38 90 46 89" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>`;
  if(s==="potf")return `<path d="M13 102Q9 88 17 76Q18 85 24 87Q19 73 28 62Q31 73 37 77Q35 66 42 58Q46 69 50 73Q54 69 58 58Q65 66 63 77Q69 73 72 62Q81 73 76 87Q82 85 83 76Q91 88 87 102Q70 112 50 112Q30 112 13 102Z" fill="#ea580c"/><path d="M20 102Q17 91 24 83Q25 90 30 91Q28 80 35 72Q38 80 43 83Q45 75 50 70Q55 75 57 83Q62 80 65 72Q72 80 70 91Q75 90 76 83Q83 91 80 102Q66 109 50 109Q34 109 20 102Z" fill="#fb923c"/><path d="M28 102Q27 94 33 89Q35 95 39 95Q41 88 50 84Q59 88 61 95Q65 95 67 89Q73 94 72 102Q62 107 50 107Q38 107 28 102Z" fill="#fbbf24"/><path d="M19 79Q28 61 50 64Q39 66 33 73Q42 69 55 71Q40 75 31 84Q26 82 19 79Z" fill="#7c2d12" opacity=".9"/><path d="M24 70Q36 63 48 66" stroke="#9a3412" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".7"/>`;
  const c=SOIL[s||"default"]||SOIL.default;
@@ -651,10 +670,11 @@ function plant(m,wl){
  const vn=S.pt==="vine"&&isPot()&&m>=3;
  if(wl)p=wiltFx(p);
  const vp=vn?(wl?wiltFx(vineSvg(m,G)):vineSvg(m,G)):"";
- return `<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}${vn?"":p}${soilFront()}${vp}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
+ const gr=ghOn()&&!ghVine(m)?gbSvg():"";
+ return `<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}${vn?"":p}${gr}${soilFront()}${vp}${m===5&&!wl?SK:""}${wl?THIRSTY:""}</svg>`;
 }
 const PC={};
-const pk=(m,wl)=>{const k=(S.pot||"")+(S.soil||"default")+"|"+(S.pt||"tree")+"|"+m+"|"+wl;return PC[k]||(PC[k]=plant(m,wl))};
+const pk=(m,wl)=>{const k=(S.pot||"")+(S.soil||"default")+"|"+(S.pt||"tree")+"|"+m+"|"+wl+"|"+(ghOn()?1:0);return PC[k]||(PC[k]=plant(m,wl))};
 function rot(){const k=(S.pot||"")+(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${soilFront()}${THIRSTY}</svg>`)}
 const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=f===2?5:f===1?4:3}return pk(v,wt)};
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
@@ -843,24 +863,26 @@ function gGarden(){
  const bf=S.bf&&S.own&&S.own.bfly?`<div class="bfs" id="bfs"></div>`:"";
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const df=S.df&&S.own&&S.own.dfly?`<div class="bfs" id="dfs"></div>`:"";
+ const gh=S.gh&&S.own&&S.own.ghop?`<div class="bfs" id="ghs"></div>`:"";
  const strip=(bf||be||df)?`<div class="hvs">${bf?BRSVG:""}${(be||df)?BR2SVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
  const cells=w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("");
- const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee,S.df,S.own&&S.own.dfly].join("|");
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧). Answer right and it grows, answer wrong and it wilts. Plants also grow when you answer well in Cards, Quiz and the other games. Every new day all plants get thirsty; practice a word to refresh its plant. Skip a day and you lose 10% 💧, plus 2 💧 per plant to keep its level and 4 💧 more to make it green again.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
+ const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee,S.df,S.own&&S.own.dfly,S.gh,S.own&&S.own.ghop].join("|");
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧): answer right and it grows, answer wrong and it wilts. Answering well in Quiz and the other games also makes plants grow.<br><br>Skip a day and you lose 10% 💧. Green plants are never affected. A wilted plant costs 2 💧 to keep its level; 4 💧 more makes it green again. Without enough 💧, it drops a level.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
  let fresh=false;
  if(!GW||GW.dataset.sig!==sig){
   gwDrop();GW=document.createElement("div");GW.className="gw";GW.dataset.sig=sig;
-  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}`;fresh=true;
+  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}${gh}`;fresh=true;
  }
  const gg=GW.querySelector(".gg");
- gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"");
+ gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"")+(GHFX?" grow":"");
+ GHFX=false;
  gg.innerHTML=cells;
  $("gwslot").replaceWith(GW);
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
- if(fresh){bfInit();beeInit();dfInit()}
+ if(fresh){bfInit();beeInit();dfInit();ghInit()}
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
  $("gx").onclick=()=>gExchange(gGarden);
@@ -871,7 +893,8 @@ function progInfo(){
  const o=[];
  if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝",d:"🐝 Bees: "+Math.min(u,t)+"/"+t+(u>=t?" ✓ all done (resets tomorrow)":"")})}
  if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
- if(S.df&&S.own&&S.own.dfly){const n=dfDay().n,t=dfTotal();o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" 💧 dew collected today"+(n>=t?" ✓":"")})}
+ if(S.df&&S.own&&S.own.dfly){const t=dfTotal(),n=Math.min(dfDay().n,t);o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" plants dewed today (+"+n*DEW+" 💧)"+(n>=t?" ✓":"")})}
+ if(S.gh&&S.own&&S.own.ghop){const t=ghTotal(),n=Math.min(ghDay().n,t);o.push({s:"🦗",d:"🦗 Grasshoppers: "+n+"/"+t+" plants visited today (+"+n*GHG+" 🪙)"+(n>=t?" ✓":"")})}
  return o;
 }
 function bfDay(){const t=ld();if(!S.bfr||S.bfr.d!==t)S.bfr={d:t,n:0};return S.bfr}
@@ -915,6 +938,22 @@ function flyCurve(o,x0,y0,tx,ty,hd0,spd,minDur,rate,land,cb){
  requestAnimationFrame(fr);
 }
 const LS=LV.map(l=>{const r=l[2]*Math.PI/180;return[l[0]+Math.sin(r)*9.5*l[3],l[1]-Math.cos(r)*9.5*l[3]]});
+const LSLOT={ // điểm đậu theo loại cây, toạ độ SVG của cây
+ orange:[[24,30],[34,12],[50,8],[66,12],[76,30],[30,50],[50,56],[70,50],[50,32]],
+ melon:[[24,24],[38,38],[26,54],[52,54],[42,68],[84,64],[88,52]],
+ vine:[[50,59],[41,64],[59,64],[33,70],[67,70],[22,77],[78,77]]
+};
+const PCAP={tree:4,orange:4,melon:3,vine:2}; // số con tối đa đậu cùng lúc trên 1 cây
+const stg=w=>{const m=Math.min(S.m[w]||0,5);if(m>=5){const f=fstate(w);return f===2?5:f===1?4:3}return m};
+function plSlots(p){
+ const w=p.dataset.w,v=stg(w);
+ if(v<0)return{s:[[50,76]],cap:1};
+ if(v<3)return{s:[[[50,68]],[[50,58]],[[50,44]]][v],cap:1}; // cây còn nhỏ: 1 con
+ const t=S.pt==="vine"&&!isPot()?"tree":(S.pt||"tree"); // dâu không có chậu vẫn vẽ như cây táo
+ const s=(LSLOT[t]||LS).slice();
+ if(t==="melon"&&v===5)s.push([60,43]); // đỉnh quả dưa
+ return{s,cap:PCAP[t]||4};
+}
 function pickSlot(g,me,dmin,ok){
  const reg=g.__lp||(g.__lp=new Map()),gr=g.getBoundingClientRect(),others=[];
  reg.forEach((v,k)=>{if(k!==me)others.push(v)});
@@ -922,9 +961,12 @@ function pickSlot(g,me,dmin,ok){
  g.querySelectorAll(".pl").forEach(p=>{
   if(!ok(p))return;
   const sv=p.querySelector("svg");if(!sv)return;
-  const r=sv.getBoundingClientRect(),k=r.width/100,ox=r.left-gr.left,oy=r.top-gr.top;
-  const sl=LS.map(s=>{
-   const x=ox+s[0]*k,y=oy+(s[1]+VT())*k;let m=60;
+  const ps=plSlots(p);
+  if(others.filter(v=>v.w===p.dataset.w).length>=ps.cap)return; // cây này đã đủ chỗ
+  const r=sv.getBoundingClientRect(),vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh),
+   ox=r.left-gr.left+r.width/2,oy=r.top-gr.top+(r.height-vh*k)/2;
+  const sl=ps.s.map(s=>{
+   const x=ox+(s[0]-50)*k,y=oy+(s[1]+VT())*k;let m=60;
    for(const v of others){const d=Math.hypot(v.x-x,v.y-y);if(d<m)m=d}
    return{x,y,m};
   }).filter(s=>s.m>=dmin);
@@ -934,7 +976,7 @@ function pickSlot(g,me,dmin,ok){
  const c=byP[Math.floor(Math.random()*byP.length)];
  let best=null,bs=-1;
  c.sl.forEach(s=>{const sc=s.m+Math.random()*10;if(sc>bs){bs=sc;best=s}});
- reg.set(me,{x:best.x,y:best.y});
+ reg.set(me,{x:best.x,y:best.y,w:c.p.dataset.w});
  return{p:c.p,x:best.x,y:best.y};
 }
 function swarmWake(g,key,wake){
@@ -1024,7 +1066,7 @@ function bfNew(h,g,i){
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
  const occ=g.__bo||(g.__bo=new Map());
  const set=p=>occ.get(p)||(occ.set(p,new Set()),occ.get(p));
- const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2&&bfDay().n<bfTotal()){S.w[w]=0;bfDay().n++;save();bfFresh(p)}};
+ const chk=p=>{const w=p.dataset.w;if(S.w&&S.w[w]&&(S.m[w]||0)>=0&&set(p).size>=2&&bfDay().n<bfTotal()){S.w[w]=0;delete S.wp[w];bfDay().n++;save();bfFresh(p)}};
  const vis=()=>[0,g.clientHeight];
  const hp=()=>[12+(i%6)*20-sz/2,11+(i%2)*6-Math.floor(i/6)*2-sz/2];
  let [x,y]=hp(),ang=rnd(-25,25),cur=null,prev=null,leaveAt=0,hd=null,miss=0,need=4;
@@ -1091,6 +1133,7 @@ function bfNew(h,g,i){
 /* ---- Bees ---- */
 const beeSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 4.3Q9.6 2.6 8.2 2.1M13.2 4.3Q14.4 2.6 15.8 2.1" stroke="#111" stroke-width=".7" stroke-linecap="round" fill="none"/><circle cx="8" cy="2" r=".85" fill="#111"/><circle cx="16" cy="2" r=".85" fill="#111"/><circle cx="12" cy="6" r="2.6" fill="#111"/><clipPath id="beeb"><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z"/></clipPath><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="#f5b335"/><g clip-path="url(#beeb)"><rect x="6" y="11.6" width="12" height="1.5" fill="#111"/><rect x="6" y="14.4" width="12" height="1.5" fill="#111"/><rect x="6" y="17.2" width="12" height="1.5" fill="#111"/><rect x="6" y="20.2" width="12" height="4" fill="#111"/></g><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="none" stroke="#111" stroke-width=".8"/><circle cx="12" cy="9.4" r="3" fill="#f5b335" stroke="#111" stroke-width=".8"/><g class="bw"><g transform="translate(12 10.5) scale(1.3) translate(-12 -10.5)"><path d="M11.6 9.8C9 6.2 5 4.6 2 5.8C2.2 9 6 11.2 11.6 10.8Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 9.8C15 6.2 19 4.6 22 5.8C21.8 9 18 11.2 12.4 10.8Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M11.6 11C8 10.6 3.6 12.2 3.4 15.4C4.6 18 8.6 17 11.6 13.2Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 11C16 10.6 20.4 12.2 20.6 15.4C19.4 18 15.4 17 12.4 13.2Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/></g></g></svg>`;
 const beeOk=w=>bfBloom(w)&&!(S.w&&S.w[w]);
+const BEW=.3; // xác suất ong làm héo
 const beeTotal=()=>((S.own&&+S.own.bee)||1)*3;
 function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}};return S.bee}
 function beeUpd(p){
@@ -1111,7 +1154,8 @@ function beeAct(p){
   if(m===4)S.m[w]=5;
   S.fr[w]=2;
   toast("🐝 \""+w+"\" has fruit now");
- }else if(Math.random()<.3){
+ }else if(Math.random()<BEW){
+  if(!S.w[w])S.wp[w]=1;
   S.w[w]=1;
   toast("🐝 stung \""+w+"\" — it wilted");
  }
@@ -1192,13 +1236,14 @@ function beeNew(h,g,i){
 const dfWing=`<path d="M11.4 7.4C8.6 3.4 3.8 1.6 1 2.6C1.2 5.6 5.4 8.2 11.4 8.2Z" fill="#7dd3fc" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11.4 8.6C7.4 8.2 2.6 9.8 2 12.2C3.8 14.4 8.8 13 11.4 9.8Z" fill="#38bdf8" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11 7.6C8 5.4 4.4 3.6 1.8 3M10 8C7 7.6 4.6 7 2.6 5.4M11 9C8 9.6 5 10.6 2.8 12" stroke="#0369a1" stroke-width=".25" fill="none" opacity=".7"/>`;
 const dfSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><g>${dfWing}</g></g><g class="bw"><g transform="translate(24 0) scale(-1 1)">${dfWing}</g></g><path d="M12 10.2V22.6" stroke="#0e7490" stroke-width="1.5" stroke-linecap="round"/><path d="M12 11V22" stroke="#22d3ee" stroke-width=".7" stroke-dasharray="1.6 1.2"/><ellipse cx="12" cy="7.4" rx="1.7" ry="2.6" fill="#0891b2"/><circle cx="12" cy="4" r="1.6" fill="#0e7490"/><circle cx="10.7" cy="3.6" r=".9" fill="#155e75"/><circle cx="13.3" cy="3.6" r=".9" fill="#155e75"/></svg>`;
 const dfDay=()=>{const t=ld();if(!S.dfr||S.dfr.d!==t)S.dfr={d:t,n:0,seen:{}};return S.dfr};
-const dfTotal=()=>((S.own&&+S.own.dfly)||1)*6;
+const DEW=3;
+const dfTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=0).length;
 const dfOk=w=>(S.m[w]||0)>=0&&!dfDay().seen[w];
 function dfAct(p,el){
  const w=p.dataset.w,d=dfDay();
- if(!dfOk(w)||d.n>=dfTotal())return false;
- d.seen[w]=1;d.n++;S.coins=(S.coins||0)+1;save();
- const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+1 💧");
+ if(!dfOk(w))return false;
+ d.seen[w]=1;d.n++;S.coins=(S.coins||0)+DEW;save();
+ const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+DEW+" 💧");
  const c=$("wc");if(c)c.textContent="💧 "+S.coins;
  progUpd();return true;
 }
@@ -1208,7 +1253,7 @@ function dfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf dfl rest";
  el.innerHTML=`<div class="bi">${dfSvg()}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
- const done=()=>dfDay().n>=dfTotal();
+ const done=()=>false;
  const vis=()=>[0,g.clientHeight];
  const hp=()=>{const s=DFS[i%6],e=Math.floor(i/6);return [g.clientWidth-150+s[0]+e*6-12,s[1]-e*3-8-3-12]};
  const pa=()=>(i%2?10:15)+rnd(-6,6); // nằm ngang dọc theo cành
@@ -1224,7 +1269,7 @@ function dfNew(h,g,i){
    x=tx;y=ty;el.classList.remove("fly");
    if(p){
     hd=null;bi.style.transition="";
-    el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(2500,6000);
+    el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(1500,2000);
     if(dfOk(p.dataset.w))dfAct(p,el);
     watch();
    }else{hd=hh;step()}
@@ -1270,6 +1315,180 @@ function dfNew(h,g,i){
  sw=swarmWake(g,"__dsw",wake);
  setTimeout(wake,rnd(300,2000));
 }
+/* ---- Grasshoppers ---- */
+const GHG=1; // số 🪙 mỗi cây mỗi ngày
+const GHW=.4; // xác suất châu chấu làm héo
+const ghDay=()=>{const t=ld();if(!S.ghr||S.ghr.d!==t)S.ghr={d:t,n:0,seen:{}};return S.ghr};
+const ghTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=0).length;
+const ghOk=w=>(S.m[w]||0)>=0&&!ghDay().seen[w];
+const ghSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true">
+<g class="gs" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M8.4 15.6Q8.2 18.6 6 19.4Q5 19.8 5.2 20.6M10.2 16.2Q10.4 19 9 20.4Q8.2 20.9 8.6 21.6" stroke="#5cb82e" stroke-width=".9"/>
+<path d="M15 15.8L18.2 9.8L19.6 21.2L22.6 21.6" stroke="#4cae2a" stroke-width="1.2"/>
+</g>
+<g class="gj" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M8.4 15.8Q5.8 17.4 3.2 16.4M10.2 16.4Q7.4 19 4.4 19.4" stroke="#5cb82e" stroke-width=".9"/>
+<path d="M14.2 16.4L18 19.6L21.4 23" stroke="#3f9a1f" stroke-width="1"/>
+<path d="M15 16L19.2 18.4L23.4 22.2" stroke="#4cae2a" stroke-width="1.2"/>
+</g>
+<path d="M9 14Q10 12.6 14 12.8Q19.5 13 23 13.6Q19 17.8 12.5 17.4Q9 16.6 9 14Z" fill="#7ab83a"/>
+<path d="M11 13.2Q14 9.5 19.4 6.2Q20.4 5.9 19.9 7Q17.6 11 13.6 14.2Z" fill="#3f9a14"/>
+<path d="M11.5 14.2Q17 12 23.2 12.6Q23.7 13 22.8 13.4Q17 15.4 12.5 15.9Z" fill="#2f8410"/>
+<ellipse cx="10.2" cy="13" rx="2.6" ry="2.4" fill="#4c9f14"/>
+<path d="M5.6 6.6Q6.6 2.6 11 1M6.8 6.3Q9 3.2 12.4 1.9" stroke="#111" stroke-width=".5" fill="none" stroke-linecap="round"/>
+<circle cx="11" cy="1" r=".75" fill="#111"/><circle cx="12.4" cy="1.9" r=".75" fill="#111"/>
+<ellipse cx="6.6" cy="9.6" rx="3.9" ry="3.5" fill="#7cc03a"/>
+<path d="M3.1 9.8Q3 6.6 6.4 6.2Q4.4 7.4 4.4 10.4Q4.6 12 5.8 12.9Q3.1 12.2 3.1 9.8Z" fill="#b6ec5a"/>
+<circle cx="6.2" cy="9.4" r="1.7" fill="#fff"/><circle cx="6" cy="9.6" r="1.05" fill="#111"/><circle cx="5.6" cy="9" r=".35" fill="#fff"/>
+</svg>`;
+
+/* ===== Cọng cỏ nhoi lên khi mua châu chấu (cho cây táo, cam, và dâu/dưa khi chưa có dây) ===== */
+let GHFX=false; // true => phát hiệu ứng đất nhoi lên ở lần vẽ vườn kế tiếp
+const ghOn=()=>!!(S.gh&&S.own&&S.own.ghop);
+const ghVine=m=>m>=3&&((S.pt==="vine"&&isPot())||S.pt==="melon"); // cây có dây leo
+const GB=[[36,-1,22,15],[64,1,19,14]]; // [x gốc, hướng nghiêng, chiều cao, độ vươn ngang]
+const gbG=([x,s,h,r])=>({cx:x+.3*s*r,cy:84-h,tx:x+s*r,ty:84-.6*h});
+const gbP=GB.map(b=>{const{cx,cy,tx,ty}=gbG(b),x=b[0],t=.72,u=1-t;return[u*u*x+2*u*t*cx+t*t*tx, u*u*84+2*u*t*(cy+4)+t*t*ty+1]}); // điểm đậu nằm trên chính lá cỏ
+const GPV={ // điểm đậu trên dây leo (toạ độ SVG của cây)
+ vine:[[24,97],[37,97],[63,97],[76,97]],
+ melon:[[63,76],[46,70],[36,85]]
+};
+const gbSvg=()=>GB.map((b,i)=>{
+ const [x,s]=b,{cx,cy,tx,ty}=gbG(b),c=i?"#4cae2a":"#3f9a1f",w=6;
+ // gốc rộng 2*w, thu nhỏ dần về một đỉnh nhọn ở (tx,ty)
+ return `<g class="gbi"><g class="gb" style="animation-delay:-${i*1.7}s"><path d="M${x-w*s} 84Q${cx-w*.45*s} ${cy+3} ${tx} ${ty}Q${cx+w*.5*s} ${cy+7} ${x+w*s} 84Z" fill="${c}"/><path d="M${x} 84Q${cx} ${cy+4} ${tx} ${ty}" stroke="#2f7a14" stroke-width=".7" fill="none" opacity=".55"/></g></g>`;
+}).join("")+GB.map(([x])=>`<ellipse class="gbm" cx="${x}" cy="84" rx="9" ry="3" fill="#6b4423"/>`).join("");
+const GHSVG=`<svg class="gt" viewBox="0 0 50 26" aria-hidden="true"><path d="M4 26Q6 12 2 4Q10 12 10 26Z" fill="#3f7d1f"/><path d="M12 26Q12 10 14 1Q20 12 18 26Z" fill="#4d8f26"/><path d="M20 26Q24 12 30 3Q30 14 28 26Z" fill="#3f7d1f"/><path d="M28 26Q34 14 42 8Q38 18 36 26Z" fill="#4d8f26"/><path d="M36 26Q42 18 48 15Q44 22 44 26Z" fill="#3f7d1f"/><path d="M0 26H50V24H0Z" fill="#7a4a1e"/></svg>`;
+function ghAct(p,el){
+ const w=p.dataset.w,d=ghDay();
+ if(!ghOk(w))return false;
+ d.seen[w]=1;d.n++;
+ S.gold=(S.gold||0)+GHG;
+ S.w=S.w||{};S.wp=S.wp||{};
+ if(Math.random()<GHW&&!S.w[w]){S.w[w]=1;S.wp[w]=1;toast("🦗 \""+w+"\" wilted")}
+ save();beeUpd(p);
+ const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+GHG+" 🪙");
+ const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄";
+ progUpd();return true;
+}
+function ghInit(){const h=$("ghs");if(!h)return;Object.keys(GHO).forEach(k=>delete GHO[k]);const n=((S.own&&+S.own.ghop)||1)*2;for(let i=0;i<n;i++)ghNew(h,h.parentNode,i)}
+
+const GHP={};  // nhớ cây mỗi con châu chấu đang đứng (theo số thứ tự con)
+const GHO={},GHK={}; 
+function ghNew(h,g,i){
+ const sz=18,el=document.createElement("div");el.className="bf gho rest";
+ el.innerHTML=`<div class="bi">${ghSvg()}</div>`;h.appendChild(el);
+ const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
+ const pls=()=>[...g.querySelectorAll(".pl")];
+ // điểm đậu ở gốc cây (mặt đất / miệng chậu)
+ const base=p=>{
+  const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
+   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
+  return[r.left-gr.left+r.width/2+rnd(-14,14)*k, r.top-gr.top+(r.height-vh*k)/2+(84+VT())*k];
+ };
+  // điểm đậu: đầu cọng cỏ (táo, cam), hoặc trên dây leo (dâu, dưa)
+  const perch=p=>{
+  const w=p.dataset.w,m=Math.min(S.m[w]||0,5);
+  let pts,kind;
+  if(m<0){pts=[[50,80]];kind=0}
+  else if(ghVine(m)){pts=S.pt==="melon"?GPV.melon:GPV.vine;kind=1}
+  else{pts=gbP;kind=2}
+  const all=pts.map((_,j)=>j),free=all.filter(j=>{const o=GHO[w+"|"+j];return o==null||o===i}),
+   pool=free.length?free:all,j=pool[Math.floor(Math.random()*pool.length)],q=pts[j];
+  let t=0,fd=0;
+  if(kind===2){t=-GB[j][1]*5;fd=GB[j][1]>0?-1:1}
+  const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
+   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
+  return[r.left-gr.left+r.width/2+(q[0]-50)*k, r.top-gr.top+(r.height-vh*k)/2+(q[1]+VT())*k, t, fd, w+"|"+j, free.length>0];
+ };
+  // còn chỗ không: tổng mọi loài < sức chứa của cây, và châu chấu trên cây < 2
+ const room=q=>{
+  const w=q.dataset.w;let n=0,gc=0;
+  g.__lp&&g.__lp.forEach((v,k)=>{if(k!==el&&v.w===w)n++});
+  for(const key in GHO)if(GHO[key]!==i&&key.startsWith(w+"|"))gc++;
+  return n<plSlots(q).cap&&gc<2;
+ };
+ const place=w=>{
+  const a=pls(),p=(w&&a.find(e=>e.dataset.w===w))||a[Math.floor(Math.random()*a.length)];
+  if(!p)return[g.clientWidth/2-sz/2,20];
+  GHP[i]=p.dataset.w;
+  const b=perch(p);
+  GHO[b[4]]=i;GHK[i]=b[4];
+  (g.__lp||(g.__lp=new Map())).set(el,{x:b[0],y:b[1],w:p.dataset.w});
+  tl=b[2];fd0=b[3];
+  return[b[0]-sz/2,b[1]-sz+3];
+ };
+ let tl=0,fd0=0; // góc nghiêng hiện tại, hướng đầu khi đậu
+ let [x,y]=place(GHP[i]),dir=i%2?1:-1,cur=null,prev=null,sw;
+ let pw=""; // tên cây vừa đứng trước đó, để không nhảy qua lại liên tục
+ const paint=(px,py)=>{el.style.transform=`translate(${px}px,${py}px)`};
+ const face=d=>{dir=d;bi.style.transform=`scaleX(${d}) rotate(${tl*d}deg)`};
+ paint(x,y);face(fd0||dir);
+ const spots=()=>pls().filter(p=>ghOk(p.dataset.w)&&p.isConnected);
+ function hop(tx,ty,t1,fd,cb){
+  const dx=tx-x,dy=ty-y,d=Math.hypot(dx,dy),dur=Math.max(450,Math.min(1000,350+d*1.5)),ah=Math.max(18,Math.min(80,d*.35));
+  const x0=x,y0=y,tl0=tl,t0=performance.now();
+  face(dx>0?-1:1);
+  function fr(now){
+   if(!el.isConnected)return;
+   const t=Math.min(1,(now-t0)/dur);
+   paint(x0+dx*t,y0+dy*t-4*ah*t*(1-t));
+   el.classList.toggle("jmp",t>.06&&t<.94);
+   if(t>=1){
+    x=tx;y=ty;tl=t1;el.classList.remove("jmp");
+    face(fd||dir); // đáp xuống: nghiêng theo cọng cỏ, đầu hướng lên ngọn
+    cb();return;
+   }
+   const ph=tl0+(t1-tl0)*t; // góc nghiêng chuyển dần trong lúc bay
+   bi.style.transform=`scaleX(${dir}) rotate(${30*(1-2*t)+ph*dir}deg)`;
+   requestAnimationFrame(fr);
+  }
+  requestAnimationFrame(fr);
+ }
+ function step(){
+  if(!el.isConnected)return;
+  const w=g.clientWidth,a=pls();
+  if(!a.length){rest();return}
+  let k=a.findIndex(e=>e.dataset.w===GHP[i]);
+  if(k<0)k=Math.floor(Math.random()*a.length);
+  const cols=4,r0=Math.floor(k/cols),c0=k%cols,nb=[];
+  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+   if(!dr&&!dc)continue;
+   const r=r0+dr,c=c0+dc;
+   if(r<0||c<0||c>=cols)continue;
+   const n=r*cols+c;
+   if(n<a.length)nb.push(n);
+  }
+  if(!nb.length){rest();return}
+    // ưu tiên ô khác ô vừa rời đi, rồi thử lần lượt đến khi gặp cây còn cọng cỏ trống
+    const fr=nb.filter(n=>a[n].dataset.w!==pw),pool=shuf(fr).concat(shuf(nb.filter(n=>!fr.includes(n))));
+  let p=null,b=null;
+  for(const n of pool){const q=a[n];if(!room(q))continue;const bb=perch(q);if(bb[5]){p=q;b=bb;break}}
+  if(!p){setTimeout(step,1000);return} // xung quanh kín chỗ, đợi chút
+  const old=GHK[i];if(old)delete GHO[old];
+  GHO[b[4]]=i;GHK[i]=b[4];
+  (g.__lp||(g.__lp=new Map())).set(el,{x:b[0],y:b[1],w:p.dataset.w});
+  g.__lp&&g.__lp.set(el,{x:b[0],y:b[1]});
+  hop(Math.max(0,Math.min(w-sz,b[0]-sz/2)),b[1]-sz+3,b[2],b[3],()=>{
+   if(!el.isConnected)return;
+   GHP[i]=p.dataset.w;
+   if(ghOk(p.dataset.w))ghAct(p,el);
+   setTimeout(step,rnd(500,1100));
+  });
+ }
+ function rest(){ // hết cây để ghé: đứng yên tại chỗ, chờ 30s rồi thử lại
+  cur=null;g.__lp&&g.__lp.delete(el);
+  sw.rest();
+ }
+ function wake(){
+  if(!el.isConnected)return;
+  if(!pls().length){sw.rest();return}
+  step();
+ }
+ sw=swarmWake(g,"__gsw",wake);
+ setTimeout(wake,rnd(300,2000));
+}
+
 function harvestOne(w,btn){
  if(ripe(w)){const r=btn.getBoundingClientRect();const n=harvest(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gGarden();return}
  const m=S.m[w]||0;
@@ -1277,7 +1496,7 @@ function harvestOne(w,btn){
 }
 /* ---- Shop ---- */
 const SHOP=[
- {id:"shield",e:"🛡️",t:"Thirst Shield",d:"Saves you from one missed day: no 10% 💧 loss and no 💧 to pay. Plants only get thirsty.",p:39,type:"cons"},
+ {id:"shield",e:"🛡️",t:"Thirst Shield",d:"Saves you from one missed day: no 💧 loss and your garden stays as it is.",p:39,type:"cons"},
  {id:"life",e:"❤️",t:"Extra Life",d:"+1 life in your next Balloon Pop or Space Typing game.",p:19,type:"cons"},
  {id:"default",e:"🟫",t:"Brown Soil",d:"The classic look.",p:0,type:"soil"},
  {id:"soilg",e:"🟨",t:"Golden Soil",d:"Shiny golden soil for every plant.",p:59,type:"soil"},
@@ -1286,9 +1505,10 @@ const SHOP=[
  {id:"potm",e:"🌙",t:"Moon Pot",d:"A glowing crescent moon on a golden stand.",p:199,type:"pot"},
  {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:299,type:"pot"},
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
- {id:"bfly",e:"🦋",t:"Butterflies",d:"Every 2 butterflies landing on a wilted plant revive it.",p:109,type:"deco",flag:"bf",per:4},
- {id:"bee",e:"🐝",t:"Bees",d:"Ripen blooms. Landing on fruit may wilt it.",p:209,type:"deco",flag:"be",per:3},
- {id:"dfly",e:"🪽",t:"Dragonflies",d:"Skim over the garden and drop dew: +1 💧 per plant landing (once per plant per day).",p:209,type:"deco",flag:"df",per:2},
+ {id:"bfly",e:"🦋",t:"Butterflies",d:"2 butterflies on a wilted plant revive it. They visit blooming and fruiting plants.",p:109,type:"deco",flag:"bf",per:4},
+ {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into fruit. "+Math.round(BEW*100)+"% chance to wilt a fruiting plant.",p:209,type:"deco",flag:"be",per:3},
+ {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew: +"+DEW+" 💧 per plant, once a day.",p:209,type:"deco",flag:"df",per:2},
+ {id:"ghop",e:"🦗",t:"Grasshoppers",d:"+"+GHG+" 🪙 per plant, once a day. "+Math.round(GHW*100)+"% chance to wilt it.",p:309,type:"deco",flag:"gh",per:2},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
@@ -1317,7 +1537,7 @@ function shopItem(it,g){
  }
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
-const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly"]]];
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly","ghop"]]];
 const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
@@ -1359,7 +1579,7 @@ function gExchange(done){
 function gShop(){
  gClean();
  const g=S.gold||0;
- $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>shopItem(SHOP.find(x=>x.id===id),g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
+ $("v").innerHTML=`<div class="gh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Garden</button><b>🛒 Shop</b><span class="cur"><span class="chip">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${g} ⇄</button></span></div>${SHELVES.map(sh=>`<div class="shelf"><div class="sh-t">${sh[0]}</div><div class="sh-r">${sh[1].map(id=>SHOP.find(x=>x.id===id)).filter(Boolean).sort((a,b)=>a.p-b.p).map(it=>shopItem(it,g)).join("")}</div></div>`).join("")}<div class="hint" style="text-align:center">Harvest fruit with the sickle to earn 🪙.</div>`;
  $("gb").onclick=gGarden;
   $("gx").onclick=()=>gExchange(gShop);
  let lp=0,ht=0,tip=null,shown=0;
@@ -1414,6 +1634,7 @@ function gShop(){
     S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
     toast(it.e+" Level "+(lv+1)+" · "+(lv+1)*it.per+" "+it.e);
    }
+   if(it.id==="ghop"&&(b.dataset.a==="tg"?S[fl]:lv===0))GHFX=true;
   }
   save();gShop();
  });
@@ -1445,7 +1666,7 @@ function waterPlant(word){
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{gwDrop();tab=b.dataset.t;inQ=false;render()});
 $("qb").onclick=()=>rGames();
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.fr={};S.hv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 $("rsf").onclick=()=>{
  if(!confirm("FULL RESET?\n\nThis erases EVERYTHING: 💧, 🪙, shop items, soil/pots, bees & butterflies, XP, streak, garden growth, scores and counts.\n\nOnly your Word List is kept.\n\nThis cannot be undone."))return;
  if(!confirm("Are you really sure? Last chance."))return;
