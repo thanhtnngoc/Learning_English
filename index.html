@@ -262,6 +262,54 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .gg.grow .gbm{animation:gbm .9s ease-out}
 @keyframes gbg{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes gbm{0%{transform:scale(.2);opacity:1}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:0}}
+/* ===== Bọ vàng: các giai đoạn cánh ===== */
+.bgl .btw{transform-origin:12px 11px;transform:scaleX(0);transition:transform .5s ease-out}
+.bgl .bte-l{transform-origin:9px 10px;transition:transform .5s ease-out}
+.bgl .bte-r{transform-origin:15px 10px;transition:transform .5s ease-out}
+/* mở cánh */
+.bgl[data-st=open] .btw{transform:scaleX(1)}
+.bgl[data-st=open] .bte-l{transform:rotate(10deg)}
+.bgl[data-st=open] .bte-r{transform:rotate(-10deg)}
+/* đập nhẹ */
+.bgl[data-st=soft] .btw{animation:btsoft .5s ease-in-out infinite alternate}
+.bgl[data-st=soft] .bte-l{transform:rotate(15deg)}
+.bgl[data-st=soft] .bte-r{transform:rotate(-15deg)}
+/* đập mạnh + đang bay */
+.bgl[data-st=hard] .btw,.bgl[data-st=fly] .btw{animation:bthard .08s linear infinite alternate}
+.bgl[data-st=hard] .bte-l,.bgl[data-st=fly] .bte-l{transform:rotate(15deg)}
+.bgl[data-st=hard] .bte-r,.bgl[data-st=fly] .bte-r{transform:rotate(-15deg)}
+.bgl[data-st=hard] svg{animation:btshake .08s linear infinite alternate}
+.bgl[data-st=fly] svg{animation:bbob .25s ease-in-out infinite alternate}
+@keyframes btsoft{from{transform:scaleX(1)}to{transform:scaleX(.6)}}
+@keyframes bthard{from{transform:scaleX(1)}to{transform:scaleX(.1)}}
+@keyframes btshake{to{transform:translateY(-1.5px)}}
+/* ẩn hẳn cánh khi đậu, chỉ hiện khi mở/đập/bay */
+.bgl .btw{opacity:0;transition:transform .5s ease-out,opacity .2s}
+.bgl[data-st=open] .btw,
+.bgl[data-st=soft] .btw,
+.bgl[data-st=hard] .btw,
+.bgl[data-st=fly] .btw{opacity:1}
+/* cánh không bị ép quá mỏng nữa */
+@keyframes bthard{from{transform:scaleX(1)}to{transform:scaleX(.3)}}
+@keyframes btsoft{from{transform:scaleX(1)}to{transform:scaleX(.65)}}
+.bf.bgl .bi{width:80%;height:80%;margin:10%}
+/* ===== Nhện ===== */
+.bf.spi{width:22px;height:22px}
+.bf.spi .spt{transition:opacity .2s}
+.bf.spi .spt{opacity:0}
+.bf.spi.hm .spt{opacity:1}
+.bf.spi .bi{transition:none}
+.pl{position:relative}
+.pl .web{position:absolute;top:8px;left:50%;margin-left:-30px;pointer-events:none;z-index:1}
+.sks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.sks g{transition:opacity .6s}
+.sks line{stroke:#7c3aed;stroke-width:0.9;stroke-linecap:round}
+.sks polyline{fill:none;stroke:#7c3aed;stroke-width:0.9;stroke-linejoin:round;opacity:.85}
+.bf.spi{z-index:2}
+.bf.spi.fly svg{animation:none}
+.bf.spi .sl{transform-box:fill-box;transform-origin:50% 50%}
+.bf.spi.fly .sl{animation:slg .12s ease-in-out infinite alternate}
+@keyframes slg{to{transform:scale(1.1,.92)}}
 </style>
 </head>
 <body>
@@ -278,7 +326,7 @@ const BASE=[["police","/pəˈliːs/","the official organization that is responsi
 let S={xp:0,streak:0,last:"",custom:[],m:{}};
 try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3]]:typeof x[4]==="boolean"?[x[0],x[1],x[2],x[3]||"","",x[4]]:x);
-function ens(){S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
+function ens(){S.bv=S.bv||{};S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
 ens();
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
@@ -332,7 +380,7 @@ function mark(w,d,q,nc){if(!q)dailyCheck();
  else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
  S.m[w]=m;S.w[w]=wl?1:0;
  S.fr=S.fr||{};S.hv=S.hv||{};
- if(m<5)delete S.fr[w];else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
+ if(m<5){delete S.fr[w];S.bv&&delete S.bv[w]}else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
  if(!q||!S.w[w])delete S.wp[w];
  if(q)return;S.td=ld();
  S.pd=S.pd||{};S.pd[ld()]=1;
@@ -343,7 +391,7 @@ function mark(w,d,q,nc){if(!q)dailyCheck();
 function fstate(w){if((S.m[w]||0)<5)return 0;const f=S.fr&&S.fr[w];return f==null?((S.hv&&S.hv[w]===ld())?1:2):f}
 function ripe(w){return (S.m[w]||0)>=5&&fstate(w)===2&&!(S.w&&S.w[w])&&((S.hv||{})[w]!==ld())}
 function fruitUp(w){if(RV===w){RV=null;return}if((S.m[w]||0)<5)return;S.fr=S.fr||{};S.hv=S.hv||{};if(S.hv[w]===ld())return;const f=fstate(w);if(f<2)S.fr[w]=f+1}
-function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.gold=(S.gold||0)+9;return 9}
+function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.bv=S.bv||{};const g=S.bv[w]!=null?S.bv[w]:9;delete S.bv[w];S.gold=(S.gold||0)+g;return g}
 /* ===== Daily thirst ===== */
 const dstr=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ld=()=>dstr(new Date());
@@ -864,25 +912,28 @@ function gGarden(){
  const be=S.be&&S.own&&S.own.bee?`<div class="bfs" id="bes"></div>`:"";
  const df=S.df&&S.own&&S.own.dfly?`<div class="bfs" id="dfs"></div>`:"";
  const gh=S.gh&&S.own&&S.own.ghop?`<div class="bfs" id="ghs"></div>`:"";
+ const bt=S.bt&&S.own&&S.own.beetle?`<div class="bfs" id="bts"></div>`:"";
+ const sp=S.sp&&S.own&&S.own.spider?`<div class="bfs" id="sps"></div>`:"";
  const strip=(bf||be||df)?`<div class="hvs">${bf?BRSVG:""}${(be||df)?BR2SVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
  const cells=w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("");
- const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee,S.df,S.own&&S.own.dfly,S.gh,S.own&&S.own.ghop].join("|");
+ const sig=[S.bf,S.own&&S.own.bfly,S.be,S.own&&S.own.bee,S.df,S.own&&S.own.dfly,S.gh,S.own&&S.own.ghop,S.bt,S.own&&S.own.beetle,S.sp,S.own&&S.own.spider].join("|");
  $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧): answer right and it grows, answer wrong and it wilts. Answering well in Quiz and the other games also makes plants grow.<br><br>Skip a day and you lose 10% 💧. Green plants are never affected. A wilted plant costs 2 💧 to keep its level; 4 💧 more makes it green again. Without enough 💧, it drops a level.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
  let fresh=false;
  if(!GW||GW.dataset.sig!==sig){
   gwDrop();GW=document.createElement("div");GW.className="gw";GW.dataset.sig=sig;
-  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}${gh}`;fresh=true;
+  GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}${gh}${bt}${sp}`;fresh=true;
  }
  const gg=GW.querySelector(".gg");
  gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"")+(GHFX?" grow":"");
  GHFX=false;
  gg.innerHTML=cells;
+ webDraw();
  $("gwslot").replaceWith(GW);
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
  $("rul").onclick=()=>{const b=$("rlb");b.style.display=b.style.display==="none"?"":"none"};
  $("swb").onclick=()=>{S.nosway=S.nosway?0:1;save();$("swb").textContent=S.nosway?"🌿 Off":"🌿 On";document.querySelector(".gg").classList.toggle("still",!!S.nosway)};
- if(fresh){bfInit();beeInit();dfInit();ghInit()}
+ if(fresh){bfInit();beeInit();dfInit();ghInit();btInit();spInit()}
  if($("prg")){progUpd();$("prg").onclick=()=>{const b=$("prb");b.style.display=b.style.display==="none"?"":"none"}}
  $("shp").onclick=gShop;
  $("gx").onclick=()=>gExchange(gGarden);
@@ -890,18 +941,20 @@ function gGarden(){
  $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
 }
 function progInfo(){
- const o=[];
+ const o=[];if(S.bt&&S.own&&S.own.beetle)o.push({s:"🪲",d:"🪲 Golden beetles: "+btDay().n+" plants visited today"});
  if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝",d:"🐝 Bees: "+Math.min(u,t)+"/"+t+(u>=t?" ✓ all done (resets tomorrow)":"")})}
  if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
  if(S.df&&S.own&&S.own.dfly){const t=dfTotal(),n=Math.min(dfDay().n,t);o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" plants dewed today (+"+n*DEW+" 💧)"+(n>=t?" ✓":"")})}
  if(S.gh&&S.own&&S.own.ghop){const t=ghTotal(),n=Math.min(ghDay().n,t);o.push({s:"🦗",d:"🦗 Grasshoppers: "+n+"/"+t+" plants visited today (+"+n*GHG+" 🪙)"+(n>=t?" ✓":"")})}
+ if(S.sp&&S.own&&S.own.spider){const t=spTotal(),n=Math.min(spDay().n,t);o.push({s:"🕷️",d:"🕷️ Spiders: "+n+"/"+t+" plants visited today"+(n>=t?" ✓":"")})}
  return o;
 }
 function bfDay(){const t=ld();if(!S.bfr||S.bfr.d!==t)S.bfr={d:t,n:0};return S.bfr}
 const bfTotal=()=>((S.own&&+S.own.bfly)||1)*2;
+const BUGICON=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M9.5 4.5L8.5 2.8M14.5 4.5L15.5 2.8"/><path d="M8.5 8V6.3Q8.5 5 9.8 5H14.2Q15.5 5 15.5 6.3V8"/><path d="M7 8H17V15Q17 21.5 12 21.5Q7 21.5 7 15Z"/><path d="M12 9V16"/><path d="M7 10Q4 10 4 7M7 13.5H3M7 17Q4 17 4 20M17 10Q20 10 20 7M17 13.5H21M17 17Q20 17 20 20"/></svg>`;
 function progUpd(){
  const e=$("prg");if(!e)return;
- const a=progInfo();e.textContent=a.map(x=>x.s).join("  ");
+ const a=progInfo();e.innerHTML=a.length?BUGICON:"";
  const b=$("prb");if(b)b.innerHTML=a.map(x=>x.d).join("<br>");
 }
 function flyCurve(o,x0,y0,tx,ty,hd0,spd,minDur,rate,land,cb){
@@ -954,15 +1007,60 @@ function plSlots(p){
  if(t==="melon"&&v===5)s.push([60,43]); // đỉnh quả dưa
  return{s,cap:PCAP[t]||4};
 }
-function pickSlot(g,me,dmin,ok){
+const WEBS={}; // tên cây -> {need:Set loài chưa ghé, cl:{loài:{e,t}}, t:hạn}
+const spSp=()=>{const o=S.own||{},a=[];if(S.bf&&o.bfly)a.push("bf");if(S.be&&o.bee)a.push("be");if(S.df&&o.dfly)a.push("df");if(S.gh&&o.ghop)a.push("gh");if(S.bt&&o.beetle)a.push("bt");return a};
+function webOn(sp,me){ // cây có mạng đang chờ loài sp (mỗi loài chỉ 1 con được gọi)
+ const now=Date.now();
+ for(const w in WEBS){const b=WEBS[w];
+  if(b.t<now){webDel(w);continue}
+  if(!b.need.has(sp))continue;
+  const c=b.cl[sp];
+  if(c&&c.e!==me&&c.e.isConnected&&c.t>now)continue;
+  b.cl[sp]={e:me,t:now+30000};return w}
+ return null}
+function webHit(sp,w){const b=WEBS[w];if(!b)return;b.need.delete(sp);delete b.cl[sp];if(!b.need.size)webDel(w)}
+const webHas=(sp,me)=>{const now=Date.now();return Object.values(WEBS).some(b=>b.t>now&&b.need.has(sp)&&(!b.cl[sp]||b.cl[sp].e===me||!b.cl[sp].e.isConnected||b.cl[sp].t<=now))};
+function webDel(w){if(!WEBS[w])return;delete WEBS[w];webDraw();progUpd()}
+function webMake(w,notify=true){
+ if(WEBS[w])return;
+ const need=new Set(spSp());if(!need.size)return;
+ WEBS[w]={need,cl:{},t:Date.now()+180000};
+ webDraw();progUpd();
+ if(notify)toast("🕸️ Web on \""+w+"\"");
+}
+function webSvg(){
+ const cx=50,cy=32,R=24;let d="";
+ for(let i=0;i<8;i++){const a=i*Math.PI/4;d+=`M${cx} ${cy}L${(cx+Math.cos(a)*R).toFixed(1)} ${(cy+Math.sin(a)*R).toFixed(1)}`}
+ [.34,.67,1].forEach(f=>{for(let i=0;i<8;i++){const a=i*Math.PI/4;d+=(i?"L":"M")+(cx+Math.cos(a)*R*f).toFixed(1)+" "+(cy+Math.sin(a)*R*f).toFixed(1)}d+="Z"});
+ return `<svg class="web" viewBox="${VB()}" aria-hidden="true"><g class="sw"><path d="${d}" fill="rgba(124,58,237,.15)" stroke="#5b21b6" stroke-width="1.6" stroke-linejoin="round"/></g></svg>`;
+}
+function webSync(p){ // mạng đung đưa cùng nhịp với cây
+ const e=p.querySelector(".web");if(!e)return;
+ const g=e.querySelector("g"),src=p.querySelector("i svg .sw, i svg .dr");
+ g.setAttribute("class",src&&src.classList.contains("dr")?"dr":"sw");
+ try{
+  const a=src&&src.getAnimations()[0],b=g.getAnimations()[0];
+  if(a&&b){const ta=a.effect.getComputedTiming();b.currentTime=ta.localTime-ta.delay}
+ }catch(e){}
+}
+function webDraw(){
+ document.querySelectorAll(".pl").forEach(p=>{
+  const has=!!WEBS[p.dataset.w],e=p.querySelector(".web");
+  if(has&&!e)p.insertAdjacentHTML("beforeend",webSvg());
+  else if(!has&&e)e.remove();
+  if(has)webSync(p);
+ });
+}
+function pickSlot(g,me,dmin,ok,sp){
+ const wb=sp?webOn(sp,me):null;
  const reg=g.__lp||(g.__lp=new Map()),gr=g.getBoundingClientRect(),others=[];
  reg.forEach((v,k)=>{if(k!==me)others.push(v)});
  const byP=[];
  g.querySelectorAll(".pl").forEach(p=>{
-  if(!ok(p))return;
+  if(!(ok(p)||(wb&&p.dataset.w===wb)))return;
   const sv=p.querySelector("svg");if(!sv)return;
   const ps=plSlots(p);
-  if(others.filter(v=>v.w===p.dataset.w).length>=ps.cap)return; // cây này đã đủ chỗ
+  if(others.filter(v=>v.w===p.dataset.w).length>=ps.cap)return;
   const r=sv.getBoundingClientRect(),vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh),
    ox=r.left-gr.left+r.width/2,oy=r.top-gr.top+(r.height-vh*k)/2;
   const sl=ps.s.map(s=>{
@@ -972,8 +1070,10 @@ function pickSlot(g,me,dmin,ok){
   }).filter(s=>s.m>=dmin);
   if(sl.length)byP.push({p,sl});
  });
+ const lu=wb?byP.find(x=>x.p.dataset.w===wb):null;
+ if(wb&&!lu&&WEBS[wb])delete WEBS[wb].cl[sp]; // cây đầy chỗ: nhả, lát quay lại
  if(!byP.length)return null;
- const c=byP[Math.floor(Math.random()*byP.length)];
+ const c=lu||byP[Math.floor(Math.random()*byP.length)];
  let best=null,bs=-1;
  c.sl.forEach(s=>{const sc=s.m+Math.random()*10;if(sc>bs){bs=sc;best=s}});
  reg.set(me,{x:best.x,y:best.y,w:c.p.dataset.w});
@@ -1057,6 +1157,7 @@ const bfBloom=w=>{const m=S.m[w]||0;return m>=4&&(m===4||fstate(w)>=1)};
 function bfFresh(p){
  const w=p.dataset.w,m=Math.min(S.m[w]||0,5);
  p.querySelector("i").innerHTML=pic(w);
+ webSync(p);
  p.classList.remove("wt");p.classList.toggle("full",m>=5);p.classList.toggle("rp",ripe(w));p.title=stName(w);
  toast("🦋 \""+w+"\" is fresh again");progUpd();
 }
@@ -1084,6 +1185,7 @@ function bfNew(h,g,i){
     hd=null;bi.style.transition="";
     el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(8000,18000);
     set(p).add(el);chk(p);
+    webHit("bf",p.dataset.w);
     watch();
    }else{hd=hh;step()}
   });
@@ -1115,9 +1217,9 @@ function bfNew(h,g,i){
  }
  function step(){
   if(!el.isConnected)return;
-  const [t,b]=vis(),w=g.clientWidth,any=spots().length>0;
+  const [t,b]=vis(),w=g.clientWidth,any=spots().length>0||webHas("bf",el);
   if(any)miss=0;
-  const s=Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&bfBloom(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>bfBloom(p.dataset.w)&&seen(p))):null;
+  const s=(webHas("bf",el)||Math.random()<.9)?(pickSlot(g,el,20,p=>p!==prev&&bfBloom(p.dataset.w)&&seen(p),"bf")||pickSlot(g,el,20,p=>bfBloom(p.dataset.w)&&seen(p),"bf")):null;
   if(s){
    cur=s.p;
    fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
@@ -1139,6 +1241,7 @@ function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}}
 function beeUpd(p){
  const w=p.dataset.w,m=Math.min(S.m[w]||0,5),wt=!!(S.w&&S.w[w]),k=Math.max(m,0);
  p.querySelector("i").innerHTML=pic(w);
+ webSync(p);
  p.classList.toggle("wt",wt);p.classList.toggle("full",m>=5&&!wt);p.classList.toggle("rp",ripe(w));
  p.title=stName(w)+(wt?" (thirsty)":"");
  const pp=p.querySelector(".pp");if(pp)pp.textContent="●".repeat(k)+"○".repeat(5-k);
@@ -1186,6 +1289,7 @@ function beeNew(h,g,i){
     hd=null;bi.style.transition="";
     el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(5000,12000);
     if(!spent&&beeOk(p.dataset.w)&&beeAct(p)){spent=true;el.classList.add("spent")}
+    webHit("be",p.dataset.w);
     watch();
    }else{hd=hh;step()}
   });
@@ -1216,10 +1320,10 @@ function beeNew(h,g,i){
  }
  function step(){
   if(!el.isConnected)return;
-  const [t,b]=vis(),w=g.clientWidth,any=!done()&&spots().length>0;
+  const [t,b]=vis(),w=g.clientWidth,any=(!done()&&spots().length>0)||webHas("be",el);
   const lookAround=!done();
   if(any)miss=0;
-  const s=any&&Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&beeOk(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>beeOk(p.dataset.w)&&seen(p))):null;
+  const s=any&&(webHas("be",el)||Math.random()<.9)?(pickSlot(g,el,20,p=>p!==prev&&beeOk(p.dataset.w)&&seen(p),"be")||pickSlot(g,el,20,p=>beeOk(p.dataset.w)&&seen(p),"be")):null;
   if(s){
    cur=s.p;
    fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
@@ -1271,6 +1375,7 @@ function dfNew(h,g,i){
     hd=null;bi.style.transition="";
     el.classList.add("rest");face(rnd(-25,25));leaveAt=Date.now()+rnd(1500,2000);
     if(dfOk(p.dataset.w))dfAct(p,el);
+    webHit("df",p.dataset.w);
     watch();
    }else{hd=hh;step()}
   });
@@ -1300,9 +1405,9 @@ function dfNew(h,g,i){
  }
  function step(){
   if(!el.isConnected)return;
-  const [t,b]=vis(),w=g.clientWidth,any=!done()&&spots().length>0;
+  const [t,b]=vis(),w=g.clientWidth,any=spots().length>0||webHas("df",el);
   if(any)miss=0;
-  const s=any&&Math.random()<.9?(pickSlot(g,el,20,p=>p!==prev&&dfOk(p.dataset.w)&&seen(p))||pickSlot(g,el,20,p=>dfOk(p.dataset.w)&&seen(p))):null;
+  const s=any&&(webHas("df",el)||Math.random()<.9)?(pickSlot(g,el,20,p=>p!==prev&&dfOk(p.dataset.w)&&seen(p),"df")||pickSlot(g,el,20,p=>dfOk(p.dataset.w)&&seen(p),"df")):null;
   if(s){
    cur=s.p;
    fly(Math.max(0,Math.min(w-sz,s.x-sz/2+rnd(-2,2))),s.y-sz/2+rnd(-2,2),s.p);
@@ -1371,10 +1476,11 @@ function ghAct(p,el){
  const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄";
  progUpd();return true;
 }
-function ghInit(){const h=$("ghs");if(!h)return;Object.keys(GHO).forEach(k=>delete GHO[k]);const n=((S.own&&+S.own.ghop)||1)*2;for(let i=0;i<n;i++)ghNew(h,h.parentNode,i)}
+function ghInit(){const h=$("ghs");if(!h)return;Object.keys(GHT).forEach(k=>delete GHT[k]);Object.keys(GHO).forEach(k=>delete GHO[k]);const n=((S.own&&+S.own.ghop)||1)*2;for(let i=0;i<n;i++)ghNew(h,h.parentNode,i)}
 
 const GHP={};  // nhớ cây mỗi con châu chấu đang đứng (theo số thứ tự con)
 const GHO={},GHK={}; 
+const GHT={}; // cây -> số thứ tự con châu chấu đang nhắm tới
 function ghNew(h,g,i){
  const sz=18,el=document.createElement("div");el.className="bf gho rest";
  el.innerHTML=`<div class="bi">${ghSvg()}</div>`;h.appendChild(el);
@@ -1393,13 +1499,17 @@ function ghNew(h,g,i){
   if(m<0){pts=[[50,80]];kind=0}
   else if(ghVine(m)){pts=S.pt==="melon"?GPV.melon:GPV.vine;kind=1}
   else{pts=gbP;kind=2}
-  const all=pts.map((_,j)=>j),free=all.filter(j=>{const o=GHO[w+"|"+j];return o==null||o===i}),
-   pool=free.length?free:all,j=pool[Math.floor(Math.random()*pool.length)],q=pts[j];
+  const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
+   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh),
+   pos=q=>[r.left-gr.left+r.width/2+(q[0]-50)*k, r.top-gr.top+(r.height-vh*k)/2+(q[1]+VT())*k],
+   oth=[];
+  g.__lp&&g.__lp.forEach((v,key)=>{if(key!==el)oth.push(v)});
+  const all=pts.map((_,j)=>j),
+   free=all.filter(j=>{const o=GHO[w+"|"+j];if(o!=null&&o!==i)return false;const c=pos(pts[j]);return !oth.some(v=>Math.hypot(v.x-c[0],v.y-c[1])<20)}),
+   pool=free.length?free:all,j=pool[Math.floor(Math.random()*pool.length)],q=pts[j],c=pos(q);
   let t=0,fd=0;
   if(kind===2){t=-GB[j][1]*5;fd=GB[j][1]>0?-1:1}
-  const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
-   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
-  return[r.left-gr.left+r.width/2+(q[0]-50)*k, r.top-gr.top+(r.height-vh*k)/2+(q[1]+VT())*k, t, fd, w+"|"+j, free.length>0];
+  return[c[0],c[1],t,fd,w+"|"+j,free.length>0];
  };
   // còn chỗ không: tổng mọi loài < sức chứa của cây, và châu chấu trên cây < 2
  const room=q=>{
@@ -1463,16 +1573,21 @@ function ghNew(h,g,i){
     // ưu tiên ô khác ô vừa rời đi, rồi thử lần lượt đến khi gặp cây còn cọng cỏ trống
     const fr=nb.filter(n=>a[n].dataset.w!==pw),pool=shuf(fr).concat(shuf(nb.filter(n=>!fr.includes(n))));
   let p=null,b=null;
-  for(const n of pool){const q=a[n];if(!room(q))continue;const bb=perch(q);if(bb[5]){p=q;b=bb;break}}
+  const mine=q=>GHT[q.dataset.w]==null||GHT[q.dataset.w]===i;
+  const wn=webOn("gh",el);
+  if(wn){const q=a.find(e=>e.dataset.w===wn);if(q&&q.dataset.w!==GHP[i]&&room(q)&&mine(q)){const bb=perch(q);if(bb[5]){p=q;b=bb}}}
+  if(!p)for(const n of pool){const q=a[n];if(!room(q)||!mine(q))continue;const bb=perch(q);if(bb[5]){p=q;b=bb;break}}
   if(!p){setTimeout(step,1000);return} // xung quanh kín chỗ, đợi chút
-  const old=GHK[i];if(old)delete GHO[old];
+  GHT[p.dataset.w]=i;
+  const from=GHP[i];const old=GHK[i];if(old)delete GHO[old];
   GHO[b[4]]=i;GHK[i]=b[4];
   (g.__lp||(g.__lp=new Map())).set(el,{x:b[0],y:b[1],w:p.dataset.w});
-  g.__lp&&g.__lp.set(el,{x:b[0],y:b[1]});
   hop(Math.max(0,Math.min(w-sz,b[0]-sz/2)),b[1]-sz+3,b[2],b[3],()=>{
    if(!el.isConnected)return;
    GHP[i]=p.dataset.w;
-   if(ghOk(p.dataset.w))ghAct(p,el);
+   if(GHT[p.dataset.w]===i)delete GHT[p.dataset.w];
+   if(p.dataset.w!==from&&ghOk(p.dataset.w))ghAct(p,el);
+   webHit("gh",p.dataset.w);
    setTimeout(step,rnd(500,1100));
   });
  }
@@ -1486,6 +1601,300 @@ function ghNew(h,g,i){
   step();
  }
  sw=swarmWake(g,"__gsw",wake);
+ setTimeout(wake,rnd(300,2000));
+}
+/* ---- Golden beetles ---- */
+const BT_X=.1,BT_P=.3,BT_BASE=9; // 10% ×2 · 30% +2 · còn lại (60%) −50%
+const btDay=()=>{const t=ld();if(!S.btr||S.btr.d!==t)S.btr={d:t,n:0,seen:{}};return S.btr};
+const btOk=w=>ripe(w)&&!btDay().seen[w];
+const BTM={},BTO={},BTK={}; // BTM: cây mỗi con đang đứng (nhớ khi rời tab)
+const BTT={}; // cây -> số thứ tự con bọ vàng đang nhắm tới
+function btAct(w,el){
+ if(!btOk(w))return false;
+ const d=btDay();d.seen[w]=1;d.n++;
+ S.bv=S.bv||{};
+ const v=S.bv[w]!=null?S.bv[w]:BT_BASE,rn=Math.random();
+ let nv,t;
+ if(rn<BT_X){nv=v*2;t="×2"}
+ else if(rn<BT_X+BT_P){nv=v+2;t="+2"}
+ else{nv=Math.max(1,Math.floor(v/2));t="−50%"}
+ S.bv[w]=nv;save();
+ const rc=el.getBoundingClientRect();coinFly(rc.left+rc.width/2,rc.top,t+" 🪙");
+ toast("🪲 \""+w+"\": "+v+" → "+nv+" 🪙");
+ progUpd();return true;
+}
+const btW=`<path d="M10.6 10.6C7 8.4 2 6 -3.2 6.3C-4.4 7.6 -2.6 10.2 1 11.7C4.6 13.1 8 13 10.8 12.4Z" fill="#f9a8c8"/><path d="M10.4 10.2C6 7.8 1 6.2 -3 6.4" stroke="#b83264" stroke-width=".5" fill="none" stroke-linecap="round"/><path d="M10.2 11C6.4 9.4 2.4 8.4 -2 8.6" stroke="#e0709d" stroke-width=".6" fill="none" stroke-linecap="round"/><path d="M10.8 12.2C7.6 12.4 4 13.6 3.6 15.6C4.8 17.6 8.4 16.6 10.6 13.6Z" fill="#fcc9da"/><path d="M10.6 11.7C8 11.2 5 11.4 3 12.6C5 13.8 8.4 13.8 10.6 12.6Z" fill="#8fe3c8"/>`;
+const btE=`<path d="M11.9 9.9C8.6 9.7 5.9 11.8 5.9 14.6C5.9 17.4 8.4 19.3 11.9 19.5Z" fill="#facc15" stroke="#92400e" stroke-width=".4" stroke-linejoin="round"/><path d="M6.4 16.4C7.2 18 9.4 19.2 11.9 19.5V17C9.6 17.4 7.8 17.1 6.4 16.4Z" fill="#f59e0b" opacity=".75"/><path d="M7.4 11.4C6.6 14 7.2 17 8.8 18.6M8.9 10.6C8.4 13.6 8.8 17 10.2 19M10.4 10.2C10.2 13.6 10.4 17 11.2 19.4" stroke="#d97706" stroke-width=".35" fill="none"/>`;
+const btL=`<path d="M7.8 9.6Q5.8 8.8 5.4 7.4L4.6 6.2"/><path d="M5.9 14Q3.9 14.4 3.5 16.6L3.1 17.8"/><path d="M6.8 19Q5 20.4 5.3 22.4L4.9 23.4"/>`;
+const btA=`<path d="M10.9 4.8Q9.6 1.6 6.8 2.2"/>`;
+const mir=s=>`<g>${s}</g><g transform="translate(24 0) scale(-1 1)">${s}</g>`;
+const EL=s=>`<g transform="translate(0 9.9) scale(1 1.35) translate(0 -9.9)">${s}</g>`;
+const btSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g stroke="#7f1d1d" stroke-width=".9" fill="none" stroke-linecap="round" stroke-linejoin="round">${mir(btL)}</g><g stroke="#7f1d1d" stroke-width=".55" fill="none" stroke-linecap="round">${mir(btA)}</g><ellipse cx="12" cy="15.4" rx="6.2" ry="6.6" fill="#7f1d1d"/><g class="btw"><g transform="translate(0 1.8) translate(12 11) scale(1.4) translate(-12 -11)"><g>${btW}</g></g></g><g class="btw"><g transform="translate(0 1.8) translate(12 11) scale(1.4) translate(-12 -11)"><g transform="translate(24 0) scale(-1 1)">${btW}</g></g></g><g class="bte-l">${EL(btE)}</g><g class="bte-r"><g transform="translate(24 0) scale(-1 1)">${EL(btE)}</g></g><ellipse cx="12" cy="5.3" rx="2.2" ry="1.6" fill="#eab308" stroke="#92400e" stroke-width=".35"/><circle cx="9.9" cy="5.2" r=".75" fill="#1e293b"/><circle cx="14.1" cy="5.2" r=".75" fill="#1e293b"/><ellipse cx="12" cy="8.9" rx="4.0" ry="2.6" fill="#facc15" stroke="#92400e" stroke-width=".4"/><path d="M8.6 7.6Q12 6.6 15.4 7.6" stroke="#1c1917" stroke-width=".4" fill="none" stroke-linecap="round" opacity=".7"/></svg>`;
+function btInit(){
+ const h=$("bts");if(!h)return;
+ Object.keys(BTT).forEach(k=>delete BTT[k]);Object.keys(BTO).forEach(k=>delete BTO[k]);Object.keys(BTK).forEach(k=>delete BTK[k]);
+ const n=((S.own&&+S.own.beetle)||1)*2;for(let i=0;i<n;i++)btNew(h,h.parentNode,i)
+}
+function btNew(h,g,i){
+ const sz=24,el=document.createElement("div");el.className="bf bgl rest";el.dataset.st="rest";
+ el.innerHTML=`<div class="bi">${btSvg()}</div>`;h.appendChild(el);
+ const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
+ const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
+ let hd=null,ang=rnd(-25,25),x=g.clientWidth/2-sz/2,y=20,sw;
+ const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
+ const o={el,bi,face,getAng:()=>ang};
+ const reg=()=>g.__lp||(g.__lp=new Map());
+ const room=p=>{const w=p.dataset.w;let n=0,b=0;reg().forEach((v,k)=>{if(k!==el&&v.w===w)n++});for(const key in BTO)if(BTO[key]!==i&&key.startsWith(w+"|"))b++;return n<plSlots(p).cap&&b<2};
+ const perch=p=>{
+  const w=p.dataset.w,s=plSlots(p).s,
+   r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
+   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh),
+   ox=r.left-gr.left+r.width/2,oy=r.top-gr.top+(r.height-vh*k)/2,
+   oth=[],ok=[];
+  reg().forEach((v,key)=>{if(key!==el)oth.push(v)});
+  s.forEach((q,j)=>{
+   const o=BTO[w+"|"+j];if(o!=null&&o!==i)return;
+   const x=ox+(q[0]-50)*k,y=oy+(q[1]+VT())*k;
+   if(oth.some(v=>Math.hypot(v.x-x,v.y-y)<20))return;
+   ok.push([x,y,w+"|"+j]);
+  });
+  return ok.length?ok[Math.floor(Math.random()*ok.length)]:null;
+ };
+ const claim=(p,b)=>{const old=BTK[i];if(old)delete BTO[old];BTO[b[2]]=i;BTK[i]=b[2];reg().set(el,{x:b[0],y:b[1],w:p.dataset.w})};
+ { // vị trí ban đầu: cây cũ nếu còn chỗ, không thì chọn cây khác còn chỗ
+  const a=pls(),first=BTM[i]&&byN(BTM[i]),cand=(first?[first]:[]).concat(shuf(a));
+  for(const p of cand){if(!room(p))continue;const b=perch(p);if(b){BTM[i]=p.dataset.w;claim(p,b);x=b[0]-sz/2;y=b[1]-sz/2;break}}
+ }
+ el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
+ function seq(){ // đậu → mở cánh → đập nhẹ → đập mạnh → bay
+  const P=[["rest",rnd(1800,3200)],["open",900],["soft",1500],["hard",1000]];
+  let k=0;
+  (function go(){
+   if(!el.isConnected)return;
+   if(k>=P.length){step();return}
+   el.dataset.st=P[k][0];setTimeout(go,P[k][1]);k++;
+  })();
+ }
+ function step(){
+  if(!el.isConnected)return;
+  const from=BTM[i],wn=webOn("bt",el),wp=wn&&byN(wn),free=q=>BTT[q.dataset.w]==null||BTT[q.dataset.w]===i,cand=(wp&&wp.dataset.w!==from&&free(wp)?[wp]:[]).concat(shuf(pls().filter(p=>p.dataset.w!==from&&bfBloom(p.dataset.w)&&p!==wp&&free(p))));
+  let p=null,b=null;
+  for(const q of cand){if(!room(q))continue;const bb=perch(q);if(bb){p=q;b=bb;break}}
+  if(!p){el.dataset.st="rest";sw.rest();return} // không còn cây có quả để ghé: nghỉ 30s rồi thử lại
+  claim(p,b);
+  BTT[p.dataset.w]=i;
+  const name=p.dataset.w,tx=Math.max(0,Math.min(g.clientWidth-sz,b[0]-sz/2)),ty=b[1]-sz/2;
+  el.dataset.st="fly";
+  flyCurve(o,x,y,tx,ty,hd,65,1.5,360,true,()=>{
+   if(!el.isConnected)return;
+   x=tx;y=ty;hd=null;
+   el.classList.remove("fly");el.classList.add("rest");bi.style.transition="";face(rnd(-25,25));
+   BTM[i]=name;
+   if(BTT[name]===i)delete BTT[name];
+   if(name!==from)btAct(name,el);
+   webHit("bt",name);
+   seq(); 
+  });
+ }
+ sw=swarmWake(g,"__tsw",()=>{if(el.isConnected)step()});
+ setTimeout(()=>{if(el.isConnected)step()},rnd(300,2000));
+}
+
+/* ---- Spiders ---- */
+const spL=`<path d="M9 9L6.5 6L5.5 2.5"/><path d="M8.5 11L4.5 9.5L2 10.5"/><path d="M8.5 13.5L4 13.5L2 16.5"/><path d="M9.5 15.5L6.5 17.5L6 21.5"/>`;
+const spSvg=(h=0)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path class="spt" d="M12 ${(-14-h/.917).toFixed(1)}V6.5" stroke="#7c3aed" stroke-width=".7"/><g class="sl" stroke="#1a1a1a" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round">${mir(spL)}</g><ellipse cx="12" cy="11" rx="5" ry="4.5" fill="#1c1c1c"/><ellipse cx="10.2" cy="9.3" rx="1.6" ry=".8" fill="#4ade80" transform="rotate(-30 10.2 9.3)"/><ellipse cx="12" cy="16" rx="4.2" ry="3.4" fill="#262626"/><circle cx="10.2" cy="16" r="1.5" fill="#f97316"/><circle cx="13.8" cy="16" r="1.5" fill="#f97316"/><circle cx="10.2" cy="16.3" r=".75" fill="#111"/><circle cx="13.8" cy="16.3" r=".75" fill="#111"/><circle cx="9.9" cy="15.9" r=".28" fill="#fff"/><circle cx="13.5" cy="15.9" r=".28" fill="#fff"/><path d="M10.8 19L11.1 20.2M13.2 19L12.9 20.2" stroke="#111" stroke-width=".6" stroke-linecap="round"/></svg>`;
+const SPG=1,SPGP=.3; // +1 🪙 (30%)
+const spDay=()=>{const t=ld();if(!S.spr||S.spr.d!==t)S.spr={d:t,n:0,seen:{}};return S.spr};
+const spTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=3).length;
+const spOk=w=>(S.m[w]||0)>=3&&!spDay().seen[w];
+function spAct(p,el){
+ const w=p.dataset.w,d=spDay();
+ if(!spOk(w))return false;
+ d.seen[w]=1;d.n++;
+ S.w=S.w||{};S.wp=S.wp||{};
+ let cured=false;
+ if(S.w[w]&&S.wp[w]){S.w[w]=0;delete S.wp[w];cured=true}
+ const r=el.getBoundingClientRect();
+ if(Math.random()<SPGP){S.gold=(S.gold||0)+SPG;coinFly(r.left+r.width/2,r.top,"+"+SPG+" 🪙");const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄"}
+ webMake(w);
+ if(cured)toast("🕷️ \""+w+"\" is fresh again");
+ save();beeUpd(p);progUpd();return true;
+}
+const SPO={}; // cây -> số thứ tự con nhện đang giữ cây đó
+function spInit(){
+ const h=$("sps");if(!h)return;
+ Object.keys(SPO).forEach(k=>delete SPO[k]);
+ h.insertAdjacentHTML("afterbegin",'<svg class="sks"></svg>');
+ const n=((S.own&&+S.own.spider)||1)*2;for(let i=0;i<n;i++)spNew(h,h.parentNode,i)
+}
+
+function spNew(h,g,i){
+ const sz=22,el=document.createElement("div");el.className="bf spi rest hm";
+ const HY=[0,20,8,26,13,4,22,10][i%8];  // độ thấp xuống (px): con cao con thấp so le
+ el.innerHTML=`<div class="bi">${spSvg(HY)}</div>`;h.appendChild(el);
+ const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a),NS="http://www.w3.org/2000/svg",sv=h.querySelector(".sks");
+ const SPW=2,ZS=8,RNG=6; // nửa khoảng cách 2 tơ · bước zích zắc · tầm đi tối đa (ô)
+ const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
+ const hp=()=>{
+  const W=g.clientWidth,n=((S.own&&+S.own.spider)||1)*2,need=n*(sz*.75);
+  let L=150,R=W-150;
+  if(R-L<need){const c=W/2;L=c-need/2;R=c+need/2}
+  return [L+(i+.5)*(R-L)/n-sz/2,HY];
+ };
+ let [x,y]=hp(),cur=null,grp=[],sw,left=0,
+ trail=[{x:x+sz/2,y:y+sz/2}];// left: số điểm đi dạo còn lại khi hết cây hợp lệ
+ const paint=()=>{el.style.transform=`translate(${x}px,${y}px)`};
+ paint();
+ const face=(dx,dy)=>{bi.style.transform=`rotate(${Math.atan2(-dx,dy)*180/Math.PI}deg)`};
+ const geo=p=>{
+  const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
+   vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
+  return{cx:r.left-gr.left+r.width/2,cy:r.top-gr.top+(r.height-vh*k)/2+(32+VT())*k,r:22*k};
+ };
+ const fadeG=gp=>{gp.style.opacity=0;setTimeout(()=>gp.remove(),600)};
+ function newGroup(){ // mỗi chuyến đi = 1 nhóm (2 tơ + đường zích zắc)
+  grp.forEach(fadeG);grp=[];   // bắn tơ mới (B→C) thì tơ cũ (A→B) mất ngay
+  const gp=document.createElementNS(NS,"g");sv.appendChild(gp);grp.push(gp);
+  setTimeout(()=>{fadeG(gp);grp=grp.filter(z=>z!==gp)},25000);
+  return gp;
+  }
+ function shoot(gp,x0,y0,x1,y1,cb){ // bắn 1 sợi tơ
+  const ln=document.createElementNS(NS,"line");
+  ln.setAttribute("x1",x0);ln.setAttribute("y1",y0);ln.setAttribute("x2",x0);ln.setAttribute("y2",y0);
+  gp.appendChild(ln);
+  const t0=performance.now(),D=320;
+  (function fr(now){
+   if(!el.isConnected)return;
+   const t=Math.min(1,(now-t0)/D);
+   ln.setAttribute("x2",x0+(x1-x0)*t);ln.setAttribute("y2",y0+(y1-y0)*t);
+   if(t<1)requestAnimationFrame(fr);else cb();
+  })(t0);
+ }
+ function crawl(x0,y0,x1,y1,d,nx,ny,zz,cb){ // bò giữa 2 tơ, nối zích zắc phía sau
+  const dur=Math.max(900,d/50*1000),t0=performance.now(),pts=[];let k=0;
+  const add=L=>{const f=L/d,s=k%2?-1:1;pts.push((x0+(x1-x0)*f+nx*s).toFixed(1)+","+(y0+(y1-y0)*f+ny*s).toFixed(1));k++;zz.setAttribute("points",pts.join(" "))};
+  el.classList.add("fly");
+  (function fr(now){
+   if(!el.isConnected)return;
+   const t=Math.min(1,(now-t0)/dur),s=t*t*(3-2*t),L=s*d;
+   x=x0+(x1-x0)*s-sz/2;y=y0+(y1-y0)*s-sz/2;paint();
+   while(k*ZS<=L)add(k*ZS);
+   if(t<1)requestAnimationFrame(fr);else{add(d);el.classList.remove("fly");cb()}
+  })(t0);
+ }
+ function go(tx,ty,cb){
+  el.classList.remove("hm");
+  const sx=x+sz/2,sy=y+sz/2,dx=tx-sx,dy=ty-sy,d=Math.hypot(dx,dy)||1,nx=-dy/d*SPW,ny=dx/d*SPW;
+  face(dx,dy);
+  const gp=newGroup(),zz=document.createElementNS(NS,"polyline");gp.appendChild(zz);
+  shoot(gp,sx+nx,sy+ny,tx+nx,ty+ny,()=>      // tơ thứ 1
+   shoot(gp,sx-nx,sy-ny,tx-nx,ty-ny,()=>     // tơ thứ 2
+    crawl(sx,sy,tx,ty,d,nx,ny,zz,cb)));     // bò bằng 2 chân trên 2 tơ
+ }
+ function circle(gc,a0,cb){
+  const t0=performance.now(),R=gc.r*.7;
+  el.classList.add("fly");
+  (function fr(now){
+   if(!el.isConnected)return;
+   const t=Math.min(1,(now-t0)/2600),a=a0+t*6.2832;
+   x=gc.cx+Math.cos(a)*R-sz/2;y=gc.cy+Math.sin(a)*R-sz/2;paint();face(-Math.sin(a),Math.cos(a));
+   if(t<1)requestAnimationFrame(fr);else{el.classList.remove("fly");cb()}
+  })(t0);
+ }
+ function around(){ // các cây (khác cây đang đứng, chưa bị nhện khác giữ) kèm khoảng cách ô
+  const a=pls(),k=cur?a.findIndex(e=>e.dataset.w===cur):-1;
+  let r0,c0;
+  if(k>=0){r0=Math.floor(k/4);c0=k%4}
+  else{r0=-1;c0=Math.max(0,Math.min(3,Math.floor((x+sz/2)/(g.clientWidth/4))))}
+  return a.map((p,n)=>({p,d:Math.max(Math.abs(Math.floor(n/4)-r0),Math.abs(n%4-c0))}))
+   .filter(o=>o.d>0&&o.p.dataset.w!==cur&&(SPO[o.p.dataset.w]==null||SPO[o.p.dataset.w]===i));
+ }
+ function cands(){ // cây hợp lệ: trong ±RNG, nếu không có thì lấy cây hợp lệ gần nhất
+  const E=around().filter(o=>spOk(o.p.dataset.w));
+  let L=E.filter(o=>o.d<=RNG);
+  if(!L.length&&E.length){const m=Math.min(...E.map(o=>o.d));L=E.filter(o=>o.d===m)}
+  const wt=w=>S.w&&S.w[w]?(S.wp&&S.wp[w]?2:1):0;
+  const best=Math.max(0,...L.map(o=>wt(o.p.dataset.w)));
+  return L.filter(o=>wt(o.p.dataset.w)===best).map(o=>o.p);
+ }
+ function wander(){ // hết việc: đi dạo qua cây còn sống trong ±RNG
+  return around().filter(o=>o.d<=RNG&&(S.m[o.p.dataset.w]||0)>=3).map(o=>o.p);
+ }
+ function toHome(){
+  if(cur&&SPO[cur]===i)delete SPO[cur];
+
+  // Bỏ điểm hiện tại, sau đó lần lượt quay lại các điểm trước
+  trail.pop();
+
+  function back(){
+    if(!el.isConnected)return;
+
+    if(trail.length){
+      const p=trail.pop();
+
+      go(p.x,p.y,back);
+    }else{
+      const [hx,hy]=hp();
+
+      go(hx+sz/2,hy+sz/2,()=>{
+        cur=null;
+        x=hx;y=hy;
+        paint();
+        bi.style.transform="";
+        el.classList.add("hm");
+        sw.rest();
+      });
+    }
+  }
+
+    back();
+  }
+ function step(){
+  if(!el.isConnected)return;
+
+  let L=cands(),stroll=false;
+
+  if(!L.length&&left>0){
+    L=wander();
+    stroll=true;
+  }
+
+  if(!L.length){
+    if(cur){
+      toHome();
+    }else{
+      // Chưa có cây trống: nghỉ một chút rồi tìm lại
+      setTimeout(step,2500+rnd(0,2000));
+    }
+    return;
+  }
+  if(stroll)left--;
+  const p=L[Math.floor(Math.random()*L.length)],gc=geo(p),a0=rnd(0,6.283);
+  if(cur&&SPO[cur]===i)delete SPO[cur];
+  SPO[p.dataset.w]=i;
+  go(gc.cx+Math.cos(a0)*gc.r*.7,gc.cy+Math.sin(a0)*gc.r*.7,()=>{
+    cur=p.dataset.w;
+
+    // Cây đã có mạng: bỏ qua quay vòng và tạo mạng mới
+    if(WEBS[cur]){
+      setTimeout(step,rnd(1200,2500));
+      return;
+    }
+
+    // Cây chưa có mạng: vẫn quay vòng và tạo mạng bình thường
+    circle(gc,a0,()=>{
+      const q=byN(cur);
+      if(q){
+        spAct(q,el);
+        webMake(cur,!stroll); 
+      }
+      trail.push({x:x+sz/2,y:y+sz/2});
+      setTimeout(step,rnd(1200,2500));
+    });
+  });
+ }
+ function wake(){if(!el.isConnected)return;left=2+Math.floor(Math.random()*2);[x,y]=hp();paint();step()}
+ sw=swarmWake(g,"__ssw",wake);
  setTimeout(wake,rnd(300,2000));
 }
 
@@ -1509,6 +1918,8 @@ const SHOP=[
  {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into fruit. "+Math.round(BEW*100)+"% chance to wilt a fruiting plant.",p:209,type:"deco",flag:"be",per:3},
  {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew: +"+DEW+" 💧 per plant, once a day.",p:209,type:"deco",flag:"df",per:2},
  {id:"ghop",e:"🦗",t:"Grasshoppers",d:"+"+GHG+" 🪙 per plant, once a day. "+Math.round(GHW*100)+"% chance to wilt it.",p:309,type:"deco",flag:"gh",per:2},
+ {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Land on fruiting plants: 10% ×2, 30% +2, 60% −50% of that plant's harvest 🪙. Once per plant a day.",p:409,type:"deco",flag:"bt",per:2},
+ {id:"spider",e:"🕷️",t:"Spiders",d:"Spin silk between plants (lvl 3+), cure insect wilt (100%), 30% +"+SPG+" 🪙, and weave a web that lures one of every insect. Once per plant a day.",p:359,type:"deco",flag:"sp",per:2},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
@@ -1537,7 +1948,7 @@ function shopItem(it,g){
  }
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
-const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly","ghop"]]];
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly","ghop","beetle","spider"]]];
 const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
@@ -1666,7 +2077,7 @@ function waterPlant(word){
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{gwDrop();tab=b.dataset.t;inQ=false;render()});
 $("qb").onclick=()=>rGames();
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.rd=null;combo=0;save();hud();render();toast("Reset done ↺")};
 $("rsf").onclick=()=>{
  if(!confirm("FULL RESET?\n\nThis erases EVERYTHING: 💧, 🪙, shop items, soil/pots, bees & butterflies, XP, streak, garden growth, scores and counts.\n\nOnly your Word List is kept.\n\nThis cannot be undone."))return;
  if(!confirm("Are you really sure? Last chance."))return;
