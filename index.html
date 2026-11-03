@@ -310,6 +310,14 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .bf.spi .sl{transform-box:fill-box;transform-origin:50% 50%}
 .bf.spi.fly .sl{animation:slg .12s ease-in-out infinite alternate}
 @keyframes slg{to{transform:scale(1.1,.92)}}
+/* ===== Dark mode: nhện trắng, tơ xám (light giữ nguyên) ===== */
+:root[data-theme="dark"] .bf.spi .sl{stroke:#f1f5f9}
+:root[data-theme="dark"] .bf.spi svg ellipse[fill="#1c1c1c"]{fill:#f8fafc}
+:root[data-theme="dark"] .bf.spi svg ellipse[fill="#262626"]{fill:#e2e8f0}
+:root[data-theme="dark"] .bf.spi .spt{stroke:#9ca3af}
+:root[data-theme="dark"] .sks line,
+:root[data-theme="dark"] .sks polyline{stroke:#9ca3af}
+:root[data-theme="dark"] .pl .web path{stroke:#9ca3af;fill:rgba(156,163,175,.15)}
 </style>
 </head>
 <body>
@@ -1029,7 +1037,7 @@ function webMake(w,notify=true){
  if(notify)toast("🕸️ Web on \""+w+"\"");
 }
 function webSvg(){
- const cx=50,cy=32,R=24;let d="";
+ const cx=50,cy=32,R=32;let d="";
  for(let i=0;i<8;i++){const a=i*Math.PI/4;d+=`M${cx} ${cy}L${(cx+Math.cos(a)*R).toFixed(1)} ${(cy+Math.sin(a)*R).toFixed(1)}`}
  [.34,.67,1].forEach(f=>{for(let i=0;i<8;i++){const a=i*Math.PI/4;d+=(i?"L":"M")+(cx+Math.cos(a)*R*f).toFixed(1)+" "+(cy+Math.sin(a)*R*f).toFixed(1)}d+="Z"});
  return `<svg class="web" viewBox="${VB()}" aria-hidden="true"><g class="sw"><path d="${d}" fill="rgba(124,58,237,.15)" stroke="#5b21b6" stroke-width="1.6" stroke-linejoin="round"/></g></svg>`;
@@ -1730,18 +1738,17 @@ function spInit(){
 function spNew(h,g,i){
  const sz=22,el=document.createElement("div");el.className="bf spi rest hm";
  const nS=((S.own&&+S.own.spider)||1)*2;
- const hi=i===0||i===nS-1||(i<nS/2-1&&i%2===0)||(i>=nS/2&&(nS-1-i)%2===0);
- const HY=hi?2:22;
- el.innerHTML=`<div class="bi">${spSvg(HY)}</div>`;h.appendChild(el);
+ const ANCH=26;                       // y điểm treo tơ (nằm trên nhánh bướm), tăng/giảm để nhích tơ lên xuống
+ const HY=(i%2===0)?40:58;            // so le: con chẵn cao, con lẻ thấp
+ const SH=HY-ANCH-12.83;              // độ dài tơ treo từ nhánh xuống nhện
+ el.innerHTML=`<div class="bi">${spSvg(SH)}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a),NS="http://www.w3.org/2000/svg",sv=h.querySelector(".sks");
  const SPW=2,ZS=8,RNG=6;      // nửa khoảng cách 2 tơ · bước zích zắc · tầm đi tối đa (ô)
  const SWA=8,SWT=4000;        // biên độ đưa (độ) · chu kỳ đưa (ms)
  const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
  const hp=()=>{
-  const W=g.clientWidth,n=nS,need=n*(sz*.75);
-  let L=150,R=W-150;
-  if(R-L<need){const c=W/2;L=c-need/2;R=c+need/2}
-  return [L+(i+.5)*(R-L)/n-sz/2,HY];
+  const GX=Math.min(14,128/Math.max(1,nS-1)); // khoảng cách ngang giữa 2 con kề nhau
+  return [10+i*GX,HY];
  };
  let [x,y]=hp(),cur=null,sw,left=0,waits=0,idle=0,tok=0;
  // timer bị huỷ khi nhện được đánh thức lại (tok đổi)
@@ -1751,7 +1758,7 @@ function spNew(h,g,i){
  const face=(dx,dy)=>{bi.style.transform=`rotate(${Math.atan2(-dx,dy)*180/Math.PI}deg)`};
 
  /* ===== Đưa qua đưa lại ở nhà ===== */
- const AY=-12.83-HY;
+ const AY=-12.83-SH;
  let swOn=false,swRaf=0,swa=0;
  function swayStart(){
   if(swOn)return;swOn=true;
@@ -1774,7 +1781,7 @@ function spNew(h,g,i){
  const geo=p=>{
   const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
    vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
-  return{cx:r.left-gr.left+r.width/2,cy:r.top-gr.top+(r.height-vh*k)/2+(32+VT())*k,r:22*k};
+  return{cx:r.left-gr.left+r.width/2,cy:r.top-gr.top+(r.height-vh*k)/2+(32+VT())*k,r:28*k};
  };
  const fadeG=gp=>{gp.style.opacity=0;setTimeout(()=>gp.remove(),600)};
  // mỗi chặng đi = 1 nhóm tơ; CHỈ mờ đi khi nhện tới đích (xem done trong go)
@@ -1885,8 +1892,14 @@ function spNew(h,g,i){
    if(!el.isConnected)return;
    const {a,r}=where();
    if(r+1<=RNG){arrive();return} // nhà trong tầm ±RNG: bắn tơ về nhà
-   const L=a.filter((p,n)=>{const rr=Math.floor(n/4);return rr<r&&r-rr<=RNG});
-   if(!L.length){arrive();return}
+   const rowOf=p=>Math.floor(a.indexOf(p)/4);
+   const hiAll=a.filter(p=>rowOf(p)<r&&(S.m[p.dataset.w]||0)>=2); // chỉ cây cấp ≥2, gần nhà hơn
+   let L=hiAll.filter(p=>r-rowOf(p)<=RNG);                        // ưu tiên trong ±RNG ô
+   if(!L.length&&hiAll.length){                                    // không có trong tầm: lấy hàng gần chỗ đang đứng nhất
+    const best=Math.max(...hiAll.map(rowOf));
+    L=hiAll.filter(p=>rowOf(p)===best);
+   }
+   if(!L.length){arrive();return}                                  // không còn cây cấp ≥3 nào gần nhà hơn: bắn tơ về nhà
    const F=L.filter(p=>SPO[p.dataset.w]==null),pool=F.length?F:L;
    const p=pool[Math.floor(Math.random()*pool.length)],gc=geo(p),a0=rnd(0,6.283);
    go(gc.cx+Math.cos(a0)*gc.r*.7,gc.cy+Math.sin(a0)*gc.r*.7,()=>{
