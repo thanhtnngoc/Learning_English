@@ -1713,10 +1713,9 @@ function spAct(p,el){
  d.seen[w]=1;d.n++;
  S.w=S.w||{};S.wp=S.wp||{};
  let cured=false;
- if(S.w[w]&&S.wp[w]){S.w[w]=0;delete S.wp[w];cured=true}
+ if(S.w[w]&&S.w[w]&&S.wp[w]){S.w[w]=0;delete S.wp[w];cured=true}
  const r=el.getBoundingClientRect();
  if(Math.random()<SPGP){S.gold=(S.gold||0)+SPG;coinFly(r.left+r.width/2,r.top,"+"+SPG+" 🪙");const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄"}
- webMake(w);
  if(cured)toast("🕷️ \""+w+"\" is fresh again");
  save();beeUpd(p);progUpd();return true;
 }
@@ -1730,35 +1729,57 @@ function spInit(){
 
 function spNew(h,g,i){
  const sz=22,el=document.createElement("div");el.className="bf spi rest hm";
- const HY=[0,20,8,26,13,4,22,10][i%8];  // độ thấp xuống (px): con cao con thấp so le
+ const nS=((S.own&&+S.own.spider)||1)*2;
+ const hi=i===0||i===nS-1||(i<nS/2-1&&i%2===0)||(i>=nS/2&&(nS-1-i)%2===0);
+ const HY=hi?2:22;
  el.innerHTML=`<div class="bi">${spSvg(HY)}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a),NS="http://www.w3.org/2000/svg",sv=h.querySelector(".sks");
- const SPW=2,ZS=8,RNG=6; // nửa khoảng cách 2 tơ · bước zích zắc · tầm đi tối đa (ô)
+ const SPW=2,ZS=8,RNG=6;      // nửa khoảng cách 2 tơ · bước zích zắc · tầm đi tối đa (ô)
+ const SWA=8,SWT=4000;        // biên độ đưa (độ) · chu kỳ đưa (ms)
  const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
  const hp=()=>{
-  const W=g.clientWidth,n=((S.own&&+S.own.spider)||1)*2,need=n*(sz*.75);
+  const W=g.clientWidth,n=nS,need=n*(sz*.75);
   let L=150,R=W-150;
   if(R-L<need){const c=W/2;L=c-need/2;R=c+need/2}
   return [L+(i+.5)*(R-L)/n-sz/2,HY];
  };
- let [x,y]=hp(),cur=null,grp=[],sw,left=0,
- trail=[{x:x+sz/2,y:y+sz/2}];// left: số điểm đi dạo còn lại khi hết cây hợp lệ
+ let [x,y]=hp(),cur=null,sw,left=0,waits=0,idle=0,tok=0;
+ // timer bị huỷ khi nhện được đánh thức lại (tok đổi)
+ const later=(f,ms)=>{const t=tok;setTimeout(()=>{if(t===tok&&el.isConnected)f()},ms)};
  const paint=()=>{el.style.transform=`translate(${x}px,${y}px)`};
  paint();
  const face=(dx,dy)=>{bi.style.transform=`rotate(${Math.atan2(-dx,dy)*180/Math.PI}deg)`};
+
+ /* ===== Đưa qua đưa lại ở nhà ===== */
+ const AY=-12.83-HY;
+ let swOn=false,swRaf=0,swa=0;
+ function swayStart(){
+  if(swOn)return;swOn=true;
+  bi.style.transformOrigin=`50% ${AY}px`;
+  const ph=i*1.3,t0=performance.now();
+  (function fr(now){
+   if(!swOn||!el.isConnected)return;
+   swa=SWA*Math.sin((now-t0)/SWT*6.2832+ph);
+   bi.style.transform=`rotate(${swa.toFixed(2)}deg)`;
+   swRaf=requestAnimationFrame(fr);
+  })(t0);
+ }
+ function swayStop(){
+  if(!swOn)return;swOn=false;cancelAnimationFrame(swRaf);
+  const r=swa*Math.PI/180,L=sz/2-AY,px=x+sz/2,py=y+AY;
+  x=px-L*Math.sin(r)-sz/2;y=py+L*Math.cos(r)-sz/2;
+  bi.style.transformOrigin="";bi.style.transform="";paint();
+ }
+
  const geo=p=>{
   const r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
    vh=isPot()?140:130,k=Math.min(r.width/100,r.height/vh);
   return{cx:r.left-gr.left+r.width/2,cy:r.top-gr.top+(r.height-vh*k)/2+(32+VT())*k,r:22*k};
  };
  const fadeG=gp=>{gp.style.opacity=0;setTimeout(()=>gp.remove(),600)};
- function newGroup(){ // mỗi chuyến đi = 1 nhóm (2 tơ + đường zích zắc)
-  grp.forEach(fadeG);grp=[];   // bắn tơ mới (B→C) thì tơ cũ (A→B) mất ngay
-  const gp=document.createElementNS(NS,"g");sv.appendChild(gp);grp.push(gp);
-  setTimeout(()=>{fadeG(gp);grp=grp.filter(z=>z!==gp)},25000);
-  return gp;
-  }
- function shoot(gp,x0,y0,x1,y1,cb){ // bắn 1 sợi tơ
+ // mỗi chặng đi = 1 nhóm tơ; CHỈ mờ đi khi nhện tới đích (xem done trong go)
+ function newGroup(){const gp=document.createElementNS(NS,"g");sv.appendChild(gp);return gp}
+ function shoot(gp,x0,y0,x1,y1,cb){
   const ln=document.createElementNS(NS,"line");
   ln.setAttribute("x1",x0);ln.setAttribute("y1",y0);ln.setAttribute("x2",x0);ln.setAttribute("y2",y0);
   gp.appendChild(ln);
@@ -1770,7 +1791,7 @@ function spNew(h,g,i){
    if(t<1)requestAnimationFrame(fr);else cb();
   })(t0);
  }
- function crawl(x0,y0,x1,y1,d,nx,ny,zz,cb){ // bò giữa 2 tơ, nối zích zắc phía sau
+ function crawl(x0,y0,x1,y1,d,nx,ny,zz,cb){
   const dur=Math.max(900,d/50*1000),t0=performance.now(),pts=[];let k=0;
   const add=L=>{const f=L/d,s=k%2?-1:1;pts.push((x0+(x1-x0)*f+nx*s).toFixed(1)+","+(y0+(y1-y0)*f+ny*s).toFixed(1));k++;zz.setAttribute("points",pts.join(" "))};
   el.classList.add("fly");
@@ -1783,13 +1804,15 @@ function spNew(h,g,i){
   })(t0);
  }
  function go(tx,ty,cb){
+  if(swOn)swayStop();
   el.classList.remove("hm");
   const sx=x+sz/2,sy=y+sz/2,dx=tx-sx,dy=ty-sy,d=Math.hypot(dx,dy)||1,nx=-dy/d*SPW,ny=dx/d*SPW;
   face(dx,dy);
   const gp=newGroup(),zz=document.createElementNS(NS,"polyline");gp.appendChild(zz);
-  shoot(gp,sx+nx,sy+ny,tx+nx,ty+ny,()=>      // tơ thứ 1
-   shoot(gp,sx-nx,sy-ny,tx-nx,ty-ny,()=>     // tơ thứ 2
-    crawl(sx,sy,tx,ty,d,nx,ny,zz,cb)));     // bò bằng 2 chân trên 2 tơ
+  const done=()=>{fadeG(gp);cb()}; // tơ chỉ biến mất khi nhện đã tới điểm đến
+  shoot(gp,sx+nx,sy+ny,tx+nx,ty+ny,()=>
+   shoot(gp,sx-nx,sy-ny,tx-nx,ty-ny,()=>
+    crawl(sx,sy,tx,ty,d,nx,ny,zz,done)));
  }
  function circle(gc,a0,cb){
   const t0=performance.now(),R=gc.r*.7;
@@ -1801,99 +1824,96 @@ function spNew(h,g,i){
    if(t<1)requestAnimationFrame(fr);else{el.classList.remove("fly");cb()}
   })(t0);
  }
- function around(){ // các cây (khác cây đang đứng, chưa bị nhện khác giữ) kèm khoảng cách ô
+
+ /* ===== Vị trí & chọn cây ===== */
+ // ô hiện tại (hàng/cột). Nhà = hàng -1.
+ function where(){
   const a=pls(),k=cur?a.findIndex(e=>e.dataset.w===cur):-1;
-  let r0,c0;
-  if(k>=0){r0=Math.floor(k/4);c0=k%4}
-  else{r0=-1;c0=Math.max(0,Math.min(3,Math.floor((x+sz/2)/(g.clientWidth/4))))}
-  return a.map((p,n)=>({p,d:Math.max(Math.abs(Math.floor(n/4)-r0),Math.abs(n%4-c0))}))
-   .filter(o=>o.d>0&&o.p.dataset.w!==cur&&(SPO[o.p.dataset.w]==null||SPO[o.p.dataset.w]===i));
+  if(k>=0)return{a,r:Math.floor(k/4),c:k%4};
+  return{a,r:-1,c:Math.max(0,Math.min(3,Math.floor((x+sz/2)/(g.clientWidth/4))))};
  }
- function cands(){ // cây hợp lệ: trong ±RNG, nếu không có thì lấy cây hợp lệ gần nhất
-  const E=around().filter(o=>spOk(o.p.dataset.w));
-  let L=E.filter(o=>o.d<=RNG);
-  if(!L.length&&E.length){const m=Math.min(...E.map(o=>o.d));L=E.filter(o=>o.d===m)}
+ // cây trong ±RNG ô, khác cây đang đứng, không bị nhện khác giữ
+ function around(){
+  const {a,r,c}=where();
+  return a.map((p,n)=>({p,r:Math.floor(n/4),d:Math.max(Math.abs(Math.floor(n/4)-r),Math.abs(n%4-c))}))
+   .filter(o=>o.d>0&&o.d<=RNG&&o.p.dataset.w!==cur&&(SPO[o.p.dataset.w]==null||SPO[o.p.dataset.w]===i));
+ }
+ // 1) cây trống còn chức năng  2) cây trống hết chức năng (đi dạo, cần left>0)
+ // 3) cây đã có tơ mà nhện trước đã rời đi (chỉ đứng đợi)
+ function choose(){
+  const me=where(),atWeb=!!(cur&&WEBS[cur]);
+  const A=around().filter(o=>(S.m[o.p.dataset.w]||0)>=3);
   const wt=w=>S.w&&S.w[w]?(S.wp&&S.wp[w]?2:1):0;
-  const best=Math.max(0,...L.map(o=>wt(o.p.dataset.w)));
-  return L.filter(o=>wt(o.p.dataset.w)===best).map(o=>o.p);
+  const top=L=>{const m=Math.max(...L.map(o=>wt(o.p.dataset.w)));return L.filter(o=>wt(o.p.dataset.w)===m)};
+  const rp=L=>L[Math.floor(Math.random()*L.length)].p;
+  const E=A.filter(o=>!WEBS[o.p.dataset.w]);
+  const F=E.filter(o=>spOk(o.p.dataset.w));
+  if(F.length)return{p:rp(top(F)),stroll:false};
+  if(left>0){const T=E.filter(o=>!spOk(o.p.dataset.w));if(T.length)return{p:rp(top(T)),stroll:true}}
+  // đang đứng trên cây có tơ thì chỉ dời sang cây có tơ nằm sâu hơn (tiến dần ra vườn)
+  const V=A.filter(o=>WEBS[o.p.dataset.w]&&(!atWeb||o.r>me.r));
+  if(V.length)return{p:rp(V),stroll:false};
+  return null;
  }
- function wander(){ // hết việc: đi dạo qua cây còn sống trong ±RNG
-  return around().filter(o=>o.d<=RNG&&(S.m[o.p.dataset.w]||0)>=3).map(o=>o.p);
- }
- function toHome(){
+ function goPlant(t){
+  const p=t.p,w=p.dataset.w,gc=geo(p),a0=rnd(0,6.283);
   if(cur&&SPO[cur]===i)delete SPO[cur];
-
-  // Bỏ điểm hiện tại, sau đó lần lượt quay lại các điểm trước
-  trail.pop();
-
-  function back(){
-    if(!el.isConnected)return;
-
-    if(trail.length){
-      const p=trail.pop();
-
-      go(p.x,p.y,back);
-    }else{
-      const [hx,hy]=hp();
-
-      go(hx+sz/2,hy+sz/2,()=>{
-        cur=null;
-        x=hx;y=hy;
-        paint();
-        bi.style.transform="";
-        el.classList.add("hm");
-        sw.rest();
-      });
-    }
-  }
-
-    back();
-  }
- function step(){
-  if(!el.isConnected)return;
-
-  let L=cands(),stroll=false;
-
-  if(!L.length&&left>0){
-    L=wander();
-    stroll=true;
-  }
-
-  if(!L.length){
-    if(cur){
-      toHome();
-    }else{
-      // Chưa có cây trống: nghỉ một chút rồi tìm lại
-      setTimeout(step,2500+rnd(0,2000));
-    }
-    return;
-  }
-  if(stroll)left--;
-  const p=L[Math.floor(Math.random()*L.length)],gc=geo(p),a0=rnd(0,6.283);
-  if(cur&&SPO[cur]===i)delete SPO[cur];
-  SPO[p.dataset.w]=i;
+  SPO[w]=i; // giữ chỗ: 1 cây chỉ 1 nhện cùng lúc
   go(gc.cx+Math.cos(a0)*gc.r*.7,gc.cy+Math.sin(a0)*gc.r*.7,()=>{
-    cur=p.dataset.w;
-
-    // Cây đã có mạng: bỏ qua quay vòng và tạo mạng mới
-    if(WEBS[cur]){
-      setTimeout(step,rnd(1200,2500));
-      return;
-    }
-
-    // Cây chưa có mạng: vẫn quay vòng và tạo mạng bình thường
-    circle(gc,a0,()=>{
-      const q=byN(cur);
-      if(q){
-        spAct(q,el);
-        webMake(cur,!stroll); 
-      }
-      trail.push({x:x+sz/2,y:y+sz/2});
-      setTimeout(step,rnd(1200,2500));
-    });
+   cur=w;
+   if(WEBS[w]){later(step,rnd(1500,3000));return} // đã có tơ: không giăng, đứng đợi
+   circle(gc,a0,()=>{
+    const q=byN(w),fn=spOk(w); // fn: còn chức năng -> báo "Web on"; không thì im lặng
+    if(q){if(fn)spAct(q,el);webMake(w,fn)}
+    later(step,rnd(1200,2500));
+   });
   });
  }
- function wake(){if(!el.isConnected)return;left=2+Math.floor(Math.random()*2);[x,y]=hp();paint();step()}
+ /* ===== Về nhà: từng chặng ≤ RNG ô, không bắn thẳng từ cuối vườn ===== */
+ function toHome(){
+  if(cur&&SPO[cur]===i)delete SPO[cur];
+  function arrive(){
+   const [hx,hy]=hp();
+   go(hx+sz/2,hy+sz/2,()=>{
+    cur=null;x=hx;y=hy;paint();
+    el.classList.add("hm");
+    swayStart();
+    idle=0;sw.rest();
+   });
+  }
+  function back(){
+   if(!el.isConnected)return;
+   const {a,r}=where();
+   if(r+1<=RNG){arrive();return} // nhà trong tầm ±RNG: bắn tơ về nhà
+   const L=a.filter((p,n)=>{const rr=Math.floor(n/4);return rr<r&&r-rr<=RNG});
+   if(!L.length){arrive();return}
+   const F=L.filter(p=>SPO[p.dataset.w]==null),pool=F.length?F:L;
+   const p=pool[Math.floor(Math.random()*pool.length)],gc=geo(p),a0=rnd(0,6.283);
+   go(gc.cx+Math.cos(a0)*gc.r*.7,gc.cy+Math.sin(a0)*gc.r*.7,()=>{
+    cur=p.dataset.w; // chỉ ghé qua: không giăng, không giữ chỗ
+    later(back,rnd(300,900));
+   });
+  }
+  back();
+ }
+ function step(){
+  if(!el.isConnected)return;
+  const t=choose();
+  if(!t){
+   if(cur){ // đang ở trên cây: đợi cây trống / cây được nhả ra, hết kiên nhẫn thì về
+    if(waits<8){waits++;later(step,rnd(1500,3000));return}
+    waits=0;toHome();return;
+   }
+   // đang ở nhà: đợi, đợi lâu thì nghỉ để cả đàn cùng thức dậy
+   if(++idle>=10){idle=0;sw.rest();return}
+   later(step,rnd(2500,4500));return;
+  }
+  waits=0;idle=0;
+  if(t.stroll)left--;
+  goPlant(t);
+ }
+ function wake(){if(!el.isConnected)return;tok++;left=2+Math.floor(Math.random()*2);waits=0;idle=0;step()}
+ swayStart();
  sw=swarmWake(g,"__ssw",wake);
  setTimeout(wake,rnd(300,2000));
 }
@@ -1941,8 +1961,10 @@ function shopItem(it,g){
  }
  else{
   const fl=it.flag,on=!!S[fl],lv=own?(+S.own[it.id]||1):0,mx=5,np=Math.round(it.p*Math.pow(1.5,lv));
-  st=lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"";
-  const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
+  const REQ={bfly:"🦋",bee:"🐝",dfly:"🪽",ghop:"🦗"};
+  const miss=(it.id==="spider"&&!own)?Object.keys(REQ).filter(k=>!(S.own&&S.own[k])):[];
+  st=miss.length?"Needs "+miss.map(k=>REQ[k]).join(" "):(lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"");
+  const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np||miss.length?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
   const tg=lv?`<button class="btn l${on?" on":""}" data-id="${it.id}" data-a="tg">${on?"On":"Off"}</button>`:"";
   btn=`<div style="display:flex;flex-direction:column;gap:6px">${up}${tg}</div>`;
  }
@@ -2040,6 +2062,7 @@ function gShop(){
    if(b.dataset.a==="tg"){S[fl]=S[fl]?0:1}
    else{
     if(lv>=5)return;
+    if(it.id==="spider"&&!own&&["bfly","bee","dfly","ghop"].some(k=>!S.own[k])){toast("🕷️ Buy butterflies, bees, dragonflies and grasshoppers first");return}
     const np=Math.round(it.p*Math.pow(1.5,lv));
     if((S.gold||0)<np)return;
     S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
