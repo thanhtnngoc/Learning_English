@@ -314,10 +314,10 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 :root[data-theme="dark"] .bf.spi .sl{stroke:#f1f5f9}
 :root[data-theme="dark"] .bf.spi svg ellipse[fill="#1c1c1c"]{fill:#f8fafc}
 :root[data-theme="dark"] .bf.spi svg ellipse[fill="#262626"]{fill:#e2e8f0}
-:root[data-theme="dark"] .bf.spi .spt{stroke:#9ca3af}
+:root[data-theme="dark"] .bf.spi .spt{stroke:#fff}
 :root[data-theme="dark"] .sks line,
-:root[data-theme="dark"] .sks polyline{stroke:#9ca3af}
-:root[data-theme="dark"] .pl .web path{stroke:#9ca3af;fill:rgba(156,163,175,.15)}
+:root[data-theme="dark"] .sks polyline{stroke:#fff}
+:root[data-theme="dark"] .pl .web path{stroke:#fff;fill:rgba(255,255,255,.12)}
 </style>
 </head>
 <body>
@@ -921,7 +921,8 @@ function gGarden(){
  const df=S.df&&S.own&&S.own.dfly?`<div class="bfs" id="dfs"></div>`:"";
  const gh=S.gh&&S.own&&S.own.ghop?`<div class="bfs" id="ghs"></div>`:"";
  const bt=S.bt&&S.own&&S.own.beetle?`<div class="bfs" id="bts"></div>`:"";
- const sp=S.sp&&S.own&&S.own.spider?`<div class="bfs" id="sps"></div>`:"";
+ const spOn=!!(S.sp&&S.own&&S.own.spider&&S.bf&&S.own.bfly); // nhện chỉ hoạt động khi bướm đang bật
+ const sp=spOn?`<div class="bfs" id="sps"></div>`:"";
  const strip=(bf||be||df)?`<div class="hvs">${bf?BRSVG:""}${(be||df)?BR2SVG:""}${be?HVSVG:""}</div>`:"";
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
  const cells=w.map(x=>{const m=Math.min(S.m[x[0]]||0,5),wt=m>=0&&!!(S.w&&S.w[x[0]]),k=Math.max(m,0),rr=ripe(x[0]);return `<button class="pl${m>=5&&!wt?" full":""}${rr?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(x[0])}" title="${stName(x[0])}${wt?" (thirsty)":""}"><i>${pic(x[0])}</i><span>${esc(x[0])}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}).join("");
@@ -936,6 +937,7 @@ function gGarden(){
  gg.className="gg"+(hm?" hm":"")+(S.nosway?" still":"")+(isPot()?" potv":"")+(GHFX?" grow":"");
  GHFX=false;
  gg.innerHTML=cells;
+ if(!spOn)Object.keys(WEBS).forEach(k=>delete WEBS[k]); // nhện tắt thì mạng nhện trên cây cũng biến mất
  webDraw();
  $("gwslot").replaceWith(GW);
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
@@ -954,7 +956,7 @@ function progInfo(){
  if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
  if(S.df&&S.own&&S.own.dfly){const t=dfTotal(),n=Math.min(dfDay().n,t);o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" plants dewed today (+"+n*DEW+" 💧)"+(n>=t?" ✓":"")})}
  if(S.gh&&S.own&&S.own.ghop){const t=ghTotal(),n=Math.min(ghDay().n,t);o.push({s:"🦗",d:"🦗 Grasshoppers: "+n+"/"+t+" plants visited today (+"+n*GHG+" 🪙)"+(n>=t?" ✓":"")})}
- if(S.sp&&S.own&&S.own.spider){const t=spTotal(),n=Math.min(spDay().n,t);o.push({s:"🕷️",d:"🕷️ Spiders: "+n+"/"+t+" plants visited today"+(n>=t?" ✓":"")})}
+ if(S.sp&&S.own&&S.own.spider&&S.bf&&S.own.bfly){const t=spTotal(),n=Math.min(spDay().n,t);o.push({s:"🕷️",d:"🕷️ Spiders: "+n+"/"+t+" plants visited today"+(n>=t?" ✓":"")})}
  return o;
 }
 function bfDay(){const t=ld();if(!S.bfr||S.bfr.d!==t)S.bfr={d:t,n:0};return S.bfr}
@@ -1737,19 +1739,21 @@ function spInit(){
 
 function spNew(h,g,i){
  const sz=22,el=document.createElement("div");el.className="bf spi rest hm";
- const nS=((S.own&&+S.own.spider)||1)*2;
- const ANCH=26;                       // y điểm treo tơ (nằm trên nhánh bướm), tăng/giảm để nhích tơ lên xuống
- const HY=(i%2===0)?40:58;            // so le: con chẵn cao, con lẻ thấp
- const SH=HY-ANCH-12.83;              // độ dài tơ treo từ nhánh xuống nhện
+const nS=((S.own&&+S.own.spider)||1)*2;
+ const GX=Math.min(14,128/Math.max(1,nS-1));   // khoảng cách ngang giữa 2 con kề nhau
+ const HX=10+i*GX;                             // x nhà của con này
+ // mép dưới nhánh bướm: [x, y] theo toạ độ vườn
+ const BE=[[0,10],[10,11],[18,14],[26,19],[36,25],[50,29.5],[68,29],[90,23],[110,16.5],[128,14.5],[150,13.6]];
+ const edgeY=x=>{for(let k=1;k<BE.length;k++){if(x<=BE[k][0]){const a=BE[k-1],b=BE[k];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}}return BE[BE.length-1][1]};
+ const ANCH=edgeY(HX+11)-2;                    // -2: cho tơ cắm hẳn vào nhánh
+ const HY=(i%2===0)?40:58;                     // so le: chẵn cao, lẻ thấp
+ const SH=HY-ANCH-12.83;                       // độ dài tơ treo
  el.innerHTML=`<div class="bi">${spSvg(SH)}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a),NS="http://www.w3.org/2000/svg",sv=h.querySelector(".sks");
  const SPW=2,ZS=8,RNG=6;      // nửa khoảng cách 2 tơ · bước zích zắc · tầm đi tối đa (ô)
  const SWA=8,SWT=4000;        // biên độ đưa (độ) · chu kỳ đưa (ms)
  const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
- const hp=()=>{
-  const GX=Math.min(14,128/Math.max(1,nS-1)); // khoảng cách ngang giữa 2 con kề nhau
-  return [10+i*GX,HY];
- };
+ const hp=()=>[HX,HY];
  let [x,y]=hp(),cur=null,sw,left=0,waits=0,idle=0,tok=0;
  // timer bị huỷ khi nhện được đánh thức lại (tok đổi)
  const later=(f,ms)=>{const t=tok;setTimeout(()=>{if(t===tok&&el.isConnected)f()},ms)};
