@@ -1310,7 +1310,7 @@ function bfInit(){const h=$("bfs");if(!h)return;const n=((S.own&&+S.own.bfly)||1
 const bfBloom=w=>{const m=S.m[w]||0;return m>=4&&(m===4||fstate(w)>=1)};
 function bfFresh(p){
  plSet(p);
- gtoast("🦋 "+p.dataset.w+" revived");progUpd();
+ gtoast("🦋 \""+p.dataset.w+"\" revived");progUpd();
 }
 function bfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf rest";
@@ -1411,7 +1411,7 @@ function beeAct(p){
  }else if(Math.random()<BEW){
   if(!S.w[w])S.wp[w]=1;
   S.w[w]=1;
-  gtoast("🐝 "+w+" wilted");
+  gtoast("🐝 \""+w+"\" wilted");
  }
  save();beeUpd(p);progUpd();
  return true;
@@ -1630,7 +1630,7 @@ function ghAct(p,el){
  d.seen[w]=1;d.n++;
  S.gold=(S.gold||0)+GHG;
  S.w=S.w||{};S.wp=S.wp||{};
- if(Math.random()<GHW&&!S.w[w]){S.w[w]=1;S.wp[w]=1;gtoast("🦗 "+w+" wilted")}
+ if(Math.random()<GHW&&!S.w[w]){S.w[w]=1;S.wp[w]=1;gtoast("🦗 \""+w+"\" wilted")}
  save();beeUpd(p);
  const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+GHG+" 🪙");
  const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄";
@@ -1878,7 +1878,7 @@ function spAct(p,el){
  if(S.w[w]&&S.w[w]&&S.wp[w]){S.w[w]=0;delete S.wp[w];cured=true}
  const r=el.getBoundingClientRect();
  if(Math.random()<SPGP){S.gold=(S.gold||0)+SPG;coinFly(r.left+r.width/2,r.top,"+"+SPG+" 🪙");const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄"}
- if(cured)gtoast("🕷️ "+w+" revived");
+ if(cured)gtoast("🕷️ \""+w+"\" revived");
  save();beeUpd(p);progUpd();return true;
 }
 const SPO={}; // cây -> số thứ tự con nhện đang giữ cây đó
