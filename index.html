@@ -323,6 +323,9 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 :root[data-theme="dark"] .sks line,
 :root[data-theme="dark"] .sks polyline{stroke:#fff}
 :root[data-theme="dark"] .pl .web path{stroke:#fff;fill:rgba(255,255,255,.12)}
+.wlh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+.wlh b{white-space:nowrap}
+.wlh input{width:auto;flex:1;min-width:0;max-width:50%;margin:0;padding:8px 12px;border-radius:99px;font-size:14px}
 .keep *{animation-play-state:paused!important}
 </style>
 </head>
@@ -583,16 +586,36 @@ function rEnd(){
   $("r1").onclick=to1;
  }
 }
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").trim();
+function wlFind(L,q){
+ const sc=x=>{
+  const w=norm(x[0]),v=norm(vi(x));
+  const st=s=>s.split(/[^a-z0-9]+/).some(t=>t.startsWith(q));
+  if(w.startsWith(q))return w===q?0:1;
+  if(v.startsWith(q))return 2;
+  if(w.includes(q))return 3;
+  if(st(v))return 4;
+  if(v.includes(q))return 5;
+  return 99};
+ return L.map(x=>[sc(x),x]).filter(a=>a[0]<99).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
+}
+const wlRow=x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`;
 function rAdd(){
  const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).concat(B()).sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
- $("v").innerHTML=`<details open><summary>📖 Word List (${L.length})</summary><div class="list">${L.map(x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`).join("")}</div></details>
+ $("v").innerHTML=`<div class="wlh"><b id="wlt">📖 Word List (${L.length})</b><input id="ws" type="search" placeholder="🔍 Search word or meaning…" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div><div class="list" id="wl">${L.map(wlRow).join("")}</div>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
  <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning of the word (e.g. tuân thủ)"><textarea id="ne" rows="2" placeholder="Vietnamese translation of the definition"></textarea></div>
  <div class="row"><button class="btn" id="ad">➕ Add word</button></div>
  <div class="list">${P.length?`<b>✨ New words waiting to paste into the Sheet (${P.length})</b>${P.slice().reverse().map(x=>`<div class="it"><b>${esc(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}<div class="row"><button class="btn l" id="cp">📋 1. Copy</button><button class="btn g" id="ok">✅ 2. Pasted into Sheet</button></div>`:`<span style="color:var(--mu)">No new words waiting. Add one!</span>`}</div></details>
  <details><summary>🔄 Sync from Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:E, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn l" id="sb">📋 Sync (paste)</button><button class="btn g" id="shs">☁️ Sync from Google Sheet</button></div></div></details>`;
- document.querySelectorAll(".sp").forEach(b=>b.onclick=()=>speak(b.dataset.w));
+ const ws=$("ws"),wl=$("wl"),wt=$("wlt");
+  ws.oninput=()=>{
+  const q=norm(ws.value),R=q?wlFind(L,q):L;
+  wl.innerHTML=R.length?R.map(wlRow).join(""):`<div style="color:var(--mu)">No matching words</div>`;
+  wt.textContent="📖 Word List ("+(q?R.length+"/":"")+L.length+")";
+  };
+  wl.onclick=e=>{const b=e.target.closest(".sp");if(b)speak(b.dataset.w)};
  $("ad").onclick=()=>{
   const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim(),e=$("ne").value.trim();
   if(!a||!c){toast("Enter a word and its definition");return}
