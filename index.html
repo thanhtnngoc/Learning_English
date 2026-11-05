@@ -487,9 +487,9 @@ function rFlash(){
 }
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 // Nhóm ưu tiên: số càng nhỏ càng được ra trước
-const TIER=m=>m<0?0:m<=2?0:m===3?1:m===4?2:3;
+const TIER=m=>m<=0?0:m<=2?1:m===3?2:m===4?3:4;
 const pshuf=names=>{
- const g=[[],[],[],[]];
+ const g=[[],[],[],[],[]];
  names.forEach(n=>g[TIER(S.m[n]||0)].push(n));
  // trong mỗi nhóm: random hoàn toàn
  // giữa các nhóm: cho 8% cơ hội "lọt lên" để không quá cứng
@@ -508,11 +508,10 @@ function newRound(ph,names){combo=0;const d=pshuf(names||W().map(x=>x[0]));S.rd=
 function fixRound(){
  const r=S.rd;if(!r||r.sub||r.i>=r.deck.length)return;
  const all=W().map(x=>x[0]),names=new Set(all);
- let i=r.i;const d=[];
- r.deck.forEach((k,j)=>{if(names.has(k))d.push(k);else if(j<r.i)i--});
- const have=new Set(d);
- r.deck=d.concat(pshuf(all.filter(k=>!have.has(k))));
- r.i=i;r.n=r.deck.length;
+ const done=r.deck.slice(0,r.i).filter(k=>names.has(k)),ds=new Set(done);
+ r.deck=done.concat(pshuf(all.filter(k=>!ds.has(k))));
+ r.i=done.length;r.n=r.deck.length;
+ save();
 }
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
 let lastWt=0;
@@ -620,8 +619,8 @@ function rAdd(){
   const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim(),e=$("ne").value.trim();
   if(!a||!c){toast("Enter a word and its definition");return}
   if(W().some(x=>x[0].toLowerCase()===a.toLowerCase())&&!confirm("This word already exists. Add anyway?"))return;
-  S.custom.push([a,b,c,d,e,false]);gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd();
- };
+  S.custom.push([a,b,c,d,e,false]);fixRound();gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd(); 
+};
  const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[5]=true});save();toast("✅ Moved to the Word List");rAdd()};
  $("shs").onclick=async()=>{if(await syncSheet(false))rAdd()};
  $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4])]);
@@ -823,7 +822,7 @@ function rot(){const k=(S.pot||"")+(S.soil||"default")+"|rot";return PC[k]||(PC[
 const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=f===2?5:f===1?4:3}return pk(v,wt)};
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
-function openQuiz(){inQ=true;$("qp").style.display="";hud();rQuiz()}
+function openQuiz(){fixRound();inQ=true;$("qp").style.display="";hud();rQuiz()}
 function quizStat(){const r=S.rd;return r&&r.deck.length?(r.ph===1?"Round 1":"Round 2")+" · "+r.i+"/"+r.deck.length:"Not started"}
 function rGames(){
  gClean();inQ=false;$("qp").style.display="none";hud();
