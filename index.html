@@ -549,7 +549,7 @@ function rMean(x){
  const r=S.rd,w=W();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:18px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:20px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[0]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
@@ -2148,7 +2148,7 @@ const SHOP=[
  {id:"melon",e:"🍉",t:"Watermelon",d:"A creeping vine with big lobed leaves, yellow flowers and one huge striped watermelon.",p:399,type:"plant"}
 ];
 const SPREQ=["bfly","bee","dfly","ghop"];
-const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.5,lv)); // giá gốc <350: x2, ≥350: x1.5
+const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.85,lv)); // giá gốc <350: x2, ≥350: x1.8
 const spOkLv=L=>SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L).length;   // số côn trùng đạt ít nhất lv L
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
