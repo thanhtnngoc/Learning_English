@@ -1123,7 +1123,7 @@ function gGarden(){
  $("gx").onclick=()=>gExchange(gGarden);
  $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
  $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
-}fv
+}
 
 function progInfo(){
  const o=[];if(S.bt&&S.own&&S.own.beetle)o.push({s:"🪲",d:"🪲 Golden beetles: "+btDay().n+" plants visited today"});
