@@ -549,11 +549,11 @@ function rMean(x){
  const r=S.rd,w=W();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:26px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:18px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[0]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
-  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const d=vd(o[i]);if(d)z.insertAdjacentHTML("beforeend",`<span class="dv" style="font-size:13px;margin-top:6px;color:var(--tx);font-weight:600">(${esc(d)})</span>`)});
+  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const d=vd(o[i]);if(d)z.insertAdjacentHTML("beforeend",`<span class="dv" style="font-size:13px;margin-top:6px;color:var(--pr);font-weight:600">(${esc(d)})</span>`)});
   const v=vi(x);if(v)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
