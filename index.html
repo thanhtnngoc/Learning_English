@@ -128,6 +128,7 @@ details{margin-top:18px;font-size:14px}summary{cursor:pointer;font-weight:700;fo
 .spd .seg button{padding:5px 9px}
 .lg{padding:5px 10px!important}
 .lg{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.lg.on{background:var(--pr);color:var(--bt);border-color:var(--pr)}
 .spd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12px;color:var(--mu);font-weight:600}
 .rk{position:absolute;left:50%;bottom:6px;margin-left:-17px;font-size:30px;line-height:1.15;z-index:2;transform:rotate(-45deg);transform-origin:50% 55%;transition:transform .25s ease-out;pointer-events:none}
 .bm{position:absolute;width:3px;margin:0;border-radius:2px;background:linear-gradient(to top,rgba(253,224,71,.15),#fde047);transform-origin:50% 100%;z-index:1;pointer-events:none;animation:bmf .3s ease-out forwards}
@@ -628,7 +629,7 @@ function rAdd(){
  <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning of the word (e.g. tuân thủ)"><textarea id="ne" rows="2" placeholder="Vietnamese translation of the definition"></textarea></div>
  <div class="row"><button class="btn" id="ad">➕ Add word</button></div>
  <div class="list">${P.length?`<b>✨ New words waiting to paste into the Sheet (${P.length})</b>${P.slice().reverse().map(x=>`<div class="it"><b>${esc(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}<div class="row"><button class="btn l" id="cp">📋 1. Copy</button><button class="btn g" id="ok">✅ 2. Pasted into Sheet</button></div>`:`<span style="color:var(--mu)">No new words waiting. Add one!</span>`}</div></details>
- <details><summary>🔄 Sync from Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:E, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn l" id="sb">📋 Sync (paste)</button><button class="btn g" id="shs">☁️ Sync from Google Sheet</button></div></div></details>`;
+ <details><summary>🔄 Sync from Sheet<button class="lg" id="asb" type="button" style="float:right;margin-top:-4px"></button></summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:E, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn l" id="sb">📋 Sync (paste)</button><button class="btn g" id="shs">☁️ Sync from Google Sheet</button></div></div></details>`;
  const ws=$("ws"),wl=$("wl"),wt=$("wlt");
  let cnt0=String(L.length);
  ws.oninput=()=>{
@@ -654,6 +655,10 @@ function rAdd(){
   S.custom.push([a,b,c,d,e,false]);fixRound();gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd(); 
 };
  const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[5]=true});save();toast("✅ Moved to the Word List");rAdd()};
+ const asb=$("asb");
+ const asUp=()=>{asb.textContent=S.noauto?"Auto: Off":"Auto: On";asb.classList.toggle("on",!S.noauto)};
+ asUp();
+ asb.onclick=e=>{e.preventDefault();e.stopPropagation();S.noauto=S.noauto?0:1;save();asUp();toast(S.noauto?"Auto sync off":"Auto sync on")};
  $("shs").onclick=async()=>{if(await syncSheet(false))rAdd()};
  $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4])]);
   if(!rows.length){toast("No Sheet data received");return}
@@ -702,7 +707,7 @@ async function syncSheet(silent){
  }catch(e){if(!silent)toast("⚠️ Can't reach the Sheet");return false}
 }
 let autoDone=false;
-function autoSync(){if(autoDone)return;autoDone=true;syncSheet(true).then(ok=>{if(ok&&tab==="a"&&!gStop)render()})}
+function autoSync(){if(autoDone||S.noauto)return;autoDone=true;syncSheet(true).then(ok=>{if(ok&&tab==="a"&&!gStop)render()})}
 /* ===== Games ===== */
 if(S.coins==null)S.coins=5;
 S.gb=S.gb||{};
