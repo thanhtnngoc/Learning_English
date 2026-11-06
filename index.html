@@ -326,7 +326,8 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .wlh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
 .wlh b{white-space:nowrap}
 .wlh input{width:auto;flex:1;min-width:0;max-width:50%;margin:0;padding:8px 12px;border-radius:99px;font-size:14px}
-.wlt{background:none;border:0;padding:0;color:var(--tx);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;text-align:left}
+.wlt{display:list-item;list-style:inside disclosure-closed;color:var(--tx);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;user-select:none;-webkit-user-select:none}
+.wlt.open{list-style-type:disclosure-open}
 .keep *{animation-play-state:paused!important}
 </style>
 </head>
@@ -601,10 +602,10 @@ function wlFind(L,q){
 }
 const wlRow=x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`;
 let wlOpen=true;
-const wlTitle=c=>(wlOpen?"▾ ":"▸ ")+"📖 Word List ("+c+")";
+const wlTitle=c=>"📖 Word List ("+c+")";
 function rAdd(){
  const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).concat(B()).sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
- $("v").innerHTML=`<div class="wlh"><button class="wlt" id="wlt" type="button" aria-expanded="${wlOpen}">${wlTitle(L.length)}</button><input id="ws" type="search" placeholder="🔍 Search word ..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div><div class="list" id="wl"${wlOpen?"":' style="display:none"'}>${L.map(wlRow).join("")}</div>
+ $("v").innerHTML=`<div class="wlh"><div class="wlt${wlOpen?" open":""}" id="wlt" role="button" tabindex="0" aria-expanded="${wlOpen}">${wlTitle(L.length)}</div><input id="ws" type="search" placeholder="🔍 Search word ..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div><div class="list" id="wl"${wlOpen?"":' style="display:none"'}>${L.map(wlRow).join("")}</div>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
  <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning of the word (e.g. tuân thủ)"><textarea id="ne" rows="2" placeholder="Vietnamese translation of the definition"></textarea></div>
@@ -615,7 +616,7 @@ function rAdd(){
  let cnt0=String(L.length);
  ws.oninput=()=>{
   const q=norm(ws.value),R=q?wlFind(L,q):L;
-  if(q&&!wlOpen){wlOpen=true;wl.style.display="";wt.setAttribute("aria-expanded",true)}
+  if(q&&!wlOpen){wlOpen=true;wl.style.display="";wt.classList.add("open");wt.setAttribute("aria-expanded",true)}
   wl.innerHTML=R.length?R.map(wlRow).join(""):`<div style="color:var(--mu)">No matching words</div>`;
   cnt0=(q?R.length+"/":"")+L.length;
   wt.textContent=wlTitle(cnt0);
@@ -623,9 +624,11 @@ function rAdd(){
  wt.onclick=()=>{
   wlOpen=!wlOpen;
   wl.style.display=wlOpen?"":"none";
+  wt.classList.toggle("open",wlOpen);
   wt.setAttribute("aria-expanded",wlOpen);
   wt.textContent=wlTitle(cnt0);
  };
+ wt.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();wt.onclick()}};
  wl.onclick=e=>{const b=e.target.closest(".sp");if(b)speak(b.dataset.w)};
  $("ad").onclick=()=>{
   const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim(),e=$("ne").value.trim();
