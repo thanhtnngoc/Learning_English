@@ -2155,8 +2155,20 @@ function spNew(h,g,i){
   goPlant(t);
  }
  function wake(){if(!el.isConnected)return;tok++;left=2+Math.floor(Math.random()*2);waits=0;idle=0;step()}
- swayStart();
  sw=swarmWake(g,"__ssw",wake);
+ if(bugsOut()){ // đã xuất tổ hôm nay: nhện xuất hiện sẵn trên 1 cây, chạy ngầm
+  const a=pls().filter(p=>(S.m[p.dataset.w]||0)>=3&&SPO[p.dataset.w]==null);
+  if(a.length){
+   const p=a[Math.floor(Math.random()*a.length)],gc=geo(p),a0=rnd(0,6.283),w=p.dataset.w;
+   SPO[w]=i;cur=w;
+   x=gc.cx+Math.cos(a0)*gc.r*.7-sz/2;y=gc.cy+Math.sin(a0)*gc.r*.7-sz/2;
+   el.classList.remove("hm");paint();
+   left=2+Math.floor(Math.random()*2);
+   later(step,rnd(300,2000));
+   return;
+  }
+ }
+ swayStart();
  gLater(wake,rnd(300,2000));
 }
 
