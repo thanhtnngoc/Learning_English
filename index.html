@@ -326,6 +326,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .wlh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
 .wlh b{white-space:nowrap}
 .wlh input{width:auto;flex:1;min-width:0;max-width:50%;margin:0;padding:8px 12px;border-radius:99px;font-size:14px}
+.wlt{background:none;border:0;padding:0;color:var(--tx);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;text-align:left}
 .keep *{animation-play-state:paused!important}
 </style>
 </head>
@@ -599,9 +600,11 @@ function wlFind(L,q){
  return L.map(x=>[sc(x),x]).filter(a=>a[0]<99).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
 }
 const wlRow=x=>`<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b><small>${esc(x[2])}</small>${vd(x)?`<small class="vd">(${esc(vd(x))})</small>`:""}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`;
+let wlOpen=true;
+const wlTitle=c=>(wlOpen?"▾ ":"▸ ")+"📖 Word List ("+c+")";
 function rAdd(){
  const P=S.custom.filter(x=>!x[5]),L=S.custom.filter(x=>x[5]).concat(B()).sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
- $("v").innerHTML=`<div class="wlh"><b id="wlt">📖 Word List (${L.length})</b><input id="ws" type="search" placeholder="🔍 Search word or meaning…" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div><div class="list" id="wl">${L.map(wlRow).join("")}</div>
+ $("v").innerHTML=`<div class="wlh"><button class="wlt" id="wlt" type="button" aria-expanded="${wlOpen}">${wlTitle(L.length)}</button><input id="ws" type="search" placeholder="🔍 Search word ..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div><div class="list" id="wl"${wlOpen?"":' style="display:none"'}>${L.map(wlRow).join("")}</div>
  <details${P.length?" open":""}><summary>➕ Add new words${P.length?" ("+P.length+" waiting to paste)":""}</summary>
  <div class="q" style="margin-top:8px">Add a new word (+15 XP each)
  <input id="nw" placeholder="Word (e.g. obey)"><input id="ni" placeholder="Pronunciation (e.g. /əʊˈbeɪ/)"><textarea id="nd" rows="3" placeholder="English definition"></textarea><input id="nv" placeholder="Vietnamese meaning of the word (e.g. tuân thủ)"><textarea id="ne" rows="2" placeholder="Vietnamese translation of the definition"></textarea></div>
@@ -609,12 +612,21 @@ function rAdd(){
  <div class="list">${P.length?`<b>✨ New words waiting to paste into the Sheet (${P.length})</b>${P.slice().reverse().map(x=>`<div class="it"><b>${esc(x[0])}</b><small>${esc(x[2])}</small></div>`).join("")}<div class="row"><button class="btn l" id="cp">📋 1. Copy</button><button class="btn g" id="ok">✅ 2. Pasted into Sheet</button></div>`:`<span style="color:var(--mu)">No new words waiting. Add one!</span>`}</div></details>
  <details><summary>🔄 Sync from Sheet</summary><div class="q" style="font-size:14px;margin-top:8px">In the Sheet, select columns A:E, press Ctrl+C, then paste below. The app will match its word list to the Sheet; any new word not yet in the Sheet goes back to the waiting list.<textarea id="sy" rows="4"></textarea><div class="row"><button class="btn l" id="sb">📋 Sync (paste)</button><button class="btn g" id="shs">☁️ Sync from Google Sheet</button></div></div></details>`;
  const ws=$("ws"),wl=$("wl"),wt=$("wlt");
-  ws.oninput=()=>{
+ let cnt0=String(L.length);
+ ws.oninput=()=>{
   const q=norm(ws.value),R=q?wlFind(L,q):L;
+  if(q&&!wlOpen){wlOpen=true;wl.style.display="";wt.setAttribute("aria-expanded",true)}
   wl.innerHTML=R.length?R.map(wlRow).join(""):`<div style="color:var(--mu)">No matching words</div>`;
-  wt.textContent="📖 Word List ("+(q?R.length+"/":"")+L.length+")";
-  };
-  wl.onclick=e=>{const b=e.target.closest(".sp");if(b)speak(b.dataset.w)};
+  cnt0=(q?R.length+"/":"")+L.length;
+  wt.textContent=wlTitle(cnt0);
+ };
+ wt.onclick=()=>{
+  wlOpen=!wlOpen;
+  wl.style.display=wlOpen?"":"none";
+  wt.setAttribute("aria-expanded",wlOpen);
+  wt.textContent=wlTitle(cnt0);
+ };
+ wl.onclick=e=>{const b=e.target.closest(".sp");if(b)speak(b.dataset.w)};
  $("ad").onclick=()=>{
   const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim(),e=$("ne").value.trim();
   if(!a||!c){toast("Enter a word and its definition");return}
@@ -2266,7 +2278,7 @@ function waterPlant(word){
   $("bg").onclick=gGarden;
  });
 }
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;render()});
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;wlOpen=true;render()});
 $("qb").onclick=()=>rGames();
 $("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.rd=null;combo=0;gwDrop();save();hud();render();gwBoot();toast("Reset done ↺")};
 $("rsf").onclick=()=>{
