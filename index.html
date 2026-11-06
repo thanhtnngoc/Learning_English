@@ -375,7 +375,7 @@ function gain(n,msg){
 function hud(){
  $("st").textContent="🔥 "+S.streak;$("xp").textContent=S.xp+" XP";
  const r=S.rd;let p=0,t="No round yet · Open Games ➜ Quiz to start";
- if(r&&r.deck.length){p=r.i/r.deck.length*100;t=["","Round 1 · Multiple choice","Round 2 · Word ➜ meaning","Round 3 · Spelling"][r.ph]+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
+ if(r&&r.deck.length){p=r.i/r.deck.length*100;t=["","Round 1 · Multiple word","Round 2 · Multiple meaning","Round 3 · Spelling"][r.ph]+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
  const rw=$("rbw");if(rw){if(r&&r.deck.length&&tab==="g"&&inQ){const o=[1,2,3].filter(k=>k!==r.ph),ic={1:"↩️",2:"🔁",3:"✍️"};rw.style.display="";[$("rb1"),$("rb2")].forEach((b,i)=>{const to=o[i];b.textContent=ic[to]+" R"+to;b.onclick=()=>{newRound(to);rQuiz()}})}else rw.style.display="none"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
@@ -549,7 +549,7 @@ function rMean(x){
  const r=S.rd,w=W();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
- $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:20px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:22px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[0]);
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
