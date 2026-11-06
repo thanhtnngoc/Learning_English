@@ -1440,7 +1440,7 @@ function beeAct(p){
   S.fr[w]=2;
   gtoast("🐝 \""+w+"\" fruited");
  }else if(Math.random()<BEW){
-  if(!S.w[w])S.wp[w]=1;
+  if(!S.w[w]){S.wp[w]=1;if(S.spr&&S.spr.seen)delete S.spr.seen[w]}
   S.w[w]=1;
   gtoast("🐝 \""+w+"\" wilted");
  }
@@ -1661,7 +1661,7 @@ function ghAct(p,el){
  d.seen[w]=1;d.n++;
  S.w=S.w||{};S.wp=S.wp||{};
  if(Math.random()<GHW){
-  if(!S.w[w]){S.w[w]=1;S.wp[w]=1;gtoast("🦗 \""+w+"\" wilted")}
+  if(!S.w[w]){S.w[w]=1;S.wp[w]=1;if(S.spr&&S.spr.seen)delete S.spr.seen[w];gtoast("🦗 \""+w+"\" wilted")}
  }else{
   S.gold=(S.gold||0)+GHG;
   const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+GHG+" 🪙");
@@ -2098,8 +2098,48 @@ function spNew(h,g,i){
   }
   back();
  }
+  /* ===== Săn cây héo do côn trùng: tìm toàn vườn, đi nhờ cây khác (không dùng chức năng) ===== */
+ function hunt(){
+  const {a,r,c}=where();
+  const T=[];
+  a.forEach((p,n)=>{
+   const w=p.dataset.w;
+   if(w===cur)return;
+   if(!(S.w&&S.w[w]&&S.wp&&S.wp[w]))return;      // phải héo do côn trùng
+   if((S.m[w]||0)<3||!spOk(w)||WEBS[w])return;    // còn chức năng, chưa có tơ
+   if(SPO[w]!=null&&SPO[w]!==i)return;            // nhện khác đang giữ
+   const tr=Math.floor(n/4),tc=n%4;
+   T.push({p,tr,tc,d:Math.max(Math.abs(tr-r),Math.abs(tc-c))});
+  });
+  if(!T.length)return false;
+  T.sort((x,y)=>x.d-y.d);
+  const t=T[0];
+  if(t.d<=RNG){goPlant({p:t.p,stroll:false});return true}
+  // quá xa: chọn cây trung gian trong tầm, gần cây đích hơn vị trí hiện tại
+  const cand=[];
+  a.forEach((p,n)=>{
+   const w=p.dataset.w;
+   if(w===cur)return;
+   if(SPO[w]!=null&&SPO[w]!==i)return;
+   const rr=Math.floor(n/4),cc=n%4;
+   if(Math.max(Math.abs(rr-r),Math.abs(cc-c))>RNG)return;
+   cand.push({p,dt:Math.max(Math.abs(rr-t.tr),Math.abs(cc-t.tc))});
+  });
+  if(!cand.length)return false;
+  const m=Math.min(...cand.map(o=>o.dt));
+  if(m>=t.d)return false;
+  const L=cand.filter(o=>o.dt===m),pk=L[Math.floor(Math.random()*L.length)].p;
+  if(cur&&SPO[cur]===i)delete SPO[cur];
+  const gc=geo(pk),a0=rnd(0,6.283);
+  go(gc.cx+Math.cos(a0)*gc.r*.7,gc.cy+Math.sin(a0)*gc.r*.7,()=>{
+   cur=pk.dataset.w;                              // chỉ ghé qua: không giăng, không dùng chức năng
+   later(step,rnd(300,800));
+  });
+  return true;
+ }
  function step(){
   if(!el.isConnected)return;
+  if(hunt()){waits=0;idle=0;return}
   const t=choose();
   if(!t){
    if(cur){ // đang ở trên cây: đợi cây trống / cây được nhả ra, hết kiên nhẫn thì về
@@ -2148,7 +2188,7 @@ const SHOP=[
  {id:"melon",e:"🍉",t:"Watermelon",d:"A creeping vine with big lobed leaves, yellow flowers and one huge striped watermelon.",p:399,type:"plant"}
 ];
 const SPREQ=["bfly","bee","dfly","ghop"];
-const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.85,lv)); // giá gốc <350: x2, ≥350: x1.8
+const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.95,lv)); // giá gốc <350: x2, ≥350: x1.95
 const spOkLv=L=>SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L).length;   // số côn trùng đạt ít nhất lv L
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
