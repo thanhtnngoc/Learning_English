@@ -335,7 +335,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 <main>
  <div class="top"><h1>📚 Learning English</h1><div class="vw"><button class="vp" id="vp" title="Settings" aria-label="Settings" style="width:36px;height:36px;padding:0;border-radius:50%;font-size:18px">⚙️</button><div class="vb" id="vb"><div class="vr"><label>Accent</label><div class="seg"><button data-a="en-GB" title="British English">UK</button><button data-a="en-US" title="American English">US</button></div></div><div class="vr"><label>Speed</label><input type="range" id="spd" min="0.5" max="1.2" step="0.05" title="Speaking speed"><span id="spv"></span></div><div class="vr"><label>Theme</label><button class="lg" id="th">☀️ Light</button></div><div class="vr"><label>Data</label><button class="lg" id="rs" title="Reset">↺ Reset</button><button class="lg" id="rsf" title="Full reset">🗑 Full reset</button></div><div class="vr" id="acr" style="display:none"><label>Account</label><span id="acn" style="flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis"></span><button class="lg" id="lo">Log out</button></div></div></div></div>
  <div class="tabs"><button data-t="f"><span>🃏</span>Cards</button><button data-t="g"><span>🎮</span>Games</button><button data-t="n"><span>🌱</span>Garden</button><button data-t="a"><span>📖</span>Word List</button></div>
- <div id="qp" style="display:none"><div class="gh qh"><button class="btn l" id="qb" style="flex:none;padding:6px 12px">← Back</button><b>🎯 Quiz</b><button class="btn l rb" id="rb" style="display:none"></button></div><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="sub" id="ps"></div></div>
+ <div id="qp" style="display:none"><div class="gh qh"><button class="btn l" id="qb" style="flex:none;padding:6px 12px">← Back</button><b>🎯 Quiz</b><span class="cur" id="rbw" style="display:none"><button class="btn l rb" id="rb1"></button><button class="btn l rb" id="rb2"></button></span></div><div class="qr"><span class="chip" id="st">🔥 0</span><span class="chip" id="xp">0 XP</span><div class="bar"><i id="pb"></i></div></div><div class="sub" id="ps"></div></div>
  <div id="v"></div>
 </main>
 <div class="au" id="auth"><form class="aub" id="af"><h2>📚 Learning English</h2><input id="au" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username"><input id="ap" name="password" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" id="ab" type="submit">Log in</button><div class="hint" id="am"></div></form></div>
@@ -375,8 +375,8 @@ function gain(n,msg){
 function hud(){
  $("st").textContent="🔥 "+S.streak;$("xp").textContent=S.xp+" XP";
  const r=S.rd;let p=0,t="No round yet · Open Games ➜ Quiz to start";
- if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(r.ph===1?"Round 1 · Multiple choice":"Round 2 · Spelling")+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
- const rb=$("rb");if(rb){if(r&&r.deck.length&&tab==="g"&&inQ){const to=r.ph===1?2:1;rb.style.display="";rb.textContent=to===2?"✍️ Round 2":"↩️ Round 1";rb.onclick=()=>{newRound(to);rQuiz()}}else rb.style.display="none"}
+ if(r&&r.deck.length){p=r.i/r.deck.length*100;t=["","Round 1 · Multiple choice","Round 2 · Word ➜ meaning","Round 3 · Spelling"][r.ph]+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
+ const rw=$("rbw");if(rw){if(r&&r.deck.length&&tab==="g"&&inQ){const o=[1,2,3].filter(k=>k!==r.ph),ic={1:"↩️",2:"🔁",3:"✍️"};rw.style.display="";[$("rb1"),$("rb2")].forEach((b,i)=>{const to=o[i];b.textContent=ic[to]+" R"+to;b.onclick=()=>{newRound(to);rQuiz()}})}else rw.style.display="none"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
 function mkU(t){const u=new SpeechSynthesisUtterance(t),l=S.acc||"en-GB";u.lang=l;u.rate=S.rate||.85;try{const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")===l);if(v)u.voice=v}catch(e){}return u}
@@ -525,7 +525,7 @@ function rQuiz(){
  if(r.i>=r.deck.length)return rEnd();
  const x=byW(r.deck[r.i]);
  if(!x){r.deck.splice(r.i,1);if(r.n)r.n--;save();return rQuiz()}
- return r.ph===1?rPick(x):rType(x);
+ return r.ph===1?rPick(x):r.ph===2?rMean(x):rType(x);
 }
 function nextBtn(r){return `<div class="nxs"><div class="row"><button class="btn" id="nb">${r.i>=r.deck.length?"See results ➜":"Next ➜"}</button></div></div>`}
 function rPick(x){
@@ -538,6 +538,23 @@ function rPick(x){
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
   document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
   const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
+  const okk=b.dataset.w===x[0];
+  answered(x[0],okk);
+  if(okk){combo++;speak(x[0]);const g=Math.min(12,5+combo);gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
+  else{b.classList.add("no");combo=0;save();hud();toast("Not quite — we'll review it at the end 💪")}
+  $("nx").innerHTML=nextBtn(r);$("nb").onclick=rQuiz;
+ });
+}
+function rMean(x){
+ const r=S.rd,w=W();
+ let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
+ o=shuf(o);
+ $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:26px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
+ $("qs").onclick=()=>qSpeak($("qs"),x[0]);
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
+  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const d=vd(o[i]);if(d)z.insertAdjacentHTML("beforeend",`<span class="dv" style="font-size:13px;margin-top:6px;color:var(--tx);font-weight:600">(${esc(d)})</span>`)});
+  const v=vi(x);if(v)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);const g=Math.min(12,5+combo);gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
@@ -567,23 +584,23 @@ function rType(x){
  inp.onkeydown=e=>{if(e.key==="Enter")check()};
 }
 function rEnd(){
- const r=S.rd,n=r.deck.length,w=r.wr;
+ const r=S.rd,n=r.deck.length,w=r.wr,ph=r.ph;
  const lst=w.map(k=>{const z=byW(k);return z?`<div class="it"><b>${esc(z[0])}${cnt(z[0])}</b><small>${esc(z[2])}</small></div>`:""}).join("");
  const to1=()=>{newRound(1);rQuiz()};
- if(r.ph===1){
+ if(ph===1){
   const pf=!w.length;
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${pf?"🎯":"📝"}</div><b>${pf?(r.sub?"You fixed all the wrong words!":"Perfect! 100% correct!"):"Round 1 complete!"}</b><br>${r.ok}/${n} correct.${pf?"":"<br>You need 100% to unlock Round 2."}</div>${pf?"":`<div class="list"><b>Wrong words (${w.length})</b>${lst}</div>`}<div class="row">${pf?`<button class="btn l" id="r1">🔁 Back to Round 1</button><button class="btn" id="go">✍️ Go to Round 2</button>`:`<button class="btn" id="rt">🔁 Redo wrong words</button>`}</div>`;
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${pf?"🎯":"📝"}</div><b>${pf?(r.sub?"You fixed all the wrong words!":"Perfect! 100% correct!"):"Round 1 complete!"}</b><br>${r.ok}/${n} correct.${pf?"":"<br>You need 100% to unlock Round 2."}</div>${pf?"":`<div class="list"><b>Wrong words (${w.length})</b>${lst}</div>`}<div class="row">${pf?`<button class="btn l" id="r1">🔁 Back to Round 1</button><button class="btn" id="go">🔁 Go to Round 2</button>`:`<button class="btn" id="rt">🔁 Redo wrong words</button>`}</div>`;
   const rt=$("rt");if(rt)rt.onclick=()=>{newRound(1,w.slice());rQuiz()};
   const r1=$("r1");if(r1)r1.onclick=to1;
   const go=$("go");if(go)go.onclick=()=>{newRound(2);rQuiz()};
  }else if(!w.length){
   if(!r.cel){r.cel=1;save();confetti();gain(r.sub?20:50,"🏆 Perfect! +"+(r.sub?20:50)+" XP")}
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:52px">🏆</div><b>${r.sub?"You fixed all the wrong words!":"Amazing! "+n+"/"+n+" spelled correctly!"}</b><br>${r.sub?"Keep practicing!":"You've conquered the whole list."}</div><div class="row"><button class="btn l" id="r1">↩️ Back to Round 1</button><button class="btn" id="go">🔁 New Round 2</button></div>`;
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:52px">🏆</div><b>${r.sub?"You fixed all the wrong words!":"Amazing! "+n+"/"+n+(ph===3?" spelled":" matched")+" correctly!"}</b><br>${r.sub?"Keep practicing!":"You've conquered the whole list."}</div><div class="row"><button class="btn l" id="r1">↩️ Back to Round 1</button><button class="btn" id="go">🔁 New Round ${ph}</button></div>`;
   $("r1").onclick=to1;
-  $("go").onclick=()=>{newRound(2);rQuiz()};
+  $("go").onclick=()=>{newRound(ph);rQuiz()};
  }else{
-  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">✍️</div><b>Round 2 complete!</b><br>${r.ok}/${n} correct.</div><div class="list"><b>Misspelled words (${w.length})</b>${lst}</div><div class="row"><button class="btn" id="rt">🔁 Redo wrong words</button><button class="btn l" id="r1">↩️ Back to Round 1</button></div>`;
-  $("rt").onclick=()=>{newRound(2,w.slice());rQuiz()};
+  $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${ph===3?"✍️":"🔁"}</div><b>Round ${ph} complete!</b><br>${r.ok}/${n} correct.</div><div class="list"><b>${ph===3?"Misspelled words":"Wrong words"} (${w.length})</b>${lst}</div><div class="row"><button class="btn" id="rt">🔁 Redo wrong words</button><button class="btn l" id="r1">↩️ Back to Round 1</button></div>`;
+  $("rt").onclick=()=>{newRound(ph,w.slice());rQuiz()};
   $("r1").onclick=to1;
  }
 }
@@ -692,7 +709,7 @@ S.gb=S.gb||{};
 let gStop=null;
 function gClean(){gwStash();if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}}
 const GAMES=[
- {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: pick the word. Round 2: spell it."},
+ {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: pick the word. Round 2: word ➜ meaning. Round 3: spell it."},
  {k:"balloon",e:"🎈",t:"Balloon Pop",d:"Read the definition and pop the right balloon before it floats away."},
  {k:"space",e:"🚀",t:"Space Typing",d:"Type the word that matches the clue before the alien lands."}
 ];
@@ -838,7 +855,7 @@ const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
 function openQuiz(){fixRound();inQ=true;$("qp").style.display="";hud();rQuiz()}
-function quizStat(){const r=S.rd;return r&&r.deck.length?(r.ph===1?"Round 1":"Round 2")+" · "+r.i+"/"+r.deck.length:"Not started"}
+function quizStat(){const r=S.rd;return r&&r.deck.length?"Round "+r.ph+" · "+r.i+"/"+r.deck.length:"Not started"}
 function rGames(){
  gClean();inQ=false;$("qp").style.display="none";hud();
  $("v").innerHTML=`<div class="gh"><b>🎮 Games</b></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="quiz"?quizStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("");
@@ -1106,14 +1123,14 @@ function gGarden(){
  $("gx").onclick=()=>gExchange(gGarden);
  $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
  $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
-}
+}fv
 
 function progInfo(){
  const o=[];if(S.bt&&S.own&&S.own.beetle)o.push({s:"🪲",d:"🪲 Golden beetles: "+btDay().n+" plants visited today"});
  if(S.be&&S.own&&S.own.bee){const u=beeDay().used,t=beeTotal();o.push({s:"🐝",d:"🐝 Bees: "+Math.min(u,t)+"/"+t+(u>=t?" ✓ all done (resets tomorrow)":"")})}
  if(S.bf&&S.own&&S.own.bfly){const t=bfTotal(),n=bfDay().n;o.push({s:"🦋",d:"🦋 Butterflies: "+n+"/"+t+" wilted plants revived today"})}
  if(S.df&&S.own&&S.own.dfly){const t=dfTotal(),n=Math.min(dfDay().n,t);o.push({s:"🪽",d:"🪽 Dragonflies: "+n+"/"+t+" plants dewed today (+"+n*DEW+" 💧)"+(n>=t?" ✓":"")})}
- if(S.gh&&S.own&&S.own.ghop){const t=ghTotal(),n=Math.min(ghDay().n,t);o.push({s:"🦗",d:"🦗 Grasshoppers: "+n+"/"+t+" plants visited today (+"+n*GHG+" 🪙)"+(n>=t?" ✓":"")})}
+ if(S.gh&&S.own&&S.own.ghop){const t=ghTotal(),n=Math.min(ghDay().n,t);o.push({s:"🦗",d:"🦗 Grasshoppers: "+n+"/"+t+" plants visited today"+(n>=t?" ✓":"")})}
  if(S.sp&&S.own&&S.own.spider){const t=spTotal(),n=Math.min(spDay().n,t);o.push({s:"🕷️",d:"🕷️ Spiders: "+n+"/"+t+" plants visited today"+(n>=t?" ✓":"")})}
  return o;
 }
@@ -1596,7 +1613,7 @@ function dfNew(h,g,i){
 }
 /* ---- Grasshoppers ---- */
 const GHG=1; // số 🪙 mỗi cây mỗi ngày
-const GHW=.4; // xác suất châu chấu làm héo
+const GHW=.6; // xác suất châu chấu làm héo
 const ghDay=()=>{const t=ld();if(!S.ghr||S.ghr.d!==t)S.ghr={d:t,n:0,seen:{}};return S.ghr};
 const ghTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=3).length;
 const ghOk=w=>(S.m[w]||0)>=3&&!ghDay().seen[w];
@@ -1642,13 +1659,15 @@ function ghAct(p,el){
  const w=p.dataset.w;if(!gwLive()||!byW(w))return false;const d=ghDay();
  if(!ghOk(w))return false;
  d.seen[w]=1;d.n++;
- S.gold=(S.gold||0)+GHG;
  S.w=S.w||{};S.wp=S.wp||{};
- if(Math.random()<GHW&&!S.w[w]){S.w[w]=1;S.wp[w]=1;gtoast("🦗 \""+w+"\" wilted")}
- save();beeUpd(p);
- const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+GHG+" 🪙");
- const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄";
- progUpd();return true;
+ if(Math.random()<GHW){
+  if(!S.w[w]){S.w[w]=1;S.wp[w]=1;gtoast("🦗 \""+w+"\" wilted")}
+ }else{
+  S.gold=(S.gold||0)+GHG;
+  const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+GHG+" 🪙");
+  const c=$("gx");if(c)c.textContent="🪙 "+S.gold+" ⇄";
+ }
+ save();beeUpd(p);progUpd();return true;
 }
 function ghInit(){const h=$("ghs");if(!h)return;Object.keys(GHT).forEach(k=>delete GHT[k]);Object.keys(GHO).forEach(k=>delete GHO[k]);const n=((S.own&&+S.own.ghop)||1)*2;for(let i=0;i<n;i++)ghNew(h,h.parentNode,i)}
 
@@ -1879,7 +1898,7 @@ function btNew(h,g,i){
 /* ---- Spiders ---- */
 const spL=`<path d="M9 9L6.5 6L5.5 2.5"/><path d="M8.5 11L4.5 9.5L2 10.5"/><path d="M8.5 13.5L4 13.5L2 16.5"/><path d="M9.5 15.5L6.5 17.5L6 21.5"/>`;
 const spSvg=(h=0)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path class="spt" d="M12 ${(-14-h/.917).toFixed(1)}V6.5" stroke="#7c3aed" stroke-width=".7"/><g class="sl" stroke="#1a1a1a" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round">${mir(spL)}</g><ellipse cx="12" cy="11" rx="5" ry="4.5" fill="#1c1c1c"/><ellipse cx="10.2" cy="9.3" rx="1.6" ry=".8" fill="#4ade80" transform="rotate(-30 10.2 9.3)"/><ellipse cx="12" cy="16" rx="4.2" ry="3.4" fill="#262626"/><circle cx="10.2" cy="16" r="1.5" fill="#f97316"/><circle cx="13.8" cy="16" r="1.5" fill="#f97316"/><circle cx="10.2" cy="16.3" r=".75" fill="#111"/><circle cx="13.8" cy="16.3" r=".75" fill="#111"/><circle cx="9.9" cy="15.9" r=".28" fill="#fff"/><circle cx="13.5" cy="15.9" r=".28" fill="#fff"/><path d="M10.8 19L11.1 20.2M13.2 19L12.9 20.2" stroke="#111" stroke-width=".6" stroke-linecap="round"/></svg>`;
-const SPG=1,SPGP=.3; // +1 🪙 (30%)
+const SPG=1,SPGP=.25; // +1 🪙 (30%)
 const spDay=()=>{const t=ld();if(!S.spr||S.spr.d!==t)S.spr={d:t,n:0,seen:{}};return S.spr};
 const spTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=3).length;
 const spOk=w=>(S.m[w]||0)>=3&&!spDay().seen[w];
@@ -2120,14 +2139,17 @@ const SHOP=[
  {id:"bfly",e:"🦋",t:"Butterflies",d:"2 butterflies on a wilted plant revive it. They visit blooming and fruiting plants.",p:109,type:"deco",flag:"bf",per:4},
  {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into fruit. "+Math.round(BEW*100)+"% chance to wilt a fruiting plant.",p:209,type:"deco",flag:"be",per:3},
  {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew: +"+DEW+" 💧 per plant, once a day.",p:209,type:"deco",flag:"df",per:3},
- {id:"ghop",e:"🦗",t:"Grasshoppers",d:"+"+GHG+" 🪙 per plant (lvl 3+), once a day. "+Math.round(GHW*100)+"% chance to wilt it.",p:309,type:"deco",flag:"gh",per:2},
+ {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Each plant (lvl 3+), once a day: "+Math.round((1-GHW)*100)+"% +"+GHG+" 🪙, "+Math.round(GHW*100)+"% wilts it.",p:309,type:"deco",flag:"gh",per:2},
  {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Land on fruiting plants: 10% ×2, 30% +2, 60% −50% of that plant's harvest 🪙. Once per plant a day.",p:409,type:"deco",flag:"bt",per:2},
- {id:"spider",e:"🕷️",t:"Spiders",d:"Spin silk between plants (lvl 3+), cure insect wilt (100%), 30% +"+SPG+" 🪙, and weave a web that lures one of every insect. Once per plant a day.",p:359,type:"deco",flag:"sp",per:2},
+ {id:"spider",e:"🕷️",t:"Spiders",d:"Spin silk between plants (lvl 3+), cure insect wilt (100%), 30% +"+SPG+" 🪙, and weave a web that lures one of every insect. Once per plant a day.",p:409,type:"deco",flag:"sp",per:2},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
  {id:"melon",e:"🍉",t:"Watermelon",d:"A creeping vine with big lobed leaves, yellow flowers and one huge striped watermelon.",p:399,type:"plant"}
 ];
+const SPREQ=["bfly","bee","dfly","ghop"];
+const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.5,lv)); // giá gốc <350: x2, ≥350: x1.5
+const spOkLv=L=>SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L).length;   // số côn trùng đạt ít nhất lv L
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
  if(it.type==="cons"){const n=(S.inv&&S.inv[it.id])||0;st=n?"You have "+n:"";btn=`<button class="btn" data-id="${it.id}"${g<it.p?" disabled":""}>🪙 ${it.p}</button>`}
@@ -2143,11 +2165,16 @@ function shopItem(it,g){
   else{st=hasPot?"":"Needs a pot";btn=`<button class="btn" data-id="${it.id}"${g<it.p||!hasPot?" disabled":""}>🪙 ${it.p}</button>`}
  }
  else{
-  const fl=it.flag,on=!!S[fl],lv=own?(+S.own[it.id]||1):0,mx=5,np=Math.round(it.p*Math.pow(1.5,lv));
+  const fl=it.flag,on=!!S[fl],lv=own?(+S.own[it.id]||1):0,mx=5,np=nextPrice(it,lv);
   const REQ={bfly:"🦋",bee:"🐝",dfly:"🪽",ghop:"🦗"};
-  const miss=(it.id==="spider"&&!own)?Object.keys(REQ).filter(k=>!(S.own&&S.own[k])):[];
-  st=miss.length?"Needs "+miss.map(k=>REQ[k]).join(" "):(lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"");
-  const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np||miss.length?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
+  let blk=false,miss=[],need=0,have=[];
+  if(it.id==="spider"&&lv<mx){
+   const L=lv+1;need=lv===0?4:3;
+   have=SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L);
+   if(have.length<need){blk=true;miss=SPREQ.filter(k=>!have.includes(k))}
+  }
+  st=blk?(lv===0?"Needs "+miss.map(k=>REQ[k]).join(" "):"Needs "+need+"/4 at Lv "+(lv+1)+" ("+have.length+"/4)"):(lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"");
+  const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np||blk?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
   const tg=lv?`<button class="btn l${on?" on":""}" data-id="${it.id}" data-a="tg">${on?"On":"Off"}</button>`:"";
   btn=`<div style="display:flex;flex-direction:column;gap:6px">${up}${tg}</div>`;
  }
@@ -2245,8 +2272,8 @@ function gShop(){
    if(b.dataset.a==="tg"){S[fl]=S[fl]?0:1}
    else{
     if(lv>=5)return;
-    if(it.id==="spider"&&!own&&["bfly","bee","dfly","ghop"].some(k=>!S.own[k])){toast("🕷️ Buy butterflies, bees, dragonflies and grasshoppers first");return}
-    const np=Math.round(it.p*Math.pow(1.5,lv));
+    if(it.id==="spider"){const L=lv+1,need=lv===0?4:3;if(spOkLv(L)<need){toast(lv===0?"🕷️ Buy butterflies, bees, dragonflies and grasshoppers first":"🕷️ Need "+need+" of 4 insects at Lv "+L);return}}
+    const np=nextPrice(it,lv);
     if((S.gold||0)<np)return;
     S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
     toast(it.e+" Level "+(lv+1)+" · "+(lv+1)*it.per+" "+it.e);
