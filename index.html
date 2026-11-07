@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#f0fdfa">
 <link rel="icon" type="image/png" href="Thanh.png">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f0fdfa;--card:#fff;--tx:#0b3b38;--mu:#52807b;--pr:#0d9488;--ac:#f59e0b;--ok:#16a34a;--no:#e5484d;--bd:#c9eee8;--bt:#fff;color-scheme:light}
-:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--tx:#e2e8f0;--mu:#94a3b8;--pr:#38bdf8;--ac:#a78bfa;--ok:#34d399;--no:#fb7185;--bd:#334155;--bt:#06212e;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f0fdfa;--card:#fff;--tx:#0b3b38;--mu:#52807b;--pr:#0d9488;--ac:#f59e0b;--ok:#16a34a;--no:#e5484d;--bd:#c9eee8;--bt:#fff;--wt:#dc2626;--h1:#f97316;--h2:#eab308;color-scheme:light}
+:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--tx:#e2e8f0;--mu:#94a3b8;--pr:#38bdf8;--ac:#a78bfa;--ok:#34d399;--no:#fb7185;--bd:#334155;--bt:#06212e;--wt:#f43f5e;--h1:#fb923c;--h2:#fde047;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
@@ -174,8 +174,8 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .pp{display:block;font-size:8px;letter-spacing:1px;color:var(--ok);line-height:1;margin-top:2px}
 .st{animation:stk 2s ease-in-out infinite}
 @keyframes stk{0%{opacity:0;transform:translateY(4px)}50%{opacity:.9}100%{opacity:0;transform:translateY(-6px)}}
-.pl.wt{border-color:var(--no)}
-.pl.wt .pp{color:var(--no)}
+.pl.wt{border:1px solid var(--wt);padding:8px 2px}
+.pl.wt .pp{color:var(--wt)}
 .q.pb{position:relative}
 .pbt{position:absolute;top:10px;left:10px;z-index:2;background:var(--pr);color:var(--bt);padding:6px 12px;border-radius:99px;font-size:13px;font-weight:700;line-height:1.3;pointer-events:none;animation:pbt 1.8s ease forwards}
 @keyframes pbt{0%{opacity:0;transform:translateY(-6px)}12%,75%{opacity:1;transform:none}100%{opacity:0}}
@@ -190,8 +190,8 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .btn:disabled{opacity:.5;cursor:default}
 .gact .btn{padding:10px 6px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
 .gact svg{width:17px;height:17px}
-.pl.rp{border-color:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.35);animation:rpg 1.6s ease-in-out infinite}
-@keyframes rpg{50%{box-shadow:0 0 0 5px rgba(245,158,11,.12)}}
+.pl.rp{border-color:var(--h1);box-shadow:0 0 0 2px color-mix(in srgb,var(--h1) 35%,transparent);animation:rpg 1.6s ease-in-out infinite}
+@keyframes rpg{50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--h1) 12%,transparent)}}
 .gg.hm .pl:not(.rp){opacity:.5}
 .cfly{position:fixed;transform:translateX(-50%);font-weight:800;font-size:16px;color:#d97706;z-index:30;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.25);animation:cfy 1s ease-out forwards}
 @keyframes cfy{to{transform:translate(-50%,-50px);opacity:0}}
@@ -324,6 +324,20 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 :root[data-theme="dark"] .sks line,
 :root[data-theme="dark"] .sks polyline{stroke:#fff}
 :root[data-theme="dark"] .pl .web path{stroke:#fff;fill:rgba(255,255,255,.12)}
+/* ===== Dark mode: ong + đom đóm — chỉ đổi phần đen của thân sang xám đậm, không thêm viền, cánh giữ nguyên ===== */
+/* Ong: đầu, mắt/râu, sọc đen trên bụng */
+:root[data-theme="dark"] .bf.bee svg [fill="#111"]{fill:#383c43;}
+/* Ong: nét râu + nét viền thân */
+:root[data-theme="dark"] .bf.bee svg>path[stroke="#111"],
+:root[data-theme="dark"] .bf.bee svg>circle[stroke="#111"]{stroke:#40454d;}
+
+/* Đom đóm: đầu, ngực, bụng */
+:root[data-theme="dark"] .bf.ff svg>circle[fill="#292524"],
+:root[data-theme="dark"] .bf.ff svg>circle[fill="#44403c"]{fill:#6b7280}
+:root[data-theme="dark"] .bf.ff svg>path[fill="#57534e"]{fill:#52525b}
+/* Đom đóm: nét râu */
+:root[data-theme="dark"] .bf.ff svg>path[stroke="#292524"]{stroke:#6b7280}
+
 .wlh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
 .wlh b{white-space:nowrap}
 .wlh input{width:auto;flex:1;min-width:0;max-width:50%;margin:0;padding:8px 12px;border-radius:99px;font-size:14px}
@@ -335,6 +349,45 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .crb.on{opacity:1}
 .crb i{display:block;font-style:normal;color:var(--pr);font-weight:600}
 .crb span{display:block;font-weight:700}
+.ff .ffg{animation:ffp 1.6s ease-in-out infinite}
+@keyframes ffp{0%,100%{opacity:.3}50%{opacity:1}}
+/* Đang bay: sáng mạnh rồi mờ từ từ, lặp lại + quầng tỏa nhẹ */
+.ff.fly .ffg{animation:ffy 1.8s ease-out infinite}
+@keyframes ffy{
+ 0%{opacity:.1;filter:none}
+ 12%{opacity:1;filter:drop-shadow(0 0 4px #fde047) drop-shadow(0 0 8px #facc15)}
+ 100%{opacity:.1;filter:none}
+}
+.ff.fly .ffb{animation:ffh 1.8s ease-out infinite}
+.ff.fly .ffb2{animation-delay:.25s}
+@keyframes ffh{0%{transform:scale(.6);opacity:0}12%{opacity:.45}100%{transform:scale(2.4);opacity:0}}
+.pl.ff1{border-color:var(--h2);box-shadow:0 0 0 2px color-mix(in srgb,var(--h2) 35%,transparent)}
+.pl.ff2{border-color:var(--h2);animation:ffr 1.4s ease-out infinite}
+@keyframes ffr{0%{box-shadow:0 0 0 2px color-mix(in srgb,var(--h2) 80%,transparent)}100%{box-shadow:0 0 0 10px color-mix(in srgb,var(--h2) 0%,transparent)}}
+.ffb{opacity:0;transform-box:fill-box;transform-origin:center}
+/* Đậu: tỏa sáng 2 lần (iteration-count = 2) */
+.ff.glow .ffb{animation:ffb 2.4s ease-out 2 both}
+.ff.glow .ffb2{animation-delay:.4s}
+@keyframes ffb{0%{transform:scale(.5);opacity:0}12%{opacity:.85}100%{transform:scale(5);opacity:0}}
+.ff.glow .ffg{animation:ffs 2.4s ease-out 2 forwards}
+@keyframes ffs{0%{opacity:.4}15%{opacity:1;filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 10px #facc15)}100%{opacity:.5;filter:none}}
+/* ===== Dung beetle ===== */
+#dbs{z-index:4}
+.dg{position:absolute;left:0;top:0;width:0;height:0;will-change:transform}
+.dgb{position:absolute;transform-origin:50% 100%;transition:transform .5s ease-out}
+.dgb svg,.dgp svg,.dgz svg{width:100%;height:100%;display:block;overflow:visible}
+.dgp{position:absolute;left:-13px;top:-26px;width:26px;height:26px;transition:transform .5s ease-out}
+.dg.roll .dgp svg{animation:dgbob .3s ease-in-out infinite alternate}
+@keyframes dgbob{to{transform:translateY(-1.5px) rotate(3deg)}}
+.dgz{position:absolute;left:0;top:0;width:26px;height:30px;color:var(--tx);opacity:0;transition:opacity .4s,transform .5s ease-out;pointer-events:none}
+.dg.zz .dgz{opacity:1}
+.dgz text{font-weight:900;font-family:system-ui,sans-serif;fill:currentColor;opacity:0;transform-box:fill-box;transform-origin:center;animation:dgzf 3s ease-out infinite}
+.dgz text:nth-child(2){animation-delay:1s}
+.dgz text:nth-child(3){animation-delay:2s}
+@keyframes dgzf{0%{opacity:0;transform:translate(0,4px) scale(.5)}15%{opacity:1}70%{opacity:.9}100%{opacity:0;transform:translate(10px,-24px) scale(1.4)}}
+.dgs{display:none}
+.dg.zz .dgs{display:inline}
+.dg.zz .dgr{display:none}
 </style>
 </head>
 <body>
@@ -352,7 +405,7 @@ const BASE=[["police","/pəˈliːs/","the official organization that is responsi
 let S={xp:0,streak:0,last:"",custom:[],m:{}};
 try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3]]:typeof x[4]==="boolean"?[x[0],x[1],x[2],x[3]||"","",x[4]]:x);
-function ens(){S.bv=S.bv||{};S.bm=S.bm||{};S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
+function ens(){S.bv=S.bv||{};S.bm=S.bm||{};S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.f2=S.f2||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
 ens();
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
@@ -410,7 +463,7 @@ function mark(w,d,q,nc){if(!q)dailyCheck();
  else{if(m<0){}else if(!wl)wl=true;else if(m===0){m=-1;wl=false}else m--}
  S.m[w]=m;S.w[w]=wl?1:0;
  S.fr=S.fr||{};S.hv=S.hv||{};
- if(m<5){delete S.fr[w];S.bv&&delete S.bv[w];S.bm&&delete S.bm[w]}else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
+ if(m<5){delete S.fr[w];S.bv&&delete S.bv[w];S.bm&&delete S.bm[w];S.f2&&delete S.f2[w]}else if(m0<5&&S.hv[w]!==ld())S.fr[w]=2;
  if(!q||!S.w[w])delete S.wp[w];
  if(q)return;S.td=ld();
  S.pd=S.pd||{};S.pd[ld()]=1;
@@ -424,11 +477,48 @@ function fruitUp(w){
  if(RV===w){RV=null;return}
  if((S.m[w]||0)<5)return;
  S.fr=S.fr||{};S.hv=S.hv||{};S.bm=S.bm||{};S.bv=S.bv||{};
- if(S.bm[w]&&fstate(w)===2){S.bv[w]=Math.max(S.bv[w]||0,BEE_UP);delete S.bm[w];return}
- if(S.hv[w]===ld())return;
+ if(S.bm[w]&&fstate(w)===2){S.bv[w]=Math.max(S.bv[w]||0,BEE_UP);delete S.bm[w];if(S.hv[w]===ld())ff2Up(w);return}
+ if(S.hv[w]===ld()){ff2Up(w);return}
  const f=fstate(w);if(f<2)S.fr[w]=f+1
 }
-function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.bv=S.bv||{};S.bm=S.bm||{};const g=S.bv[w]!=null?S.bv[w]:9;delete S.bv[w];delete S.bm[w];S.gold=(S.gold||0)+g;return g}
+function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.bv=S.bv||{};S.bm=S.bm||{};const g=S.bv[w]!=null?S.bv[w]:9;delete S.bv[w];delete S.bm[w];S.gold=(S.gold||0)+g;
+ if(S.own&&S.own.ffly){S.f2=S.f2||{};S.f2[w]={d:ld(),s:0,h:0,v:g}} // nhớ sản lượng lần 1 để tính 60%
+ return g}
+/* ===== Fireflies: 2nd harvest ===== */
+const FF_PER=3,FF_Y=.6;                                   // 3 con/level (tốc độ) · 60% sản lượng
+const FF_RANGE=.4;                                        // ✏️ CHỈNH Ở ĐÂY: đom đóm thắp tối đa % số cây/ngày (đổi .3 / .4 tùy ý)
+const ffOn=()=>!!(S.ff&&S.own&&S.own.ffly);
+const ffCount=()=>((S.own&&+S.own.ffly)||0)*FF_PER;       // số con đom đóm (theo level)
+const ffQuota=()=>(S.own&&+S.own.ffly)?Math.max(1,Math.ceil(W().length*FF_RANGE)):0; // hạn mức cây/ngày = % tổng số cây
+const f2e=w=>{const e=S.f2&&S.f2[w];return e&&e.d===ld()?e:null};
+const ffUsed=()=>Object.values(S.f2||{}).filter(e=>e&&e.d===ld()&&e.s>=1).length;
+function ripe2(w){const e=f2e(w);return ffOn()&&(S.m[w]||0)>=5&&(S.hv||{})[w]===ld()&&!!e&&e.s===2&&!e.h&&!(S.w&&S.w[w])}
+const pickable=w=>ripe(w)||ripe2(w);
+const ffLit=w=>{const e=f2e(w);return ffOn()&&!!e&&e.s===1&&!e.h&&(S.m[w]||0)>=5&&(S.hv||{})[w]===ld()&&!(S.w&&S.w[w])};
+const ffOk=w=>{ // cây đom đóm được phép thắp: đã thu hoạch hôm nay, chưa thắp, còn hạn mức
+ if(!ffOn()||(S.m[w]||0)<5||(S.hv||{})[w]!==ld()||(S.w&&S.w[w]))return false;
+ const e=f2e(w);
+ return (!e||(e.s===0&&!e.h))&&ffUsed()<ffQuota();
+};
+function ffAct(p){
+ const w=p.dataset.w;if(!gwLive()||!byW(w)||!ffOk(w))return false;
+ S.f2=S.f2||{};
+ const e=f2e(w)||(S.f2[w]={d:ld(),s:0,h:0});
+ e.s=1;
+ save();plSet(p);progUpd();
+ gtoast("✨ \""+w+"\" lit up");
+ return true;
+}
+function ff2Up(w){ // chỉ gọi từ fruitUp => chỉ khi trả lời đúng trong Quiz/games
+ if(!ffOn())return;
+ const e=f2e(w);
+ if(e&&e.s===1&&!e.h)e.s=2;                               // cây đã được đom đóm thắp sáng → ra quả
+}
+function harvest2(w){
+ if(!ripe2(w))return 0;
+ const e=S.f2[w];e.h=1;
+ const g=Math.max(1,Math.round((e.v!=null?e.v:9)*FF_Y));
+ S.gold=(S.gold||0)+g;return g}
 /* ===== Daily thirst ===== */
 const dstr=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ld=()=>dstr(new Date());
@@ -665,7 +755,7 @@ function rAdd(){
   const a=$("nw").value.trim(),b=$("ni").value.trim(),c=$("nd").value.trim(),d=$("nv").value.trim(),e=$("ne").value.trim();
   if(!a||!c){toast("Enter a word and its definition");return}
   if(W().some(x=>x[0].toLowerCase()===a.toLowerCase())&&!confirm("This word already exists. Add anyway?"))return;
-  S.custom.push([a,b,c,d,e,false]);fixRound();gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd(); 
+  S.custom.push([a,b,c,d,e,false]);fixRound();dbPoke();gain(15,"🎉 Added \""+a+"\" +15 XP");speak(a);rAdd(); 
 };
  const ok=$("ok");if(ok)ok.onclick=()=>{S.custom.forEach(x=>{x[5]=true});save();toast("✅ Moved to the Word List");rAdd()};
  const asb=$("asb");
@@ -677,7 +767,7 @@ function rAdd(){
   if(!rows.length){toast("No Sheet data received");return}
   const have=new Set(rows.map(r=>r[0].toLowerCase()));
   S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",x[4]||"",false]);
-  fixRound();save();hud();toast("🔄 Synced "+rows.length+" words");rAdd()};
+  fixRound();save();hud();dbPoke();toast("🔄 Synced "+rows.length+" words");rAdd()};
  const cp=$("cp");if(cp)cp.onclick=()=>{
   const t=P.map(x=>x.slice(0,5).join("\t")).join("\n");
   const done=()=>{P.forEach(x=>x[5]=true);save();toast("Copied! Words moved to the Word List");rAdd()};
@@ -703,7 +793,7 @@ function applyRows(rows){
  const have=new Set(rows.map(r=>r[0].toLowerCase()));
  S.base=rows;
  S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",x[4]||"",false]);
- fixRound();save();hud();
+ fixRound();save();hud();dbPoke();
 }
 async function syncSheet(silent){
  try{
@@ -872,8 +962,8 @@ function plant(m,wl){
 const PC={};
 const pk=(m,wl)=>{const k=(S.pot||"")+(S.soil||"default")+"|"+(S.pt||"tree")+"|"+m+"|"+wl+"|"+(ghOn()?1:0);return PC[k]||(PC[k]=plant(m,wl))};
 function rot(){const k=(S.pot||"")+(S.soil||"default")+"|rot";return PC[k]||(PC[k]=`<svg viewBox="${VB()}" aria-hidden="true">${soilSvg()}<ellipse cx="50" cy="78" rx="5" ry="6" fill="#4a4036" stroke="#2f2820" stroke-width="1" transform="rotate(-15 50 78)"/><path d="M47 74L50 78L48 83" stroke="#1f1a15" stroke-width="1" fill="none"/><path class="st" style="animation-delay:0s" d="M44 68q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-.7s" d="M50 66q-3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/><path class="st" style="animation-delay:-1.4s" d="M56 68q3-4 0-8t0-8" stroke="#9aa83e" stroke-width="1.8" fill="none" stroke-linecap="round"/>${soilFront()}${THIRSTY}</svg>`)}
-const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=f===2?5:f===1?4:3}return pk(v,wt)};
-function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return f===2?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
+const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&&S.w[w]);let v=m;if(m>=5){const f=fstate(w);v=(f===2||ripe2(w))?5:f===1?4:3}return pk(v,wt)};
+function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return (f===2||ripe2(w))?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
 function openQuiz(){fixRound();inQ=true;$("qp").style.display="";hud();rQuiz()}
 function quizStat(){const r=S.rd;return r&&r.deck.length?"Round "+r.ph+" · "+r.i+"/"+r.deck.length:"Not started"}
@@ -1071,11 +1161,11 @@ let hm=false;
 const SICKLE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21l5-7"/><path d="M10 14c-4-3-5-8-1-10 5-2 11 1 11 7-2-3-6-4-9-2"/></svg>`;
 function coinFly(x,y,t){if(!GW||GW.parentNode===KEEP)return;const s=document.createElement("span");s.className="cfly";s.textContent=t;s.style.cssText=`left:${x}px;top:${y}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}
 const gwList=()=>W().slice().sort((a,b)=>a[0].trim().localeCompare(b[0].trim(),"en",{sensitivity:"base"}));
-function plHtml(x){const w=x[0],m=Math.min(S.m[w]||0,5),wt=m>=0&&!!(S.w&&S.w[w]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}${ripe(w)?" rp":""}${wt||m<0?" wt":""}" data-w="${esc(w)}" title="${stName(w)}${wt?" (thirsty)":""}"><i>${pic(w)}</i><span>${esc(w)}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}
+function plHtml(x){const w=x[0],m=Math.min(S.m[w]||0,5),wt=m>=0&&!!(S.w&&S.w[w]),k=Math.max(m,0);return `<button class="pl${m>=5&&!wt?" full":""}  ${pickable(w)?" rp":""}${ripe2(w)?" ff2":""}${ffLit(w)?" ff1":""}${wt||m<0?" wt":""}" data-w="${esc(w)}" title="${stName(w)}${wt?" (thirsty)":""}"><i>${pic(w)}</i><span>${esc(w)}</span><b class="pp">${"●".repeat(k)+"○".repeat(5-k)}</b></button>`}
 function plSet(p){ // cập nhật ô tại chỗ, không dựng lại
  const w=p.dataset.w,m=Math.min(S.m[w]||0,5),wt=m>=0&&!!(S.w&&S.w[w]),k=Math.max(m,0),i=p.querySelector("i"),h=pic(w);
  if(i.__h!==h){i.innerHTML=h;i.__h=h}
- p.classList.toggle("full",m>=5&&!wt);p.classList.toggle("rp",ripe(w));p.classList.toggle("wt",wt||m<0);
+ p.classList.toggle("full",m>=5&&!wt);p.classList.toggle("rp",pickable(w));p.classList.toggle("ff2",ripe2(w));p.classList.toggle("ff1",ffLit(w));p.classList.toggle("wt",wt||m<0);
  p.title=stName(w)+(wt?" (thirsty)":"");
  const pp=p.querySelector(".pp");if(pp)pp.textContent="●".repeat(k)+"○".repeat(5-k);
  webSync(p);
@@ -1092,7 +1182,7 @@ function gwCells(grow){
 // true nếu côn trùng đã xuất tổ hôm nay (đang khôi phục sau reload)
 const bugsOut=()=>S.out===ld()&&!GWFIRST;
 let GWFIRST=false;
-const gwSig=()=>{const o=S.own||{};return [S.bf,o.bfly,S.be,o.bee,S.df,o.dfly,S.gh,o.ghop,S.bt,o.beetle,S.sp,o.spider,S.cr,o.cricket,S.gd,S.uid||""].join("|")};
+const gwSig=()=>{const o=S.own||{};return [S.bf,o.bfly,S.be,o.bee,S.df,o.dfly,S.gh,o.ghop,S.bt,o.beetle,S.sp,o.spider,S.cr,o.cricket,S.ff,o.ffly,S.dg,o.dung,S.gd,S.uid||""].join("|")};
 function gwEnsure(){ // tạo vườn (nếu cổng mở) và để trong KEEP; chỉ tạo lại khi sig/ngày/uid đổi
  if(S.gd!==ld()){gwDrop();return false}
  const sig=gwSig();
@@ -1103,12 +1193,14 @@ function gwEnsure(){ // tạo vườn (nếu cổng mở) và để trong KEEP; 
  const bf=L(S.bf,"bfly","bfs"),be=L(S.be,"bee","bes"),df=L(S.df,"dfly","dfs"),gh=L(S.gh,"ghop","ghs"),bt=L(S.bt,"beetle","bts");
  const sp=(S.sp&&o.spider)?`<div class="bfs" id="sps"></div>`:"";
  const cr=L(S.cr,"cricket","crs");
+ const ff=L(S.ff,"ffly","ffs");
+ const dg=L(S.dg,"dung","dbs");
  const strip=(bf||be||df||sp)?`<div class="hvs">${(bf||sp)?BRSVG:""}${(be||df)?BR2SVG:""}${be?HVSVG:""}</div>`:"";
  GW=document.createElement("div");GW.className="gw";GW.dataset.sig=sig;
- GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}${gh}${bt}${sp}${cr}`;
+ GW.innerHTML=`${strip}<div class="gg"></div>${bf}${be}${df}${gh}${bt}${sp}${cr}${ff}${dg}`;
  keepFit();KEEP.appendChild(GW);
  gwCells(false);
- bfInit();beeInit();dfInit();ghInit();btInit();spInit();crInit();
+ bfInit();beeInit();dfInit();ghInit();btInit();spInit();crInit();ffInit();dbInit();
  return true;
 }
 
@@ -1131,7 +1223,7 @@ function gGarden(){
  const fresh=gwEnsure();
  if(S.out!==ld()){S.out=ld();save()} // đã tạo vườn lần đầu hôm nay: đánh dấu đã xuất tổ
  const w=gwList();
- const rp=w.filter(x=>ripe(x[0])).length;
+ const rp=w.filter(x=>pickable(x[0])).length;
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
  $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧): answer right and it grows, answer wrong and it wilts. Answering well in Quiz and the other games also makes plants grow.<br><br>Skip a day and you lose 10% 💧. Green plants are never affected. A wilted plant costs 2 💧 to keep its level; 4 💧 more makes it green again. Without enough 💧, it drops a level.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
@@ -1144,7 +1236,7 @@ function gGarden(){
  $("shp").onclick=gShop;
  $("gx").onclick=()=>gExchange(gGarden);
  $("skl").onclick=()=>{hm=!hm;toast(hm?"Sickle on: tap a ripe plant":"Sickle off");gGarden()};
- $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
+ $("hva").onclick=()=>{let n=0;w.forEach(x=>{n+=harvest(x[0])+harvest2(x[0])});if(n){save();const r=$("hva").getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");toast("🧺 Harvested "+n+" 🪙");gGarden()}};
 }
 
 function progInfo(){
@@ -1157,7 +1249,7 @@ function progInfo(){
   o.push({s:"🪲",d:"🪲 Beetles: "+n+"/"+t+" fruit plants visited"+ok(n,t)});
  }
  if(S.be&&own.bee){
-  const t=beeSet().size,n=cap(beeDay().used,t);
+  const t=beeTotal(),n=cap(beeDay().used,t);
   o.push({s:"🐝",d:"🐝 Bees: "+n+"/"+t+" plants visited"+ok(n,t)});
  }
  if(S.bf&&own.bfly){
@@ -1180,6 +1272,15 @@ function progInfo(){
   const n=cap(crDay().n,N);
   o.push({s:"🎶",d:"🎶 Crickets: "+n+"/"+N+" plants sung (+"+n+" 💧, +"+Math.floor(n/10)+" 🪙)"+ok(n,N)});
  }
+ if(S.ff&&own.ffly){
+  const q=ffQuota(),n=cap(ffUsed(),q);
+  o.push({s:"✨",d:"✨ Fireflies: "+n+"/"+q+" plants lit ("+Math.round(FF_RANGE*100)+"% of "+N+")"+ok(n,q)});
+ }
+ if(S.dg&&own.dung){
+  const n=cap(dbDay().n,N);
+  o.push({s:"🟤",d:"🟤 Dung beetles: "+n+"/"+N+" plants rolled"+ok(n,N)});
+ }
+
  return o;
 }
 
@@ -1231,7 +1332,7 @@ const LSLOT={ // điểm đậu theo loại cây, toạ độ SVG của cây
  vine:[[50,59],[41,64],[59,64],[33,70],[67,70],[22,77],[78,77]]
 };
 const PCAP={tree:4,orange:4,melon:3,vine:2}; // số con tối đa đậu cùng lúc trên 1 cây
-const stg=w=>{const m=Math.min(S.m[w]||0,5);if(m>=5){const f=fstate(w);return f===2?5:f===1?4:3}return m};
+const stg=w=>{const m=Math.min(S.m[w]||0,5);if(m>=5){const f=fstate(w);return (f===2||ripe2(w))?5:f===1?4:3}return m};
 function plSlots(p){
  const w=p.dataset.w,v=stg(w);
  if(v<0)return{s:[[50,76]],cap:1};
@@ -1481,24 +1582,14 @@ const beeSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 4.3
 const BEW=.2; // xác suất ong làm héo
 const BEE_V=4,BEE_UP=7,BEE_W=6,BEE_G=2; // quả ong 4🪙; bạn trả lời đúng thì lên 7🪙 (75% của 9)
 const BEE_RANGE=.5;                      // ong chỉ được làm trên 50% số cây
-const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
-let BSC={k:"",s:new Set()};
-function beeSet(){
- const ws=W().map(x=>x[0]),k=ld()+"|"+ws.length+"|"+(S.uid||"");
- if(BSC.k!==k){
-  const n=Math.max(1,Math.ceil(ws.length*BEE_RANGE));
-  BSC={k,s:new Set(ws.slice().sort((a,b)=>hs(a+"|"+ld())-hs(b+"|"+ld())).slice(0,n))};
- }
- return BSC.s;
-}
 const beeCan=w=>{const m=S.m[w]||0;return (m===4||(m>=5&&fstate(w)===1))?((S.coins||0)>=BEE_W&&(S.gold||0)>=BEE_G):true};
-const beeOk=w=>beeSet().has(w)&&bfBloom(w)&&!(S.w&&S.w[w])&&!beeDay().seen[w]&&beeCan(w);
-const beeTotal=()=>beeSet().size;                 // hạn mức/ngày = 50% số cây
+const beeOk=w=>bfBloom(w)&&!(S.w&&S.w[w])&&!beeDay().seen[w]&&beeCan(w);
+const beeTotal=()=>Math.max(1,Math.ceil(W().length*BEE_RANGE));   // hạn mức/ngày = % tổng số cây
 const beeCount=()=>((S.own&&+S.own.bee)||1)*3;    // số con ong (tốc độ làm việc)
 function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}};return S.bee}
 function beeUpd(p){
  plSet(p);
- const rp=W().filter(x=>ripe(x[0])).length,hv=$("hva");if(hv){hv.textContent="🧺 All ("+rp+")";hv.disabled=!rp}
+ const rp=W().filter(x=>pickable(x[0])).length,hv=$("hva");if(hv){hv.textContent="🧺 All ("+rp+")";hv.disabled=!rp}
 }
 function beeAct(p){
  const w=p.dataset.w;if(!gwLive()||!byW(w))return false;const b=beeDay();
@@ -1573,7 +1664,6 @@ function beeNew(h,g,i){
  function step(){
   if(!el.isConnected)return;
   const [t,b]=vis(),w=g.clientWidth,any=(!done()&&spots().length>0)||webHas("be",el);
-  const lookAround=!done();
   if(any)miss=0;
   const s=any&&(webHas("be",el)||Math.random()<.9)?(pickSlot(g,el,20,p=>p!==prev&&beeOk(p.dataset.w)&&seen(p),"be")||pickSlot(g,el,20,p=>beeOk(p.dataset.w)&&seen(p),"be")):null;
   if(s){
@@ -1594,8 +1684,8 @@ function beeNew(h,g,i){
  }else gLater(wake,rnd(300,2000));
 }
 /* ---- Dragonflies ---- */
-const dfWing=`<path d="M11.4 7.4C8.6 3.4 3.8 1.6 1 2.6C1.2 5.6 5.4 8.2 11.4 8.2Z" fill="#7dd3fc" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11.4 8.6C7.4 8.2 2.6 9.8 2 12.2C3.8 14.4 8.8 13 11.4 9.8Z" fill="#38bdf8" fill-opacity=".6" stroke="#0369a1" stroke-width=".4" stroke-linejoin="round"/><path d="M11 7.6C8 5.4 4.4 3.6 1.8 3M10 8C7 7.6 4.6 7 2.6 5.4M11 9C8 9.6 5 10.6 2.8 12" stroke="#0369a1" stroke-width=".25" fill="none" opacity=".7"/>`;
-const dfSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><g>${dfWing}</g></g><g class="bw"><g transform="translate(24 0) scale(-1 1)">${dfWing}</g></g><path d="M12 10.2V22.6" stroke="#0e7490" stroke-width="1.5" stroke-linecap="round"/><path d="M12 11V22" stroke="#22d3ee" stroke-width=".7" stroke-dasharray="1.6 1.2"/><ellipse cx="12" cy="7.4" rx="1.7" ry="2.6" fill="#0891b2"/><circle cx="12" cy="4" r="1.6" fill="#0e7490"/><circle cx="10.7" cy="3.6" r=".9" fill="#155e75"/><circle cx="13.3" cy="3.6" r=".9" fill="#155e75"/></svg>`;
+const dfWing=`<path d="M11.4 7.4C8.6 3.4 3.8 1.6 1 2.6C1.2 5.6 5.4 8.2 11.4 8.2Z" fill="#e0f2fe" fill-opacity=".72" stroke="#0369a1" stroke-width=".35" stroke-linejoin="round"/><path d="M11.4 8.6C7.4 8.2 2.6 9.8 2 12.2C3.8 14.4 8.8 13 11.4 9.8Z" fill="#bae6fd" fill-opacity=".72" stroke="#0369a1" stroke-width=".35" stroke-linejoin="round"/><path d="M11 7.6C8 5.4 4.4 3.6 1.8 3M10 8C7 7.6 4.6 7 2.6 5.4M11 9C8 9.6 5 10.6 2.8 12" stroke="#0369a1" stroke-width=".25" fill="none" opacity=".75"/>`;
+const dfSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><g class="bw"><g>${dfWing}</g></g><g class="bw"><g transform="translate(24 0) scale(-1 1)">${dfWing}</g></g><path d="M12 10.2V22.6" stroke="#0e7490" stroke-width="1.5" stroke-linecap="round"/><path d="M12 11.2V22.2" stroke="#083344" stroke-width="1.5" stroke-dasharray=".7 1.3" opacity=".5"/><path d="M12 11V22" stroke="#67e8f9" stroke-width=".5" stroke-dasharray="1.6 1.2"/><ellipse cx="12" cy="7.4" rx="1.7" ry="2.6" fill="#0891b2" stroke="#083344" stroke-width=".3"/><circle cx="12" cy="4" r="1.6" fill="#155e75"/><circle cx="10.7" cy="3.6" r="1" fill="#0e9bb8" stroke="#083344" stroke-width=".3"/><circle cx="13.3" cy="3.6" r="1" fill="#0e9bb8" stroke="#083344" stroke-width=".3"/><circle cx="10.4" cy="3.2" r=".3" fill="#fff"/><circle cx="13" cy="3.2" r=".3" fill="#fff"/></svg>`;
 const dfDay=()=>{const t=ld();if(!S.dfr||S.dfr.d!==t)S.dfr={d:t,n:0,g:0,seen:{}};return S.dfr};
 const DEW=2,DEWW=3; // cây xanh +2, cây héo +3
 const dfTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=0).length;
@@ -2420,10 +2510,316 @@ function crNew(h,g,i){
  if(!ok){paint(0,0);face(dir);gLater(step,1000)}
 }
 
+/* ---- Fireflies (visual) ---- */
+const ffSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ffb" cx="12" cy="19.5" r="4" fill="#d9f99d"/><circle class="ffb ffb2" cx="12" cy="19.5" r="4" fill="#fde047"/><path d="M10.8 4.3Q9.6 2.6 8.2 2.1M13.2 4.3Q14.4 2.6 15.8 2.1" stroke="#292524" stroke-width=".7" stroke-linecap="round" fill="none"/><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="#57534e"/><ellipse class="ffg" cx="12" cy="19.4" rx="3.1" ry="3.6" fill="#fde047"/><circle cx="12" cy="6" r="2.4" fill="#292524"/><circle cx="12" cy="9.4" r="3" fill="#44403c" stroke="#1c1917" stroke-width=".6"/><g class="bw"><g transform="translate(12 10.5) scale(1.3) translate(-12 -10.5)"><path d="M11.6 9.8C9 6.2 5 4.6 2 5.8C2.2 9 6 11.2 11.6 10.8Z" fill="#e0f2fe" fill-opacity=".8" stroke="#475569" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 9.8C15 6.2 19 4.6 22 5.8C21.8 9 18 11.2 12.4 10.8Z" fill="#e0f2fe" fill-opacity=".8" stroke="#475569" stroke-width=".55" stroke-linejoin="round"/><path d="M11.6 11C8 10.6 3.6 12.2 3.4 15.4C4.6 18 8.6 17 11.6 13.2Z" fill="#e0f2fe" fill-opacity=".8" stroke="#475569" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 11C16 10.6 20.4 12.2 20.6 15.4C19.4 18 15.4 17 12.4 13.2Z" fill="#e0f2fe" fill-opacity=".8" stroke="#475569" stroke-width=".55" stroke-linejoin="round"/></g></g></svg>`;
+
+const FFT={}; // cây -> số thứ tự đom đóm đang nhắm tới
+function ffInit(){const h=$("ffs");if(!h)return;Object.keys(FFT).forEach(k=>delete FFT[k]);const n=ffCount();for(let i=0;i<n;i++)ffNew(h,h.parentNode,i)}
+function ffNew(h,g,i){
+ const sz=24,el=document.createElement("div");el.className="bf ff rest";
+ el.innerHTML=`<div class="bi">${ffSvg()}</div>`;h.appendChild(el);
+ const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
+ let x=rnd(0,Math.max(1,g.clientWidth-sz)),y=rnd(0,Math.max(1,g.clientHeight-sz)),ang=rnd(-30,30),hd=null;
+ el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
+ const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
+ const o={el,bi,face,getAng:()=>ang};
+ const free=p=>{ // cây đủ điều kiện, và còn chỗ trong hạn mức (tính cả cây các con khác đang giữ chỗ)
+  if(!p.isConnected||!ffOk(p.dataset.w))return false;
+  const t=FFT[p.dataset.w];
+  if(t!=null&&t!==i)return false;
+  return t===i||ffUsed()+Object.keys(FFT).length<ffQuota();
+ };
+ function step(){
+  if(!el.isConnected)return;
+  g.__lp&&g.__lp.delete(el);
+  const w0=g.clientWidth,h0=g.clientHeight;
+  const s=pickSlot(g,el,20,free,null);
+  if(s){ // bay tới đậu, phát sáng, rồi mới thắp sáng cây
+   const w=s.p.dataset.w,tx=Math.max(0,Math.min(w0-sz,s.x-sz/2)),ty=s.y-sz/2;
+   FFT[w]=i;
+   flyCurve(o,x,y,tx,ty,hd,22,2.5,110,true,()=>{
+    if(!el.isConnected)return;
+    x=tx;y=ty;hd=null;
+    el.classList.remove("fly");el.classList.add("rest","glow");bi.style.transition="";
+    gLater(()=>{
+     if(!el.isConnected)return;
+     el.classList.remove("glow");
+     if(FFT[w]===i)delete FFT[w];
+     if(ffOk(w))ffAct(s.p);                // hết sáng → cây có viền vàng
+     gLater(step,rnd(1800,3200));
+    },5220);
+   });
+   return;
+  }
+  const tx=rnd(0,Math.max(1,w0-sz)),ty=rnd(0,Math.max(1,h0-sz)); // không có cây nào: bay lượn
+  flyCurve(o,x,y,tx,ty,hd,22,2.5,110,false,hh=>{
+   if(!el.isConnected)return;
+   x=tx;y=ty;hd=hh;
+   gLater(step,rnd(300,1500));
+  });
+ }
+ gLater(step,rnd(300,2500));
+}
+/* ---- Dung beetles ---- */
+const DB_MAX=50,DB_MIN=.05;            // đường kính cục tròn tối đa (px) · tỉ lệ lúc bắt đầu
+const DB_RS=.4,DB_LS=.5,DB_G1=.08;     // 40% reset +2💧 · 50% −4💧 · 8% +2💧+1🪙 · còn lại 2% +4🪙
+const DGREQ=["bfly","bee","dfly","ghop","beetle","spider","cricket","ffly"]; // phải có sẵn 3 con trong này
+const dbDay=()=>{const t=ld(),o=S.dbr;if(!o||o.d!==t)S.dbr={d:t,n:0,seen:{},c:{},home:(o&&o.home)||{}};return S.dbr};
+function dbReset(w){ // chỉ loài đã dùng chức năng trên cây này mới được gọi lại
+ const o=[],a=dfDay(),b=ghDay(),c=beeDay();
+ if(a.seen[w]){delete a.seen[w];a.n=Math.max(0,a.n-1);o.push("🪽")}
+ if(b.seen[w]){delete b.seen[w];b.n=Math.max(0,b.n-1);o.push("🦗")}
+ if(c.seen[w]){delete c.seen[w];c.used=Math.max(0,c.used-1);o.push("🐝")}
+ return o;
+}
+function dbAct(w,el){
+ if(!gwLive()||!byW(w))return;
+ const r=Math.random(),rc=el.getBoundingClientRect();let t;
+ if(r<DB_RS){const o=dbReset(w);S.coins=(S.coins||0)+2;t="+2 💧";gtoast("🟤 \""+w+"\""+(o.length?" reset: "+o.join(" "):": +2 💧"))}
+ else if(r<DB_RS+DB_LS){S.coins=Math.max(0,(S.coins||0)-4);t="−4 💧"}
+ else if(r<DB_RS+DB_LS+DB_G1){S.coins=(S.coins||0)+2;S.gold=(S.gold||0)+1;t="+2 💧 +1 🪙"}
+ else{S.gold=(S.gold||0)+4;t="+4 🪙"}
+ coinFly(rc.left,rc.top-30,t);
+ save();hudC();progUpd();
+}
+const DBBALL=`<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4C74 2 96 20 96 48C96 76 76 97 50 96C24 98 4 76 4 50C4 24 26 6 50 4Z" fill="#d9993f" stroke="#b8742a" stroke-width="2"/><path d="M14 40C20 22 38 12 58 14C44 18 30 28 26 44C22 56 14 52 14 40Z" fill="#edb65f"/><path d="M52 40C62 32 78 36 84 50C80 62 66 66 56 60C46 54 46 46 52 40Z" fill="#c98534"/><path d="M20 70C30 62 40 74 50 80C58 86 70 84 78 78C72 90 56 94 42 92C28 88 20 80 20 70Z" fill="#b8742a"/><path d="M24 54L32 48L38 56L46 50M60 76L66 70L72 78L80 70" fill="none" stroke="#9a5f1f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="68" cy="26" r="4" fill="#edb65f"/></svg>`;
+const dbBody=`<path d="M5.8 -4.1C1.5 -5.6 -5 -4.8 -8.8 -.2C-6.2 3.8 -1.5 5.4 5.8 4.2Z" fill="#7b4a33"/><path d="M-6.2 2Q-1 5.8 5.6 3.8L5.6 5Q-1 7.2 -6.5 2.8Z" fill="#5a3322"/><path d="M-4.8 -2.6Q-1.5 -4.2 3.2 -3.8" stroke="#b98468" stroke-width=".85" fill="none" stroke-linecap="round"/><path d="M-4.4 1.2Q-3.2 1.9 -1.6 1.8" stroke="#a06a52" stroke-width=".6" fill="none" stroke-linecap="round"/><path d="M5.3 -4.2Q6.2 0 5.2 4" stroke="#4e2c1d" stroke-width=".55" fill="none"/><path d="M5.2 -4.3Q9.8 -4.8 11.2 -1.4Q10.8 2.6 7.6 3.9Q5.8 3.3 5.2 3.7Z" fill="#8a553b"/><path d="M7 -3Q9 -3.6 10.2 -2.6" stroke="#b98468" stroke-width=".6" fill="none" stroke-linecap="round"/><path d="M12 -2.6Q12.4 -4 13.4 -4.8" stroke="#4e2c1d" stroke-width=".55" fill="none" stroke-linecap="round"/><circle cx="13.6" cy="-5" r=".75" fill="#4e2c1d"/><path d="M9.8 -2.6Q12.6 -3.4 14.6 -1.8L15.2 -.6L14.2 -.4L14.4 .7L13.4 .5L13.2 1.8L12.2 1.4L11.6 2.4Q10.4 2.6 9.8 1.4Z" fill="#6a3b27" stroke="#4e2c1d" stroke-width=".4" stroke-linejoin="round"/><path d="M10.6 -1.9Q12.4 -2.5 13.8 -1.6" stroke="#b98468" stroke-width=".5" fill="none" stroke-linecap="round"/>`;
+const DBSVG=`<svg viewBox="0 0 26 26" aria-hidden="true">
+<g class="dgs">
+<g transform="translate(13 16.5) scale(-.95 .95)">
+<g stroke="#4e2c1d" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M-4 4.5L-5.4 7.6L-4.2 8.2"/><path d="M0 5L-.2 8.2L1 8.6"/><path d="M6 4L7.4 7.6L8.6 7.8"/></g>
+${dbBody}
+<path d="M11 -.9Q11.9 -.3 12.7 -.9" stroke="#2a150c" stroke-width=".5" fill="none" stroke-linecap="round"/>
+</g>
+</g>
+<g class="dgr">
+<g class="dgl" stroke="#4e2c1d" stroke-width="1.15" fill="none" stroke-linecap="round" stroke-linejoin="round"></g>
+<g class="dgt" transform="translate(15 13) rotate(55) scale(.9)">
+<g stroke="#4e2c1d" stroke-width="1.15" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M1 4.6L.4 8L-.6 9.6L.6 9.8"/><path d="M7 3.8L9.6 7L9 9.2L10.2 9.2"/>
+</g>
+${dbBody}
+<circle cx="11.9" cy="-.9" r=".85" fill="#aeb4be"/><circle cx="12" cy="-.8" r=".4" fill="#4b5563"/><circle cx="11.65" cy="-1.2" r=".28" fill="#fff"/>
+</g>
+</g>
+</svg>`;
+const DBZ=`<svg viewBox="0 0 26 30" aria-hidden="true"><text x="1" y="28" font-size="6">z</text><text x="1" y="28" font-size="8">Z</text><text x="1" y="28" font-size="10">Z</text></svg>`;
+const DB_SPD=[1,1,1.5,2,2.5];                                   // Lv1-2: thường · Lv3-5: lăn nhanh hơn
+const dbLv=()=>Math.max(1,Math.min(5,+(S.own&&S.own.dung)||1));
+const dbCount=()=>Math.min(2,dbLv());                           // tối đa 2 con
+const dbSpeed=()=>DB_SPD[dbLv()-1];
+const DBP={},DBL={};      // DBP[i]={p,d}: ô đã đặt chỗ + chiều đi · DBL[i]: hàm "tính lại" của từng con
+const dbSame=e=>e%4!==3;  // ô e và e+1 cùng hàng (4 cột)
+
+// Điểm gặp: con trái ở a, con phải ở b (a<b) -> con trái dừng ở e, con phải dừng ở e+1 (cùng hàng), gần giữa nhất
+function dbMeet(a,b){
+ const mid=(a+b-1)/2;let best=-1,bd=1e9;
+ for(let e=a;e<b;e++){if(!dbSame(e))continue;const d=Math.abs(e-mid);if(d<bd){bd=d;best=e}}
+ return best<0?a:best;
+}
+// Trạng thái lưu qua ngày S.dbp[i]={p,d,t}: p = ô đã tới gần nhất, d = chiều đi (+1 xuôi, -1 ngược)
+function dbRecs(N,n){
+ S.dbp=S.dbp||{};
+ const t=ld(),P=S.dbp,top=Math.max(0,N-1),cp=v=>Math.max(0,Math.min(top,+v||0));
+ const get=k=>{const r=P[k];if(!r)return null;const st=r.t!==t;return{p:cp(r.p),d:st?-r.d:r.d,st}}; // ngày mới: đảo chiều
+ let r0=get(0);
+ if(n<2){
+  if(!r0)r0={p:0,d:1};
+  if(r0.d>0&&r0.p>=top)r0.d=-1;else if(r0.d<0&&r0.p<=0)r0.d=1;
+  return[r0];
+ }
+ let r1=get(1);
+ const rolled=!!r0&&r0.st&&(!r1||r1.st);
+ if(!r0)r0={p:0,d:1};
+ if(!r1)r1={p:top,d:-1};
+ const inw=r0.d>0&&r1.d<0,out=r0.d<0&&r1.d>0;                    // đi vào gặp nhau / đi ra xa nhau
+ const ok=rolled?((inw&&r0.p===0&&r1.p===top)||(out&&r1.p===r0.p+1)):((inw||out)&&r0.p<r1.p);
+ if(!ok){r0={p:0,d:1};r1={p:top,d:-1}}                           // lệch trạng thái: về 2 đầu, đi vào gặp nhau
+ return[r0,r1];
+}
+function dbInit(){
+ const h=$("dbs");if(!h)return;
+ Object.keys(DBP).forEach(k=>delete DBP[k]);Object.keys(DBL).forEach(k=>delete DBL[k]);
+ const n=dbCount(),N=Math.max(1,h.parentNode.querySelectorAll(".pl").length);
+ dbRecs(N,n).forEach((r,i)=>{DBP[i]={p:r.p,d:r.d}});
+ for(let i=0;i<n;i++)dbNew(h,h.parentNode,i);
+}
+// Gọi khi danh sách từ đổi (sync / thêm từ): cập nhật ô vườn rồi bắt các con tính lại điểm gặp + khối lượng quả
+function dbPoke(){
+ if(!GW)return;
+ try{gwCells(false)}catch(e){}
+ Object.keys(DBL).forEach(k=>{try{DBL[k]()}catch(e){}});
+}
+function dbNew(h,g,i){
+ const M=DB_MAX,cols=4,el=document.createElement("div");el.className="dg";
+ el.innerHTML=`<div class="dgb" style="left:${-M/2}px;top:${-M}px;width:${M}px;height:${M}px">${DBBALL}</div><div class="dgp">${DBSVG}</div><div class="dgz">${DBZ}</div>`;
+ h.appendChild(el);
+ const bb=el.children[0],ball=bb.firstChild,bt=el.children[1],zz=el.children[2];
+ let x=0,y=0,dir=1,ang=0,sc=DB_MIN,asleep=true,shifted=0,busy=false,pt=null;
+ const pls=()=>[...g.querySelectorAll(".pl")];
+ // đường zigzag: hàng chẵn trái→phải, hàng lẻ phải→trái
+ const seq=()=>{const a=pls(),o=[];for(let r=0;r*cols<a.length;r++){const row=[];for(let c=0;c<cols;c++){const n=r*cols+c;if(n<a.length)row.push(a[n])}o.push(...(r%2?row.reverse():row))}return o};
+ const me=()=>DBP[i],ot=()=>(dbCount()>1&&DBP[1-i])||null;
+ const gp=p=>{const r=p.getBoundingClientRect(),gr=g.getBoundingClientRect();return[r.left-gr.left+r.width/2,r.bottom-gr.top-5,r.width]};
+ const paint=()=>{el.style.transform=`translate(${x}px,${y}px)`};
+ const unv=(a,k)=>{const q=a[k];return !!q&&!dbDay().seen[q.dataset.w]};
+ const anyUnv=(a,lo,hi)=>{for(let k=Math.max(0,lo);k<=Math.min(a.length-1,hi);k++)if(unv(a,k))return true;return false};
+ const cntTo=(a,p,goal)=>{let c=0;const s=goal>=p?1:-1;for(let k=p+s;s>0?k<=goal:k>=goal;k+=s)if(unv(a,k))c++;return c};
+
+ /* ===== Kế hoạch: tính lại mỗi bước theo vị trí con kia ===== */
+ // trả về {t:"go",n:ô kế,rem} | {t:"wait"} (chờ con kia tới) | {t:"done"} (ngủ) ; rem = số ô còn phải làm
+ function plan(){
+  const a=seq(),N=a.length,m=me(),o=ot();
+  if(!N)return{t:"done",rem:0};
+  m.p=Math.max(0,Math.min(N-1,m.p));if(o)o.p=Math.max(0,Math.min(N-1,o.p));
+  const P0=DBP[0],P1=DBP[1];
+  if(o&&P0.d>0&&P1.d<0&&P0.p<P1.p){                               // đang đi vào gặp nhau
+   const e=dbMeet(P0.p,P1.p),goal=i===0?e:e+1;
+   if(m.p===goal){
+    if(o.p!==(i===0?goal+1:goal-1))return{t:"wait",rem:0};         // mình tới rồi, chờ con kia
+    if(i===0?anyUnv(a,0,m.p-1):anyUnv(a,m.p+1,N-1)){m.d=-m.d;return plan()} // còn ô mới ngoài phạm vi (do thêm từ): quét nốt
+    return{t:"done",rem:0};
+   }
+   return{t:"go",n:m.p+m.d,rem:cntTo(a,m.p,goal)};
+  }
+  // quét thẳng: 1 con, hoặc 2 con đang đi ra xa nhau
+  const behind=m.d>0?anyUnv(a,0,m.p-1):anyUnv(a,m.p+1,N-1);
+  if(o&&o.d===m.d&&(o.p-m.p)*m.d>0){                              // con kia đi trước cùng chiều: nhường
+   if(behind){m.d=-m.d;return plan()}
+   return{t:"done",rem:0};
+  }
+  let ahead=0;for(let k=m.p+m.d;k>=0&&k<N;k+=m.d)if(unv(a,k))ahead++;
+  if(!ahead){if(!o&&behind){m.d=-m.d;return plan()}return{t:"done",rem:0}}
+  const n=m.p+m.d;
+  if(o&&o.p===n)return{t:"done",rem:ahead};
+  return{t:"go",n,rem:ahead};
+ }
+
+ /* ===== Hiển thị ===== */
+ // ngủ: bọ nằm TRÊN quả cầu; chữ Z bay lên từ đầu. Đang lăn: bọ đứng bên cạnh đẩy quả
+ const bodyG=bt.querySelector(".dgt"),legG=bt.querySelector(".dgl");
+ // tư thế lăn: góc nghiêng theo cỡ bóng (8° → 55°), chân sau luôn chạm mặt bóng
+ const dpose=R=>{
+  const K=.9,f=Math.max(0,Math.min(1,(R-3)/22)),deg=8+47*f,a=deg*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+  const py=25.5-K*Math.max(.6*s+9.8*c,10.2*s+9.2*c);          // hạ thân cho chân trước chạm đất
+  const T=(x,y)=>[15+K*(x*c-y*s),py+K*(x*s+y*c)];
+  bodyG.setAttribute("transform",`translate(15 ${py.toFixed(2)}) rotate(${deg.toFixed(1)}) scale(${K})`);
+  const C=[4-R,26-R],l=5.2;                                     // tâm bóng (toạ độ SVG bọ) · độ dài mỗi đoạn chân
+  const leg=(sx,sy,offs)=>{
+   const S=T(sx,sy),b=Math.atan2(S[1]-C[1],S[0]-C[0]);
+   let P=[C[0]+R*Math.cos(b),C[1]+R*Math.sin(b)];               // điểm gần vai nhất trên mặt bóng
+   for(const o of offs){const q=[C[0]+R*Math.cos(b+o),C[1]+R*Math.sin(b+o)];if(Math.hypot(q[0]-S[0],q[1]-S[1])<=9.6){P=q;break}}
+   const ex=P[0]-S[0],ey=P[1]-S[1],d=Math.hypot(ex,ey)||1,dd=Math.min(d,2*l-.01),h=Math.sqrt(Math.max(0,l*l-dd*dd/4));
+   let nx=-ey/d,ny=ex/d;if(ny>0){nx=-nx;ny=-ny}                  // đầu gối luôn hướng lên
+   const Kn=[(S[0]+P[0])/2+nx*h,(S[1]+P[1])/2+ny*h];
+   return `<path d="M${S[0].toFixed(2)} ${S[1].toFixed(2)}L${Kn[0].toFixed(2)} ${Kn[1].toFixed(2)}L${P[0].toFixed(2)} ${P[1].toFixed(2)}"/>`;
+  };
+  legG.innerHTML=leg(-5,3.6,[-.35,-.2,0])+leg(-3,4.2,[.2,.1,0]);
+ };
+ const lay=()=>{const R=M*sc/2;
+  if(asleep){
+   const by=-(R*2*.94)+3;
+   bt.style.transform=`translate(0px,${by.toFixed(1)}px) scaleX(1)`;
+   zz.style.transform=`translate(-9px,${(by-45).toFixed(1)}px)`;
+  }else{
+   bt.style.transform=`translate(${(-dir*(R+9)).toFixed(1)}px,0) scaleX(${-dir})`;
+   dpose(R);
+  }};
+ // khối lượng quả = số ô đã làm / (đã làm + còn phải làm tới điểm gặp)
+ const grow=()=>{const d=dbDay(),c=(d.c&&d.c[i])||0,r=plan().rem||0,f=(c+r)>0?c/(c+r):0;sc=DB_MIN+(1-DB_MIN)*f;bb.style.transform=`scale(${sc})`;lay()};
+ // +1: con bên trái (quả sát vách phải) · -1: con bên phải (quả sát vách trái) · 0: không gặp nhau
+ function sideNow(){
+  const o=ot();if(!o)return 0;
+  const P0=DBP[0],P1=DBP[1];
+  if(!(P0.d>0&&P1.d<0&&P1.p===P0.p+1&&dbSame(P0.p)))return 0;
+  const a=seq(),A=a[me().p],B=a[o.p];if(!A||!B)return 0;
+  const ax=gp(A)[0],bx=gp(B)[0];
+  return ax<bx-1?1:ax>bx+1?-1:0;
+ }
+ function placeSleep(anim){
+  const a=seq(),q=a[Math.min(me().p,a.length-1)];if(!q)return;
+  const [px,py,w]=gp(q),sd=sideNow(),R=M*sc/2;
+  y=py;shifted=sd?1:0;x=px+(sd?Math.max(0,w/2-R-3)*sd:0);
+  if(anim){el.style.transition="transform .5s ease-out";setTimeout(()=>{el.style.transition=""},560)}
+  paint();
+ }
+ function sleep(){
+  el.classList.remove("roll");asleep=true;el.classList.add("zz");
+  grow();placeSleep(true);
+  pt=gLater(step,30000);
+ }
+ function awake(cb){
+  const fin=()=>{if(!el.isConnected)return;busy=false;if(asleep){asleep=false;el.classList.remove("zz");lay()}cb()};
+  if(!shifted){fin();return}
+  const a=seq(),q=a[Math.min(me().p,a.length-1)];shifted=0;
+  if(q){x=gp(q)[0];el.style.transition="transform .45s ease-out";paint()}
+  busy=true;gLater(()=>{el.style.transition="";fin()},480);       // trượt về giữa ô rồi mới lăn
+ }
+
+ /* ===== Lăn ===== */
+ // lăn 1 đoạn thẳng; soft=true: đổi phía bọ hung ngay khi đang lăn, không chờ
+ function roll(tx,ty,nd,soft,cb){
+  const go=()=>{
+   if(!el.isConnected)return;
+   const x0=x,y0=y,d=Math.hypot(tx-x0,ty-y0);
+   if(d<2){cb();return}
+   const dur=Math.max(150,d/(42*dbSpeed())*1000),t0=gnow(),sg=Math.abs(tx-x0)>1?(tx>x0?1:-1):dir;
+   el.classList.add("roll");
+   (function fr(){const now=gnow();if(!el.isConnected)return;
+    const t=Math.min(1,(now-t0)/dur),px=x0+(tx-x0)*t,py=y0+(ty-y0)*t,R=Math.max(1.5,M*sc/2);
+    ang+=sg*Math.hypot(px-x,py-y)/R*57.3;
+    x=px;y=py;paint();ball.style.transform=`rotate(${ang.toFixed(1)}deg)`;
+    if(t<1)gRaf(fr);else cb();
+   })();
+  };
+  if(nd!==dir){dir=nd;lay();if(soft)go();else gLater(go,500)}else go();
+ }
+ function moveTo(p,n,dd,cb){
+  const [tx,ty]=gp(p),dx=tx-x,dy=ty-y,nd=dd*(Math.floor(n/cols)%2?-1:1); // hướng lăn trong hàng đích
+  if(Math.abs(dx)<2&&Math.abs(dy)<2){cb();return}
+  if(Math.abs(dy)<2)roll(tx,ty,dx>0?1:-1,false,cb);              // lăn ngang trong hàng
+  else if(Math.abs(dx)<2)roll(tx,ty,nd,true,cb);                  // hết hàng: lăn thẳng xuống/lên
+  else roll(tx,y,dx>0?1:-1,false,()=>roll(tx,ty,nd,true,cb));     // hàng cuối thiếu ô: ngang trước, dọc sau
+ }
+ function arrive(){ // tới ô nào thì làm chức năng ở ô đó
+  const a=seq(),m=me(),q=a[Math.min(m.p,a.length-1)],d=dbDay();
+  d.c=d.c||{};
+  S.dbp=S.dbp||{};S.dbp[i]={p:m.p,d:m.d,t:ld()};
+  if(q&&!d.seen[q.dataset.w]&&gwLive()&&byW(q.dataset.w)){const w=q.dataset.w;d.seen[w]=1;d.n++;d.c[i]=(d.c[i]||0)+1;grow();dbAct(w,el)}else save();
+ }
+ function step(){
+  if(!el.isConnected||busy)return;
+  gClr(pt);
+  const pl=plan();
+  if(pl.t==="done"){sleep();return}
+  if(pl.t==="wait"){if(!asleep){el.classList.remove("roll");grow()}pt=gLater(step,600);return} // chờ con kia (chưa ngủ)
+  awake(move);
+ }
+ function move(){
+  if(!el.isConnected)return;
+  const a=seq(),m=me();
+  if(unv(a,Math.min(m.p,a.length-1)))arrive();                     // đang đứng sẵn trên ô chưa làm: làm luôn
+  const pl=plan();
+  if(pl.t!=="go"){step();return}
+  const n=pl.n,dd=m.d;m.p=n;busy=true;                             // đặt chỗ ô kế để con kia thấy
+  moveTo(a[n],n,dd,()=>{busy=false;if(!el.isConnected)return;arrive();step()}); // không dừng, lăn tiếp luôn
+ }
+
+ // vị trí ban đầu: đứng ở ô đã lưu, nằm ngủ rồi tự thức dậy
+ const a0=seq();
+ if(a0.length){const m=me();m.p=Math.max(0,Math.min(a0.length-1,m.p));const q=gp(a0[m.p]);x=q[0];y=q[1]}
+ el.classList.add("zz");
+ bb.style.transition="none";bt.style.transition="none";
+ grow();placeSleep(false);
+ void bb.offsetWidth;bb.style.transition="";bt.style.transition="";
+ DBL[i]=()=>{if(!el.isConnected||busy)return;gClr(pt);step()};     // gọi khi danh sách từ đổi
+ pt=gLater(step,Math.random()*1200+300);
+}
+
 function harvestOne(w,btn){
- if(ripe(w)){const r=btn.getBoundingClientRect();const n=harvest(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gGarden();return}
- const m=S.m[w]||0;
- toast(m<5?"Only fully grown plants bear fruit":(S.hv&&S.hv[w]===ld())?"Already harvested today":(S.w&&S.w[w])?"Thirsty — water it first":"No fruit yet — answer correctly in Quiz or games");
+ if(pickable(w)){const r=btn.getBoundingClientRect();const n=ripe(w)?harvest(w):harvest2(w);save();coinFly(r.left+r.width/2,r.top,"+"+n+" 🪙");gGarden();return}
+ const m=S.m[w]||0,e=f2e(w);
+ toast(m<5?"Only fully grown plants bear fruit":(S.hv&&S.hv[w]===ld())?(ffOn()?(e&&e.h?"2nd harvest done today":e&&e.s>=1?"Answer correctly in Quiz or games to make it fruit":"Waiting for a firefly to land"):"Already harvested today"):(S.w&&S.w[w])?"Thirsty — water it first":"No fruit yet — answer correctly in Quiz or games");
 }
 /* ---- Shop ---- */
 const SHOP=[
@@ -2437,19 +2833,21 @@ const SHOP=[
  {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:299,type:"pot"},
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
  {id:"bfly",e:"🦋",t:"Butterflies",d:"A butterfly landing on a green level-3 plant makes it bloom (level 4), once per plant a day. Costs 3 💧 + 1 🪙. They also stroll over level 3+ plants.",p:109,type:"deco",flag:"bf",per:4},
- {id:"bee",e:"🐝",t:"Bees",d:"Each day bees can work up to 50% of your plants, once per plant (more bees = faster). They turn blooms into fruit (6 💧 + 2 🪙 each, bee fruit is worth less). Landing on a fruiting plant has a "+Math.round(BEW*100)+"% chance to wilt it.",p:209,type:"deco",flag:"be",per:3},
+ {id:"bee",e:"🐝",t:"Bees",d:"Each day bees can work up to "+Math.round(BEE_RANGE*100)+"% of your plants, once per plant (more bees = faster). They turn blooms into fruit (6 💧 + 2 🪙 each, bee fruit is worth less). Landing on a fruiting plant has a "+Math.round(BEW*100)+"% chance to wilt it.",p:209,type:"deco",flag:"be",per:3},
  {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew once per plant a day: +"+DEW+" 💧 on green plants, +"+DEWW+" 💧 on wilted ones.",p:209,type:"deco",flag:"df",per:3},
  {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Hop between plants (Leafy or bigger). Once per plant a day: "+Math.round(GHW*100)+"% wilts it (no effect if already wilted), "+Math.round(GH1*100)+"% +"+GHG+" 🪙, "+Math.round((1-GHW-GH1)*100)+"% +"+GHG2+" 🪙.",p:309,type:"deco",flag:"gh",per:2},
  {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Visit blooming and fruiting plants. On a ripe, unvisited fruit: 10% ×2, 30% +2, 60% −50% of that plant's harvest 🪙. Once per plant a day.",p:409,type:"deco",flag:"bt",per:2},
  {id:"spider",e:"🕷️",t:"Spiders",d:"Spin silk between plants (Leafy or bigger), cure insect-caused wilt (100%) and 10% +"+SPG+" 🪙. Each web lasts 3 minutes and lures one of every insect you own. Once per plant a day.",p:409,type:"deco",flag:"sp",per:2},
  {id:"cricket",e:"🎶",t:"Singing Crickets",d:"Hop between plants and read each word twice, taking turns. +1 💧 per plant a day, only while you watch the Garden and +1 🪙 for every 10 plants sung to in a day.",p:259,type:"deco",flag:"cr",per:2},
+ {id:"ffly",e:"✨",t:"Fireflies",d:"Land on plants you already harvested today and light them up. Then answer correctly in Quiz or games and that plant fruits again: a 2nd harvest worth "+Math.round(FF_Y*100)+"%. Up to "+Math.round(FF_RANGE*100)+"% of your plants a day (more fireflies = faster). Other insects can't trigger it.",p:609,type:"deco",flag:"ff",per:FF_PER},
+ {id:"dung",e:"🟤",t:"Dung Beetles",d:"Roll a growing ball in a zigzag across the garden (row 1 left→right, row 2 right→left…) without stopping, once per plant a day. Lv 2 adds a 2nd beetle from the opposite end; Lv 3-5 roll faster. Each plant: "+Math.round(DB_RS*100)+"% calls back 🪽🦗🐝 that already worked there (+2 💧), "+Math.round(DB_LS*100)+"% −4 💧, "+Math.round(DB_G1*100)+"% +2 💧 +1 🪙, 2% +4 🪙. Sleeps on the ball at night. Needs 3 other insects.",p:509,type:"deco",flag:"dg",per:1},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
  {id:"melon",e:"🍉",t:"Watermelon",d:"A creeping vine with big lobed leaves, yellow flowers and one huge striped watermelon.",p:399,type:"plant"}
 ];
 const SPREQ=["bfly","bee","dfly","ghop"];
-const nextPrice=(it,lv)=>Math.round(it.p*Math.pow(it.p<350?2:1.95,lv)); // giá gốc <350: x2, ≥350: x1.95
+const nextPrice=(it,lv)=>Math.round(it.p*Math.pow((it.p<350||it.id==="ffly")?2:1.95,lv));
 const spOkLv=L=>SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L).length;   // số côn trùng đạt ít nhất lv L
 function shopItem(it,g){
  const own=!!(S.own&&S.own[it.id]);let st="",btn="";
@@ -2468,20 +2866,21 @@ function shopItem(it,g){
  else{
   const fl=it.flag,on=!!S[fl],lv=own?(+S.own[it.id]||1):0,mx=5,np=nextPrice(it,lv);
   const REQ={bfly:"🦋",bee:"🐝",dfly:"🪽",ghop:"🦗"};
-  let blk=false,miss=[],need=0,have=[];
+  let blk=false,miss=[],need=0,have=[],dgn=0;
   if(it.id==="spider"&&lv<mx){
    const L=lv+1;need=lv===0?4:3;
    have=SPREQ.filter(k=>(+(S.own&&S.own[k])||0)>=L);
    if(have.length<need){blk=true;miss=SPREQ.filter(k=>!have.includes(k))}
   }
-  st=blk?(lv===0?"Needs "+miss.map(k=>REQ[k]).join(" "):"Needs "+need+"/4 at Lv "+(lv+1)+" ("+have.length+"/4)"):(lv?"Lv "+lv+" · "+lv*it.per+" "+it.e+(on?"":" · Off"):"");
+  if(it.id==="dung"&&lv===0){dgn=DGREQ.filter(k=>S.own&&S.own[k]).length;if(dgn<3)blk=true}
+  st=blk?(it.id==="dung"?"Needs 3 other insects ("+dgn+"/3)":(lv===0?"Needs "+miss.map(k=>REQ[k]).join(" "):"Needs "+need+"/4 at Lv "+(lv+1)+" ("+have.length+"/4)")):(lv?"Lv "+lv+" · "+(it.id==="dung"?Math.min(lv,2):lv*it.per)+" "+it.e+(on?"":" · Off"):"");
   const up=lv>=mx?`<button class="btn l" disabled>Max</button>`:`<button class="btn" data-id="${it.id}" data-a="up"${g<np||blk?" disabled":""}>${lv?"⬆️ Lv "+(lv+1):"Buy"} · 🪙 ${np}</button>`;
   const tg=lv?`<button class="btn l${on?" on":""}" data-id="${it.id}" data-a="tg">${on?"On":"Off"}</button>`:"";
   btn=`<div style="display:flex;flex-direction:column;gap:6px">${up}${tg}</div>`;
  }
  return `<div class="si" data-sid="${it.id}" title="${it.d}"><div class="se">${it.e}</div><b>${it.t}</b><span class="sd">${it.d}</span>${st?`<em>${st}</em>`:""}<div class="sb">${btn}</div></div>`;
 }
-const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly","ghop","beetle","spider","cricket"]]];
+const SHELVES=[["🧪 Supplies",["shield","life"]],["🌱 Soil",["default","soilg","soiln"]],["🪴 Pots",["pot","potm","potw","potf"]],["🌳 Plants",["tree","orange","vine","melon"]],["✨ Garden friends",["bfly","bee","dfly","ghop","beetle","spider","cricket","ffly","dung"]]];
 const XRATE=10; // 10 💧 = 1 🪙, đổi số này nếu muốn
 function gExchange(done){
  const o=document.createElement("div");o.className="au";let q=1;
@@ -2574,10 +2973,11 @@ function gShop(){
    else{
     if(lv>=5)return;
     if(it.id==="spider"){const L=lv+1,need=lv===0?4:3;if(spOkLv(L)<need){toast(lv===0?"🕷️ Buy butterflies, bees, dragonflies and grasshoppers first":"🕷️ Need "+need+" of 4 insects at Lv "+L);return}}
+    if(it.id==="dung"&&lv===0&&DGREQ.filter(k=>S.own[k]).length<3){toast("🟤 Own 3 other insects first");return}
     const np=nextPrice(it,lv);
     if((S.gold||0)<np)return;
     S.gold-=np;S.own[it.id]=lv+1;S[fl]=1;
-    toast(it.e+" Level "+(lv+1)+" · "+(lv+1)*it.per+" "+it.e);
+    toast(it.e+" Level "+(lv+1)+" · "+(it.id==="dung"?Math.min(lv+1,2):(lv+1)*it.per)+" "+it.e);
    }
    if((it.id==="ghop"||it.id==="cricket")&&(b.dataset.a==="tg"?S[fl]:lv===0))GHFX=true;
   }
@@ -2611,7 +3011,7 @@ function waterPlant(word){
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;wlOpen=true;render()});
 $("qb").onclick=()=>rGames();
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.bm={};S.rd=null;combo=0;gwDrop();save();hud();render();gwBoot();toast("Reset done ↺")};
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.bm={};S.f2={};S.rd=null;combo=0;gwDrop();save();hud();render();gwBoot();toast("Reset done ↺")};
 $("rsf").onclick=()=>{
  if(!confirm("FULL RESET?\n\nThis erases EVERYTHING: 💧, 🪙, shop items, soil/pots, bees & butterflies, XP, streak, garden growth, scores and counts.\n\nOnly your Word List is kept.\n\nThis cannot be undone."))return;
  if(!confirm("Are you really sure? Last chance."))return;
