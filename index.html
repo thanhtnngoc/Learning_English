@@ -827,8 +827,9 @@ if(S.coins==null)S.coins=5;
 S.gb=S.gb||{};
 let gStop=null;
 function gClean(){
- if(CRT){CRT=0;const e=$("tl");if(e)e.classList.remove("s");clearTimeout(TT.tl)} // dế hết kêu: tắt toast dế
- gwStash();if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;try{speechSynthesis.cancel()}catch(e){}
+ if(CRT&&tab!=="n"){CRT=0;const e=$("tl");if(e)e.classList.remove("s");clearTimeout(TT.tl)} // chỉ tắt toast dế khi rời tab Garden
+ gwStash();if(gStop){try{gStop()}catch(e){}gStop=null}qTok++;
+ if(!(tab==="n"&&CR.busy)){try{speechSynthesis.cancel()}catch(e){}} // dế đang đọc ở tab Garden thì đừng cắt giọng
 }
 const GAMES=[
  {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: Choice the word. Round 2: Choice the meaning. Round 3: Spell it."},
@@ -2349,7 +2350,7 @@ function spNew(h,g,i){
 const CR={t:0,busy:false},CRO={};
 const crDay=()=>{const t=ld();if(!S.crr||S.crr.d!==t)S.crr={d:t,n:0,seen:{}};return S.crr};
 const crTotal=()=>((S.own&&+S.own.cricket)||1)*2;
-const crOn=()=>onGarden()&&!document.hidden&&!gHid();
+const crOn=()=>tab==="n"&&!document.hidden;
 const crSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true">
 <g class="gs" fill="none" stroke-linecap="round" stroke-linejoin="round">
 <path d="M8.6 16Q8.4 19 6.4 20M10.4 16.4Q10.6 19.4 9 21" stroke="#9a6a1a" stroke-width=".9"/>
