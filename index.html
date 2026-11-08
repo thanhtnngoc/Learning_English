@@ -258,6 +258,10 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .gho .gj{display:none}
 .gho.jmp .gj{display:inline}
 .gho.jmp .gs{display:none}
+/* Đom đóm: viền thân vừa phải */
+.bf.ff .bi svg{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 2.5px rgba(253,224,71,.65)) drop-shadow(0 0 4px rgba(253,224,71,.3))}
+/* Đom đóm: đuôi sáng hơn */
+.ff .ffg{fill:#fef9c3;filter:drop-shadow(0 0 2px #fde047) drop-shadow(0 0 5px #facc15)}
 .bf.gho .bi{transition:none}
 .hvs .gt{left:calc(50% - 25px);top:38px;width:50px;height:26px}
 .gbi{transform-box:fill-box;transform-origin:50% 100%}
@@ -350,13 +354,13 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .crb i{display:block;font-style:normal;color:var(--pr);font-weight:600}
 .crb span{display:block;font-weight:700}
 .ff .ffg{animation:ffp 1.6s ease-in-out infinite}
-@keyframes ffp{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes ffp{0%,100%{opacity:.55}50%{opacity:1}}
 /* Đang bay: sáng mạnh rồi mờ từ từ, lặp lại + quầng tỏa nhẹ */
 .ff.fly .ffg{animation:ffy 1.8s ease-out infinite}
 @keyframes ffy{
- 0%{opacity:.1;filter:none}
- 12%{opacity:1;filter:drop-shadow(0 0 4px #fde047) drop-shadow(0 0 8px #facc15)}
- 100%{opacity:.1;filter:none}
+ 0%{opacity:.35;filter:drop-shadow(0 0 2px #fde047)}
+ 12%{opacity:1;filter:drop-shadow(0 0 5px #fff59d) drop-shadow(0 0 10px #facc15) drop-shadow(0 0 14px #fde047)}
+ 100%{opacity:.35;filter:drop-shadow(0 0 2px #fde047)}
 }
 .ff.fly .ffb{animation:ffh 1.8s ease-out infinite}
 .ff.fly .ffb2{animation-delay:.25s}
@@ -1711,7 +1715,7 @@ function dfAct(p,el){
  const r=el.getBoundingClientRect();coinFly(r.left+r.width/2,r.top,"+"+g+" 💧");
  hudC();progUpd();return true;
 }
-function dfInit(){const h=$("dfs");if(!h)return;const n=((S.own&&+S.own.dfly)||1)*2;for(let i=0;i<n;i++)dfNew(h,h.parentNode,i)}
+function dfInit(){const h=$("dfs");if(!h)return;const n=((S.own&&+S.own.dfly)||1)*3;for(let i=0;i<n;i++)dfNew(h,h.parentNode,i)}
 const DFS=[[0,27],[14,26],[48,23],[102,22],[116,21],[130,21],[158,20],[188,19.5]]; // điểm đậu rải đều trên cành (toạ độ SVG nhành ong) // điểm đậu trên nhành (toạ độ SVG nhành ong)
 function dfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf dfl rest";
@@ -1786,10 +1790,11 @@ function dfNew(h,g,i){
 }
 /* ---- Grasshoppers ---- */
 const GHG=1,GHG2=2; // số 🪙
-const GHW=.6,GH1=.35; // 60% héo, 35% +1🪙, còn lại 5% +2🪙
+const GHW=.45,GH1=.35,GH_RANGE=.5;   // 45% héo, 35% +1🪙, còn lại 20% +2🪙; hạn mức 50% số cây
+const GH_JUMP=2; // châu chấu nhảy tối đa ±2 ô (hàng/cột) quanh ô đang đứng
 const ghDay=()=>{const t=ld();if(!S.ghr||S.ghr.d!==t)S.ghr={d:t,n:0,seen:{}};return S.ghr};
-const ghTotal=()=>W().filter(x=>(S.m[x[0]]||0)>=3).length;
-const ghOk=w=>(S.m[w]||0)>=3&&!ghDay().seen[w];
+const ghTotal=()=>Math.max(1,Math.ceil(W().filter(x=>(S.m[x[0]]||0)>=3).length*GH_RANGE));
+const ghOk=w=>(S.m[w]||0)>=3&&!ghDay().seen[w]&&ghDay().n<ghTotal();
 const ghSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true">
 <g class="gs" fill="none" stroke-linecap="round" stroke-linejoin="round">
 <path d="M8.4 15.6Q8.2 18.6 6 19.4Q5 19.8 5.2 20.6M10.2 16.2Q10.4 19 9 20.4Q8.2 20.9 8.6 21.6" stroke="#5cb82e" stroke-width=".9"/>
@@ -1930,7 +1935,7 @@ function ghNew(h,g,i){
   let k=a.findIndex(e=>e.dataset.w===GHP[i]);
   if(k<0)k=Math.floor(Math.random()*a.length);
   const cols=4,r0=Math.floor(k/cols),c0=k%cols,nb=[];
-  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+  for(let dr=-GH_JUMP;dr<=GH_JUMP;dr++)for(let dc=-GH_JUMP;dc<=GH_JUMP;dc++){
    if(!dr&&!dc)continue;
    const r=r0+dr,c=c0+dc;
    if(r<0||c<0||c>=cols)continue;
@@ -1974,7 +1979,7 @@ function ghNew(h,g,i){
  gLater(wake,rnd(300,2000));
 }
 /* ---- Golden beetles ---- */
-const BT_X=.1,BT_P=.3,BT_BASE=9; // 10% ×2 · 30% +2 · còn lại (60%) −50%
+const BT_X=.15,BT_P=.6,BT_BASE=9,BT_MAX=27; // 15% ×2 · 60% +2 · còn lại 25% −50% · trần 27🪙
 const btDay=()=>{const t=ld();if(!S.btr||S.btr.d!==t)S.btr={d:t,n:0,seen:{}};return S.btr};
 const btOk=w=>ripe(w)&&!btDay().seen[w];
 const BTM={},BTO={},BTK={}; // BTM: cây mỗi con đang đứng (nhớ khi rời tab)
@@ -1988,6 +1993,7 @@ function btAct(w,el){
  if(rn<BT_X){nv=v*2;t="×2"}
  else if(rn<BT_X+BT_P){nv=v+2;t="+2"}
  else{nv=Math.max(1,Math.floor(v/2));t="−50%"}
+ nv=Math.min(nv,Math.max(v,BT_MAX));   // trần: không vượt 27 (nếu quả đã cao hơn thì giữ nguyên)
  S.bv[w]=nv;save();
  const rc=el.getBoundingClientRect();coinFly(rc.left+rc.width/2,rc.top,t+" 🪙");
  gtoast("🪲 \""+w+"\": "+v+" → "+nv+" 🪙");
@@ -2010,11 +2016,18 @@ function btNew(h,g,i){
  el.innerHTML=`<div class="bi">${btSvg()}</div>`;h.appendChild(el);
  const bi=el.firstChild,rnd=(a,b)=>a+Math.random()*(b-a);
  const pls=()=>[...g.querySelectorAll(".pl")],byN=n=>pls().find(e=>e.dataset.w===n);
- let hd=null,ang=rnd(-25,25),x=g.clientWidth/2-sz/2,y=20,sw;
+ let hd=null,ang=rnd(-25,25),x=g.clientWidth/2-sz/2,y=20,sw,strolling=false;
+ const newLeft=()=>2+Math.floor(Math.random()*2);            // số lượt dạo mỗi lần thức dậy: 2–3 (đổi tại đây)
+ let left=newLeft();
  const face=a=>{const d=((a-ang)%360+540)%360-180;ang+=d;bi.style.transform=`rotate(${ang}deg)`};
  const o={el,bi,face,getAng:()=>ang};
  const reg=()=>g.__lp||(g.__lp=new Map());
  const room=p=>{const w=p.dataset.w;let n=0,b=0;reg().forEach((v,k)=>{if(k!==el&&v.w===w)n++});for(const key in BTO)if(BTO[key]!==i&&key.startsWith(w+"|"))b++;return n<plSlots(p).cap&&b<2};
+ // được phép đậu khi đi dạo: cấp 4–5 và KHÔNG héo
+ const okWalk=w=>(S.m[w]||0)>=4&&!(S.w&&S.w[w]);
+ const free=q=>BTT[q.dataset.w]==null||BTT[q.dataset.w]===i;
+ // còn cây chín chưa ghé (ngoài cây đang đứng) không?
+ const hasWork=()=>pls().some(p=>p.dataset.w!==BTM[i]&&free(p)&&btOk(p.dataset.w)&&room(p));
  const perch=p=>{
   const w=p.dataset.w,s=plSlots(p).s,
    r=p.querySelector("svg").getBoundingClientRect(),gr=g.getBoundingClientRect(),
@@ -2031,8 +2044,8 @@ function btNew(h,g,i){
   return ok.length?ok[Math.floor(Math.random()*ok.length)]:null;
  };
  const claim=(p,b)=>{const old=BTK[i];if(old)delete BTO[old];BTO[b[2]]=i;BTK[i]=b[2];reg().set(el,{x:b[0],y:b[1],w:p.dataset.w})};
- { // vị trí ban đầu: cây cũ nếu còn chỗ, không thì chọn cây khác còn chỗ
-  const a=pls(),first=BTM[i]&&byN(BTM[i]),cand=(first?[first]:[]).concat(shuf(a));
+ { // vị trí ban đầu: chỉ đậu cây cấp ≥4 và không héo
+  const a=pls().filter(p=>okWalk(p.dataset.w)),first=BTM[i]&&a.find(p=>p.dataset.w===BTM[i]),cand=(first?[first]:[]).concat(shuf(a));
   for(const p of cand){if(!room(p))continue;const b=perch(p);if(b){BTM[i]=p.dataset.w;claim(p,b);x=b[0]-sz/2;y=b[1]-sz/2;break}}
  }
  el.style.transform=`translate(${x}px,${y}px)`;bi.style.transform=`rotate(${ang}deg)`;
@@ -2041,16 +2054,26 @@ function btNew(h,g,i){
   let k=0;
   (function go(){
    if(!el.isConnected)return;
+   if(strolling&&hasWork()){step();return}   // đang dạo mà có cây chín mới: bay đi làm ngay
    if(k>=P.length){step();return}
    el.dataset.st=P[k][0];gLater(go,P[k][1]);k++;
   })();
  }
  function step(){
   if(!el.isConnected)return;
-  const from=BTM[i],wn=webOn("bt",el),wp=wn&&byN(wn),free=q=>BTT[q.dataset.w]==null||BTT[q.dataset.w]===i,cand=(wp&&wp.dataset.w!==from&&free(wp)?[wp]:[]).concat(shuf(pls().filter(p=>p.dataset.w!==from&&bfBloom(p.dataset.w)&&p!==wp&&free(p))));
+  const from=BTM[i],wn=webOn("bt",el);
+  let wp=wn&&byN(wn);
+  // cây có mạng nhưng héo hoặc cấp <4: không đậu, nhả chỗ giữ
+  if(wp&&!okWalk(wp.dataset.w)){if(WEBS[wn])delete WEBS[wn].cl.bt;wp=null}
+  const todo=shuf(pls().filter(p=>p!==wp&&p.dataset.w!==from&&free(p)&&btOk(p.dataset.w))),                 // cây chín (cấp 5, không héo)
+   walk=left>0?shuf(pls().filter(p=>p!==wp&&p.dataset.w!==from&&free(p)&&okWalk(p.dataset.w)&&!btOk(p.dataset.w))):[], // dạo: cấp 4–5, không héo
+   cand=(wp&&wp.dataset.w!==from&&free(wp)?[wp]:[]).concat(todo,walk);
   let p=null,b=null;
   for(const q of cand){if(!room(q))continue;const bb=perch(q);if(bb){p=q;b=bb;break}}
-  if(!p){el.dataset.st="rest";sw.rest();return} // không còn cây có quả để ghé: nghỉ 30s rồi thử lại
+  if(!p){strolling=false;el.dataset.st="rest";sw.rest();return} // hết việc và hết lượt dạo: nghỉ 30s
+  const work=btOk(p.dataset.w);
+  strolling=!work&&p!==wp;
+  if(strolling)left--;                      // chỉ lượt dạo mới bị trừ
   claim(p,b);
   BTT[p.dataset.w]=i;
   const name=p.dataset.w,tx=Math.max(0,Math.min(g.clientWidth-sz,b[0]-sz/2)),ty=b[1]-sz/2;
@@ -2063,10 +2086,10 @@ function btNew(h,g,i){
    if(BTT[name]===i)delete BTT[name];
    if(name!==from)btAct(name,el);
    webHit("bt",name);
-   seq(); 
+   seq();
   });
  }
- sw=swarmWake(g,"__tsw",()=>{if(el.isConnected)step()});
+ sw=swarmWake(g,"__tsw",()=>{if(el.isConnected){left=newLeft();strolling=false;step()}});
  gLater(()=>{if(el.isConnected)step()},rnd(300,2000));
 }
 
@@ -2578,11 +2601,11 @@ const DB_MAX=50,DB_MIN=.05;            // đường kính cục tròn tối đa 
 const DB_RS=.4,DB_LS=.5,DB_G1=.08;     // 40% reset +2💧 · 50% −4💧 · 8% +2💧+1🪙 · còn lại 2% +4🪙
 const DGREQ=["bfly","bee","dfly","ghop","beetle","spider","cricket","ffly"]; // phải có sẵn 3 con trong này
 const dbDay=()=>{const t=ld(),o=S.dbr;if(!o||o.d!==t)S.dbr={d:t,n:0,seen:{},c:{},home:(o&&o.home)||{}};return S.dbr};
-function dbReset(w){ // chỉ loài đã dùng chức năng trên cây này mới được gọi lại
+function dbReset(w){ // hoàn 1 suất hạn mức, nhưng cây w vẫn bị loại (1 cây chỉ 1 lần/ngày)
  const o=[],a=dfDay(),b=ghDay(),c=beeDay();
  if(a.seen[w]){delete a.seen[w];a.n=Math.max(0,a.n-1);o.push("🪽")}
- if(b.seen[w]){delete b.seen[w];b.n=Math.max(0,b.n-1);o.push("🦗")}
- if(c.seen[w]){delete c.seen[w];c.used=Math.max(0,c.used-1);o.push("🐝")}
+ if(b.seen[w]){b.n=Math.max(0,b.n-1);o.push("🦗")}
+ if(c.seen[w]){c.used=Math.max(0,c.used-1);o.push("🐝")}
  return o;
 }
 function dbAct(w,el){
@@ -2742,7 +2765,7 @@ function dbNew(h,g,i){
  const grow=()=>{const d=dbDay(),c=(d.c&&d.c[i])||0,r=plan().rem||0,f=(c+r)>0?c/(c+r):0;sc=DB_MIN+(1-DB_MIN)*f;bb.style.transform=`scale(${sc})`;lay()};
  // +1: con bên trái (quả sát vách phải) · -1: con bên phải (quả sát vách trái) · 0: không gặp nhau
  function sideNow(){
-  const o=ot();if(!o)return 0;
+  const o=ot();if(!o)return 1;
   const P0=DBP[0],P1=DBP[1];
   if(!(P0.d>0&&P1.d<0&&P1.p===P0.p+1&&dbSame(P0.p)))return 0;
   const a=seq(),A=a[me().p],B=a[o.p];if(!A||!B)return 0;
@@ -2752,7 +2775,7 @@ function dbNew(h,g,i){
  function placeSleep(anim){
   const a=seq(),q=a[Math.min(me().p,a.length-1)];if(!q)return;
   const [px,py,w]=gp(q),sd=sideNow(),R=M*sc/2;
-  y=py;shifted=sd?1:0;x=px+(sd?Math.max(0,w/2-R-3)*sd:0);
+  y=py;shifted=sd?1:0;x=px+(sd?Math.max(0,w/2-R-0)*sd:0);
   if(anim){el.style.transition="transform .5s ease-out";setTimeout(()=>{el.style.transition=""},560)}
   paint();
  }
@@ -2854,14 +2877,17 @@ const SHOP=[
  {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:299,type:"pot"},
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
  {id:"bfly",e:"🦋",t:"Butterflies",d:"Land on level-3 plants and make them bloom (3 💧 + 1 🪙).",p:109,type:"deco",flag:"bf",per:4},
- {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into small fruit (6 💧 + 2 🪙). "+Math.round(BEW*100)+"% chance to wilt a plant. Up to "+Math.round(BEE_RANGE*100)+"% of plants a day.",p:209,type:"deco",flag:"be",per:3},
+ {id:"cricket",e:"🎶",t:"Singing Crickets",d:"Read each word twice while you watch: +1 💧 per plant, +1 🪙 per 10 plants.",p:159,type:"deco",flag:"cr",per:2},
  {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew: +"+DEW+" 💧 on green plants, +"+DEWW+" 💧 on wilted ones.",p:209,type:"deco",flag:"df",per:3},
- {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Hop between plants: "+Math.round(GHW*100)+"% wilt it, "+Math.round(GH1*100)+"% +"+GHG+" 🪙, "+Math.round((1-GHW-GH1)*100)+"% +"+GHG2+" 🪙.",p:309,type:"deco",flag:"gh",per:2},
- {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Visit ripe fruit: "+Math.round(BT_X*100)+"% ×2, "+Math.round(BT_P*100)+"% +2, "+Math.round((1-BT_X-BT_P)*100)+"% −50% of its 🪙.",p:409,type:"deco",flag:"bt",per:2},
+ {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Hop between plants: "+Math.round(GHW*100)+"% wilt it, "+Math.round(GH1*100)+"% +"+GHG+" 🪙, "+Math.round((1-GHW-GH1)*100)+"% +"+GHG2+" 🪙.",p:259,type:"deco",flag:"gh",per:2},
+ {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into small fruit (6 💧 + 2 🪙). "+Math.round(BEW*100)+"% chance to wilt a plant. Up to "+Math.round(BEE_RANGE*100)+"% of plants a day.",p:309,type:"deco",flag:"be",per:3},
+ {id:"dung",e:"🟤",t:"Dung Beetles",d:"Roll a ball across the garden: "+Math.round(DB_RS*100)+"% reset 🪽🦗🐝 (+2 💧), "+Math.round(DB_LS*100)+"% −4 💧, "+Math.round(DB_G1*100)+"% +2 💧 +1 🪙, 2% +4 🪙. Needs 3 other insects.",p:359,type:"deco",flag:"dg",per:1},
+ 
  {id:"spider",e:"🕷️",t:"Spiders",d:"Spin webs that lure your other insects and cure insect wilt. "+Math.round(SPGP*100)+"% +"+SPG+" 🪙.",p:409,type:"deco",flag:"sp",per:2},
- {id:"cricket",e:"🎶",t:"Singing Crickets",d:"Read each word twice while you watch: +1 💧 per plant, +1 🪙 per 10 plants.",p:259,type:"deco",flag:"cr",per:2},
- {id:"ffly",e:"✨",t:"Fireflies",d:"Light up harvested plants. Answer correctly for a 2nd harvest ("+Math.round(FF_Y*100)+"%). Up to "+Math.round(FF_RANGE*100)+"% of plants a day.",p:609,type:"deco",flag:"ff",per:FF_PER},
- {id:"dung",e:"🟤",t:"Dung Beetles",d:"Roll a ball across the garden: "+Math.round(DB_RS*100)+"% reset 🪽🦗🐝 (+2 💧), "+Math.round(DB_LS*100)+"% −4 💧, "+Math.round(DB_G1*100)+"% +2 💧 +1 🪙, 2% +4 🪙. Needs 3 other insects.",p:509,type:"deco",flag:"dg",per:1},
+ 
+ {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Visit ripe fruit: "+Math.round(BT_X*100)+"% ×2, "+Math.round(BT_P*100)+"% +2, "+Math.round((1-BT_X-BT_P)*100)+"% −50% of its 🪙.",p:509,type:"deco",flag:"bt",per:2},
+ 
+ {id:"ffly",e:"✨",t:"Fireflies",d:"Light up harvested plants. Answer correctly for a 2nd harvest ("+Math.round(FF_Y*100)+"%). Up to "+Math.round(FF_RANGE*100)+"% of plants a day.",p:699,type:"deco",flag:"ff",per:FF_PER},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
