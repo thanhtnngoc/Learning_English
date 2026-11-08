@@ -501,7 +501,7 @@ function harvest(w){if(!ripe(w))return 0;S.fr[w]=1;S.hv[w]=ld();S.bv=S.bv||{};S.
  return g}
 /* ===== Fireflies: 2nd harvest ===== */
 const FF_PER=3,FF_Y=.6;                                   // 3 con/level (tốc độ) · 60% sản lượng
-const FF_RANGE=.4;                                        // ✏️ CHỈNH Ở ĐÂY: đom đóm thắp tối đa % số cây/ngày (đổi .3 / .4 tùy ý)
+const FF_RANGE=.5;                                        // ✏️ CHỈNH Ở ĐÂY: đom đóm thắp tối đa % số cây/ngày (đổi .3 / .4 tùy ý)
 const ffOn=()=>!!(S.ff&&S.own&&S.own.ffly);
 const ffCount=()=>((S.own&&+S.own.ffly)||0)*FF_PER;       // số con đom đóm (theo level)
 const ffQuota=()=>(S.own&&+S.own.ffly)?Math.max(1,Math.ceil(W().length*FF_RANGE)):0; // hạn mức cây/ngày = % tổng số cây
@@ -1261,9 +1261,9 @@ function progInfo(){
  const hasWilt=w=>S.w&&S.w[w];
 
  if(S.bt&&own.beetle){
-  const t=all.filter(x=>(S.m[x[0]]||0)>=5).length,n=cap(btDay().n,t);
-  o.push({s:"🪲",d:"🪲 Beetles: "+n+"/"+t+" fruit plants visited"+ok(n,t)});
- }
+  const d=btDay(),left=all.filter(x=>btOk(x[0])).length,t=d.n+left,n=d.n;
+  o.push({s:"🪲",d:"🪲 Beetles: "+n+"/"+t+" ripe plants visited"+ok(n,t)});
+  }
  if(S.be&&own.bee){
   const t=beeTotal(),n=cap(beeDay().used,t);
   o.push({s:"🐝",d:"🐝 Bees: "+n+"/"+t+" plants visited"+ok(n,t)});
@@ -1290,7 +1290,7 @@ function progInfo(){
  }
  if(S.ff&&own.ffly){
   const q=ffQuota(),n=cap(ffUsed(),q);
-  o.push({s:"✨",d:"✨ Fireflies: "+n+"/"+q+" plants lit ("+Math.round(FF_RANGE*100)+"% of "+N+")"+ok(n,q)});
+  o.push({s:"✨",d:"✨ Fireflies: "+n+"/"+q+" plants lit"+ok(n,q)});
  }
  if(S.dg&&own.dung){
   const n=cap(dbDay().n,N);
