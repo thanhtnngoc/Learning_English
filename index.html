@@ -49,7 +49,7 @@ input,textarea{width:100%;padding:11px;margin-top:8px;border-radius:10px;border:
 details{margin-top:18px;font-size:14px}summary{cursor:pointer;font-weight:700;font-size:16px}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%);background:var(--pr);color:var(--bt);padding:9px 16px;border-radius:99px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.s{opacity:1;top:calc(env(safe-area-inset-top,0px) + 24px)}
-.toast.sd{transform:none;white-space:normal;max-width:calc(50vw - 22px);height:40px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.3;padding:0 12px;border-radius:14px;top:calc(env(safe-area-inset-top,0px) + 34px)}
+.toast.sd{transform:none;white-space:normal;max-width:calc(50vw - 22px);height:40px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.3;padding:0 12px;border-radius:14px;top:calc(env(safe-area-inset-top,0px) + 44px);transition:opacity .2s}
 .toast.sd.s{top:calc(env(safe-area-inset-top,0px) + 44px)}
 #tl{left:max(12px,env(safe-area-inset-left,0px))}
 #tr{left:auto;right:max(12px,env(safe-area-inset-right,0px));opacity:0}
@@ -372,7 +372,7 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .ff.glow .ffg{animation:ffs 2.4s ease-out 2 forwards}
 @keyframes ffs{0%{opacity:.4}15%{opacity:1;filter:drop-shadow(0 0 6px #fde047) drop-shadow(0 0 10px #facc15)}100%{opacity:.5;filter:none}}
 /* ===== Dung beetle ===== */
-#dbs{z-index:4}
+#dbs{z-index:4;overflow-x:clip;clip-path:inset(-400px 0 -200px 0)}
 .dg{position:absolute;left:0;top:0;width:0;height:0;will-change:transform}
 .dgb{position:absolute;transform-origin:50% 100%;transition:transform .5s ease-out}
 .dgb svg,.dgp svg,.dgz svg{width:100%;height:100%;display:block;overflow:visible}
@@ -388,6 +388,17 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .dgs{display:none}
 .dg.zz .dgs{display:inline}
 .dg.zz .dgr{display:none}
+/* ===== Dark mode: bọ hung sáng lên (light giữ nguyên) ===== */
+:root[data-theme="dark"] .dg svg [fill="#7b4a33"]{fill:#e0a458}
+:root[data-theme="dark"] .dg svg [fill="#5a3322"]{fill:#c47f2e}
+:root[data-theme="dark"] .dg svg [fill="#8a553b"]{fill:#eeb96c}
+:root[data-theme="dark"] .dg svg [fill="#6a3b27"]{fill:#d69642}
+:root[data-theme="dark"] .dg svg [stroke="#4e2c1d"]{stroke:#e8b36a}
+:root[data-theme="dark"] .dg svg [stroke="#b98468"]{stroke:#fff1d6}
+:root[data-theme="dark"] .dg svg [stroke="#a06a52"]{stroke:#f6d9a8}
+:root[data-theme="dark"] .dg svg [fill="#4e2c1d"]{fill:#e8b36a}
+:root[data-theme="dark"] .dg svg [fill="#aeb4be"]{fill:#0f172a}
+:root[data-theme="dark"] .dg svg [fill="#4b5563"]{fill:#000}
 </style>
 </head>
 <body>
@@ -1580,10 +1591,11 @@ function bfNew(h,g,i){
 /* ---- Bees ---- */
 const beeSvg=()=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 4.3Q9.6 2.6 8.2 2.1M13.2 4.3Q14.4 2.6 15.8 2.1" stroke="#111" stroke-width=".7" stroke-linecap="round" fill="none"/><circle cx="8" cy="2" r=".85" fill="#111"/><circle cx="16" cy="2" r=".85" fill="#111"/><circle cx="12" cy="6" r="2.6" fill="#111"/><clipPath id="beeb"><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z"/></clipPath><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="#f5b335"/><g clip-path="url(#beeb)"><rect x="6" y="11.6" width="12" height="1.5" fill="#111"/><rect x="6" y="14.4" width="12" height="1.5" fill="#111"/><rect x="6" y="17.2" width="12" height="1.5" fill="#111"/><rect x="6" y="20.2" width="12" height="4" fill="#111"/></g><path d="M12 8.5C16.6 9 17.2 15 15.2 18.6C14.2 20.6 12.9 22.6 12 23.4C11.1 22.6 9.8 20.6 8.8 18.6C6.8 15 7.4 9 12 8.5Z" fill="none" stroke="#111" stroke-width=".8"/><circle cx="12" cy="9.4" r="3" fill="#f5b335" stroke="#111" stroke-width=".8"/><g class="bw"><g transform="translate(12 10.5) scale(1.3) translate(-12 -10.5)"><path d="M11.6 9.8C9 6.2 5 4.6 2 5.8C2.2 9 6 11.2 11.6 10.8Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 9.8C15 6.2 19 4.6 22 5.8C21.8 9 18 11.2 12.4 10.8Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M11.6 11C8 10.6 3.6 12.2 3.4 15.4C4.6 18 8.6 17 11.6 13.2Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/><path d="M12.4 11C16 10.6 20.4 12.2 20.6 15.4C19.4 18 15.4 17 12.4 13.2Z" fill="#fff" fill-opacity=".85" stroke="#111" stroke-width=".55" stroke-linejoin="round"/></g></g></svg>`;
 const BEW=.2; // xác suất ong làm héo
-const BEE_V=4,BEE_UP=7,BEE_W=6,BEE_G=2; // quả ong 4🪙; bạn trả lời đúng thì lên 7🪙 (75% của 9)
+const BEE_V=4,BEE_UP=9,BEE_W=6,BEE_G=2; // quả ong 4🪙; bạn trả lời đúng thì lên 9🪙 (100% của 9)
 const BEE_RANGE=.5;                      // ong chỉ được làm trên 50% số cây
-const beeCan=w=>{const m=S.m[w]||0;return (m===4||(m>=5&&fstate(w)===1))?((S.coins||0)>=BEE_W&&(S.gold||0)>=BEE_G):true};
-const beeOk=w=>bfBloom(w)&&!(S.w&&S.w[w])&&!beeDay().seen[w]&&beeCan(w);
+const beeFruit=w=>{const m=S.m[w]||0;return (m===4||(m>=5&&fstate(w)===1))&&(S.hv||{})[w]!==ld()};
+const beeCan=w=>beeFruit(w)?((S.coins||0)>=BEE_W&&(S.gold||0)>=BEE_G):true;
+const beeOk=w=>bfBloom(w)&&(S.hv||{})[w]!==ld()&&!(S.w&&S.w[w])&&!beeDay().seen[w]&&beeCan(w);
 const beeTotal=()=>Math.max(1,Math.ceil(W().length*BEE_RANGE));   // hạn mức/ngày = % tổng số cây
 const beeCount=()=>((S.own&&+S.own.bee)||1)*3;    // số con ong (tốc độ làm việc)
 function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}};return S.bee}
@@ -1593,10 +1605,10 @@ function beeUpd(p){
 }
 function beeAct(p){
  const w=p.dataset.w;if(!gwLive()||!byW(w))return false;const b=beeDay();
- if(b.seen[w]||b.used>=beeTotal())return false;
+ if(b.seen[w]||b.used>=beeTotal()||(S.hv||{})[w]===ld())return false;
  S.fr=S.fr||{};S.w=S.w||{};S.bv=S.bv||{};
  const m=S.m[w]||0;
- if(m===4||(m>=5&&fstate(w)===1)){
+ if(beeFruit(w)){
   if((S.coins||0)<BEE_W||(S.gold||0)<BEE_G)return false; // không đủ: bỏ qua, không tính
   S.coins-=BEE_W;S.gold-=BEE_G;
   if(m===4)S.m[w]=5;
@@ -2774,12 +2786,20 @@ function dbNew(h,g,i){
   };
   if(nd!==dir){dir=nd;lay();if(soft)go();else gLater(go,500)}else go();
  }
- function moveTo(p,n,dd,cb){
-  const [tx,ty]=gp(p),dx=tx-x,dy=ty-y,nd=dd*(Math.floor(n/cols)%2?-1:1); // hướng lăn trong hàng đích
+ function moveTo(p,n,dd,cb,pv){
+  const [tx,ty]=gp(p),dx=tx-x,dy=ty-y,nd=dd*(Math.floor(n/cols)%2?-1:1);
   if(Math.abs(dx)<2&&Math.abs(dy)<2){cb();return}
-  if(Math.abs(dy)<2)roll(tx,ty,dx>0?1:-1,false,cb);              // lăn ngang trong hàng
-  else if(Math.abs(dx)<2)roll(tx,ty,nd,true,cb);                  // hết hàng: lăn thẳng xuống/lên
-  else roll(tx,y,dx>0?1:-1,false,()=>roll(tx,ty,nd,true,cb));     // hàng cuối thiếu ô: ngang trước, dọc sau
+  if(Math.abs(dy)<2){roll(tx,ty,dx>0?1:-1,false,cb);return}     // cùng hàng: lăn ngang như cũ
+  // đổi hàng: đẩy ra khỏi vườn, rồi xuất hiện lại ở hàng mới đã quay sẵn hướng
+  const W0=g.clientWidth,off=Math.max(1.5,M*sc/2)+30;
+  const ed=pv==null?-nd:dd*(Math.floor(pv/cols)%2?-1:1);          // hướng đang lăn ở hàng cũ
+  const ox=ed>0?W0+off:-off;                                      // điểm biến mất
+  const ex=nd>0?-off:W0+off;                                      // điểm xuất hiện lại
+  roll(ox,y,ed,false,()=>{
+   if(!el.isConnected)return;
+   x=ex;y=ty;dir=nd;lay();paint();                                // dịch chuyển lúc đang ngoài vườn, không ai thấy
+   roll(tx,ty,nd,false,cb);
+  });
  }
  function arrive(){ // tới ô nào thì làm chức năng ở ô đó
   const a=seq(),m=me(),q=a[Math.min(m.p,a.length-1)],d=dbDay();
@@ -2801,8 +2821,8 @@ function dbNew(h,g,i){
   if(unv(a,Math.min(m.p,a.length-1)))arrive();                     // đang đứng sẵn trên ô chưa làm: làm luôn
   const pl=plan();
   if(pl.t!=="go"){step();return}
-  const n=pl.n,dd=m.d;m.p=n;busy=true;                             // đặt chỗ ô kế để con kia thấy
-  moveTo(a[n],n,dd,()=>{busy=false;if(!el.isConnected)return;arrive();step()}); // không dừng, lăn tiếp luôn
+  const n=pl.n,dd=m.d,pv=m.p;m.p=n;busy=true;                          // đặt chỗ ô kế để con kia thấy
+  moveTo(a[n],n,dd,()=>{busy=false;if(!el.isConnected)return;arrive();step()},pv); // không dừng, lăn tiếp luôn
  }
 
  // vị trí ban đầu: đứng ở ô đã lưu, nằm ngủ rồi tự thức dậy
@@ -2832,15 +2852,15 @@ const SHOP=[
  {id:"potm",e:"🌙",t:"Moon Pot",d:"A glowing crescent moon on a golden stand.",p:199,type:"pot"},
  {id:"potw",e:"🫧",t:"Water Pot",d:"A swirling bowl of water with bubbles and a tiny fish.",p:299,type:"pot"},
  {id:"potf",e:"🔥",t:"Fire Pot",d:"A fiery little devil cat in dancing flames.",p:399,type:"pot"},
- {id:"bfly",e:"🦋",t:"Butterflies",d:"A butterfly landing on a green level-3 plant makes it bloom (level 4), once per plant a day. Costs 3 💧 + 1 🪙. They also stroll over level 3+ plants.",p:109,type:"deco",flag:"bf",per:4},
- {id:"bee",e:"🐝",t:"Bees",d:"Each day bees can work up to "+Math.round(BEE_RANGE*100)+"% of your plants, once per plant (more bees = faster). They turn blooms into fruit (6 💧 + 2 🪙 each, bee fruit is worth less). Landing on a fruiting plant has a "+Math.round(BEW*100)+"% chance to wilt it.",p:209,type:"deco",flag:"be",per:3},
- {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew once per plant a day: +"+DEW+" 💧 on green plants, +"+DEWW+" 💧 on wilted ones.",p:209,type:"deco",flag:"df",per:3},
- {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Hop between plants (Leafy or bigger). Once per plant a day: "+Math.round(GHW*100)+"% wilts it (no effect if already wilted), "+Math.round(GH1*100)+"% +"+GHG+" 🪙, "+Math.round((1-GHW-GH1)*100)+"% +"+GHG2+" 🪙.",p:309,type:"deco",flag:"gh",per:2},
- {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Visit blooming and fruiting plants. On a ripe, unvisited fruit: 10% ×2, 30% +2, 60% −50% of that plant's harvest 🪙. Once per plant a day.",p:409,type:"deco",flag:"bt",per:2},
- {id:"spider",e:"🕷️",t:"Spiders",d:"Spin silk between plants (Leafy or bigger), cure insect-caused wilt (100%) and 10% +"+SPG+" 🪙. Each web lasts 3 minutes and lures one of every insect you own. Once per plant a day.",p:409,type:"deco",flag:"sp",per:2},
- {id:"cricket",e:"🎶",t:"Singing Crickets",d:"Hop between plants and read each word twice, taking turns. +1 💧 per plant a day, only while you watch the Garden and +1 🪙 for every 10 plants sung to in a day.",p:259,type:"deco",flag:"cr",per:2},
- {id:"ffly",e:"✨",t:"Fireflies",d:"Land on plants you already harvested today and light them up. Then answer correctly in Quiz or games and that plant fruits again: a 2nd harvest worth "+Math.round(FF_Y*100)+"%. Up to "+Math.round(FF_RANGE*100)+"% of your plants a day (more fireflies = faster). Other insects can't trigger it.",p:609,type:"deco",flag:"ff",per:FF_PER},
- {id:"dung",e:"🟤",t:"Dung Beetles",d:"Roll a growing ball in a zigzag across the garden (row 1 left→right, row 2 right→left…) without stopping, once per plant a day. Lv 2 adds a 2nd beetle from the opposite end; Lv 3-5 roll faster. Each plant: "+Math.round(DB_RS*100)+"% calls back 🪽🦗🐝 that already worked there (+2 💧), "+Math.round(DB_LS*100)+"% −4 💧, "+Math.round(DB_G1*100)+"% +2 💧 +1 🪙, 2% +4 🪙. Sleeps on the ball at night. Needs 3 other insects.",p:509,type:"deco",flag:"dg",per:1},
+ {id:"bfly",e:"🦋",t:"Butterflies",d:"Land on level-3 plants and make them bloom (3 💧 + 1 🪙).",p:109,type:"deco",flag:"bf",per:4},
+ {id:"bee",e:"🐝",t:"Bees",d:"Turn blooms into small fruit (6 💧 + 2 🪙). "+Math.round(BEW*100)+"% chance to wilt a plant. Up to "+Math.round(BEE_RANGE*100)+"% of plants a day.",p:209,type:"deco",flag:"be",per:3},
+ {id:"dfly",e:"🪽",t:"Dragonflies",d:"Drop dew: +"+DEW+" 💧 on green plants, +"+DEWW+" 💧 on wilted ones.",p:209,type:"deco",flag:"df",per:3},
+ {id:"ghop",e:"🦗",t:"Grasshoppers",d:"Hop between plants: "+Math.round(GHW*100)+"% wilt it, "+Math.round(GH1*100)+"% +"+GHG+" 🪙, "+Math.round((1-GHW-GH1)*100)+"% +"+GHG2+" 🪙.",p:309,type:"deco",flag:"gh",per:2},
+ {id:"beetle",e:"🪲",t:"Golden Beetles",d:"Visit ripe fruit: "+Math.round(BT_X*100)+"% ×2, "+Math.round(BT_P*100)+"% +2, "+Math.round((1-BT_X-BT_P)*100)+"% −50% of its 🪙.",p:409,type:"deco",flag:"bt",per:2},
+ {id:"spider",e:"🕷️",t:"Spiders",d:"Spin webs that lure your other insects and cure insect wilt. "+Math.round(SPGP*100)+"% +"+SPG+" 🪙.",p:409,type:"deco",flag:"sp",per:2},
+ {id:"cricket",e:"🎶",t:"Singing Crickets",d:"Read each word twice while you watch: +1 💧 per plant, +1 🪙 per 10 plants.",p:259,type:"deco",flag:"cr",per:2},
+ {id:"ffly",e:"✨",t:"Fireflies",d:"Light up harvested plants. Answer correctly for a 2nd harvest ("+Math.round(FF_Y*100)+"%). Up to "+Math.round(FF_RANGE*100)+"% of plants a day.",p:609,type:"deco",flag:"ff",per:FF_PER},
+ {id:"dung",e:"🟤",t:"Dung Beetles",d:"Roll a ball across the garden: "+Math.round(DB_RS*100)+"% reset 🪽🦗🐝 (+2 💧), "+Math.round(DB_LS*100)+"% −4 💧, "+Math.round(DB_G1*100)+"% +2 💧 +1 🪙, 2% +4 🪙. Needs 3 other insects.",p:509,type:"deco",flag:"dg",per:1},
  {id:"tree",e:"🍎",t:"Apple Tree",d:"The classic upright tree with red apples.",p:0,type:"plant"},
  {id:"vine",e:"🍓",t:"Strawberry Vine",d:"A trailing vine that hangs from your pot and bears strawberries. Needs a pot.",p:199,type:"plant"},
  {id:"orange",e:"🍊",t:"Orange Tree",d:"A round, leafy tree with glossy leaves and juicy oranges.",p:299,type:"plant"},
