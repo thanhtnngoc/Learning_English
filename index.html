@@ -24,10 +24,12 @@ h1{font-size:20px;margin:0}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),var(--ac));transition:width .4s}
 .sub{font-size:12px;color:var(--mu);margin-bottom:12px}
 .btn.rb{flex:none;width:auto;padding:6px 12px;font-size:15px;white-space:nowrap}
-.qh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}.qh>:first-child{justify-self:start}.qh>:last-child{justify-self:end}.qh b{text-align:center}
+.gh.qh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}.qh>:first-child{justify-self:start}.qh>:last-child{justify-self:end}.qh b{text-align:center}
 .tabs{display:flex;gap:6px;margin-bottom:14px}
 .tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
-.tabs button.on{background:var(--pr);color:var(--bt);border-color:var(--pr)}
+.tabs button.on{background:var(--pr);color:var(--bt);border-color:color-mix(in srgb,var(--pr) 45%,#000);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pr) 45%,#000)}
+:root[data-theme="dark"] .tabs button.on{border-color:color-mix(in srgb,var(--pr) 2%,#000);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pr) 2%,#000)}
+.tabs button.on{background:var(--pr);color:var(--bt);border-color:color-mix(in srgb,var(--pr) 2%,#000);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pr) 45%,#000)}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:px;padding:24px 18px;min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;box-shadow:0 6px 24px rgba(13,148,136,.15)}
 .w{font-size:34px;font-weight:800;margin:0}
 .ipa{color:var(--pr);font-size:18px;margin:6px 0}
@@ -422,9 +424,16 @@ try{const r=localStorage.getItem("ebs");if(r)S=Object.assign(S,JSON.parse(r))}ca
 S.custom=(S.custom||[]).map(x=>typeof x[3]==="boolean"?[x[0],x[1],x[2],"","",x[3]]:typeof x[4]==="boolean"?[x[0],x[1],x[2],x[3]||"","",x[4]]:x);
 function ens(){S.bv=S.bv||{};S.bm=S.bm||{};S.wp=S.wp||{};S.m=S.m||{};S.w=S.w||{};S.fr=S.fr||{};S.hv=S.hv||{};S.gold=S.gold||0;S.inv=S.inv||{};S.inv.shield=S.inv.shield||0;S.inv.life=S.inv.life||0;S.own=S.own||{};S.f2=S.f2||{};S.bee=S.bee||{d:"",used:0,seen:{}};if(["pot","potm","potw","potf"].includes(S.soil)){S.pot=S.soil;S.soil="default"}}
 ens();
+if(S.rdt){S.rph=S.rph||{};S.rcur=S.rcur||{};Object.keys(S.rdt).forEach(k=>{const r=S.rdt[k];if(r&&r.deck&&!r.sub){(S.rph[k]=S.rph[k]||{})[r.ph]=r;S.rcur[k]=r.ph}});delete S.rdt}
 const cl=s=>String(s||"").trim().replace(/\s*:\s*$/,"");
 const vi=x=>cl(x[3]);
 const vd=x=>cl(x[4]);
+const tp=x=>cl(x[6]);                                   // chủ đề của từ (cột F)
+const TOPICS=()=>{const a=[];B().forEach(x=>{const t=tp(x);if(t&&!a.includes(t))a.push(t)});return a}; // theo thứ tự xuất hiện trong Sheet
+const QW=()=>S.qt?W().filter(x=>tp(x)===S.qt):W();      // danh sách từ của bộ quiz đang chọn
+const TI={"Food & Drink":"🍜","Nature & Science":"🌿","Health & Body":"💪","Home, Daily Life & Travel":"🏠","Emotions & Personality":"😊","Communication & Society":"💬","Work, Study & Money":"💼","General Actions & Ideas":"💡"};
+const rdOf=k=>k===(S.qt||"")?S.rd:((S.rph||{})[k]||{})[(S.rcur||{})[k]];
+function setQT(k){stash();S.qt=k;S.rd=((S.rph||{})[k]||{})[(S.rcur||{})[k]]||null;combo=0;save()}
 if(S.uid)document.getElementById("auth").classList.add("off");
 let cUser=null,pushT=0,cDirty=false,pulled=false;
 const save=()=>{try{S.ts=Date.now();localStorage.setItem("ebs",JSON.stringify(S))}catch(e){}if(cUser){cDirty=true;cStat();cSoon()}};
@@ -450,8 +459,8 @@ function gain(n,msg){
 function hud(){
  $("st").textContent="🔥 "+S.streak;$("xp").textContent=S.xp+" XP";
  const r=S.rd;let p=0,t="No round yet · Open Games ➜ Quiz to start";
- if(r&&r.deck.length){p=r.i/r.deck.length*100;t=["","Round 1 · Multiple word","Round 2 · Multiple meaning","Round 3 · Spelling"][r.ph]+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
- const rw=$("rbw");if(rw){if(r&&r.deck.length&&tab==="g"&&inQ){const o=[1,2,3].filter(k=>k!==r.ph),ic={1:"↩️",2:"🔁",3:"✍️"};rw.style.display="";[$("rb1"),$("rb2")].forEach((b,i)=>{const to=o[i];b.textContent=ic[to]+" R"+to;b.onclick=()=>{newRound(to);rQuiz()}})}else rw.style.display="none"}
+ if(r&&r.deck.length){p=r.i/r.deck.length*100;t=(S.qt?"📘 "+S.qt+" · ":"")+["","Round 1 · Multiple word","Round 2 · Multiple meaning","Round 3 · Spelling"][r.ph]+(r.sub?" (review wrong words)":"")+": "+r.i+"/"+r.deck.length+" words"}
+ const rw=$("rbw");if(rw){if(r&&r.deck.length&&tab==="g"&&inQ){const o=[1,2,3].filter(k=>k!==r.ph),ic={1:"↩️",2:"🔁",3:"✍️"};rw.style.display="";[$("rb1"),$("rb2")].forEach((b,i)=>{const to=o[i];b.textContent=ic[to]+" R"+to;b.onclick=()=>{switchRound(to);rQuiz()}})}else rw.style.display="none"}
  $("pb").style.width=p+"%";$("ps").textContent=t;
 }
 function mkU(t){const u=new SpeechSynthesisUtterance(t),l=S.acc||"en-GB";u.lang=l;u.rate=S.rate||.85;try{const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")===l);if(v)u.voice=v}catch(e){}return u}
@@ -625,13 +634,32 @@ const pshuf=names=>{
  return out;
 };
 const byW=n=>W().find(x=>x[0]===n);
-function newRound(ph,names){combo=0;const d=pshuf(names||W().map(x=>x[0]));S.rd={ph:ph,deck:d,n:d.length,i:0,ok:0,wr:[],sub:!!names};save();hud()}
+function stash(){const r=S.rd;if(!r||r.sub||!r.deck.length)return;const k=S.qt||"";S.rph=S.rph||{};(S.rph[k]=S.rph[k]||{})[r.ph]=r;S.rcur=S.rcur||{};S.rcur[k]=r.ph}
+function switchRound(to){
+ stash();
+ const k=S.qt||"",r=(S.rph&&S.rph[k]&&S.rph[k][to])||null;
+ // có round cũ chưa xong (hoặc xong nhưng còn từ sai) thì làm tiếp; xong 100% thì mở ván mới
+ if(r&&!r.sub&&r.ph===to&&r.deck.length&&!(r.i>=r.deck.length&&!r.wr.length)){S.rd=r;combo=0;save();hud()}
+ else newRound(to);
+}
+function newRound(ph,names){if(S.rd&&!S.rd.sub)stash();combo=0;const d=pshuf(names||QW().map(x=>x[0]));S.rd={ph:ph,deck:d,n:d.length,i:0,ok:0,wr:[],sub:!!names};save();hud()}
 function fixRound(){
- const r=S.rd;if(!r||r.sub||r.i>=r.deck.length)return;
- const all=W().map(x=>x[0]),names=new Set(all);
- const done=r.deck.slice(0,r.i).filter(k=>names.has(k)),ds=new Set(done);
- r.deck=done.concat(pshuf(all.filter(k=>!ds.has(k))));
- r.i=done.length;r.n=r.deck.length;
+ stash();
+ const fo=(r,k)=>{
+  if(!r||r.sub||!r.deck)return;
+  const all=(k?W().filter(x=>tp(x)===k):W()).map(x=>x[0]),names=new Set(all);
+  const done=r.deck.slice(0,r.i).filter(n=>names.has(n)),ds=new Set(done);
+  const rest=all.filter(n=>!ds.has(n));
+  const old=r.deck.slice(r.i).filter(n=>names.has(n));
+  const same=old.length===rest.length&&done.length===r.i&&old.every(n=>rest.includes(n));
+  if(same)return; // không có từ mới/bị xoá: giữ nguyên thứ tự
+  r.deck=done.concat(pshuf(rest)); // từ đã làm giữ nguyên, từ chưa làm + từ mới random lại (từ mới lên đầu)
+  r.wr=(r.wr||[]).filter(n=>names.has(n));
+  r.i=done.length;r.n=r.deck.length;
+ };
+ fo(S.rd,S.qt||"");
+ const P=S.rph||{};
+ Object.keys(P).forEach(k=>Object.keys(P[k]).forEach(ph=>fo(P[k][ph],k)));
  save();
 }
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
@@ -648,36 +676,43 @@ function rQuiz(){
 }
 function nextBtn(r){return `<div class="nxs"><div class="row"><button class="btn" id="nb">${r.i>=r.deck.length?"See results ➜":"Next ➜"}</button></div></div>`}
 function rPick(x){
- const r=S.rd,w=W();
+ const r=S.rd,w=QW();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
  $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt">${esc(x[2])}</span><button class="sp" id="qs" title="Listen to the question">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[0])}${z[1]?`<span class="ip">${esc(z[1])}</span>`:""}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[2]);
+ let ans=false;
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  if(ans){if(b.dataset.w===x[0])speak(x[0]);return}
+  ans=true;
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
-  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
+  document.querySelectorAll(".opt").forEach((z,i)=>{if(z.dataset.w===x[0])z.classList.add("ok");const v=vi(o[i]);if(v)z.insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`)});
   const ve=vd(x);if(ve)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="dv">(${esc(ve)})</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);const g=Math.min(12,5+combo);gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
-  else{b.classList.add("no");combo=0;save();hud();toast("Not quite — we'll review it at the end 💪")}
+  else{b.classList.add("no");combo=0;save();hud();toast("Not quite 💪")}
   $("nx").innerHTML=nextBtn(r);$("nb").onclick=rQuiz;
  });
 }
 function rMean(x){
- const r=S.rd,w=W();
+ const r=S.rd,w=QW();
  let o=[x];while(o.length<Math.min(4,w.length)){const c=w[Math.floor(Math.random()*w.length)];if(!o.some(z=>z[0]===c[0]))o.push(c)}
  o=shuf(o);
  $("v").innerHTML=`<div class="combo" style="min-height:15px;margin-bottom:2px">${combo>1?"🔥 Combo x"+combo:""}</div><div class="q qq"><span class="qt"><b style="font-size:22px">${esc(x[0])}</b>${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}</span><button class="sp" id="qs" title="Listen to the word">🔊</button></div><div id="os">${o.map(z=>`<button class="opt" data-w="${esc(z[0])}">${esc(z[2])}</button>`).join("")}</div><div id="nx"></div>`;
  $("qs").onclick=()=>qSpeak($("qs"),x[0]);
+ $("qs").onclick=()=>qSpeak($("qs"),x[0]);
+ let ans=false;                                  
  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  if(ans){if(b.dataset.w===x[0])speak(x[0]);return}
+  ans=true;
   qTok++;try{speechSynthesis.cancel()}catch(e){}$("qs").dataset.on="0";$("qs").textContent="🔊";
-  document.querySelectorAll(".opt").forEach((z,i)=>{z.disabled=true;if(z.dataset.w===x[0])z.classList.add("ok");const d=vd(o[i]);if(d)z.insertAdjacentHTML("beforeend",`<span class="dv" style="font-size:13px;margin-top:6px;color:var(--pr);font-weight:600">(${esc(d)})</span>`)});
+  document.querySelectorAll(".opt").forEach((z,i)=>{if(z.dataset.w===x[0])z.classList.add("ok");const d=vd(o[i]);if(d)z.insertAdjacentHTML("beforeend",`<span class="dv" style="font-size:13px;margin-top:6px;color:var(--pr);font-weight:600">(${esc(d)})</span>`)});
   const v=vi(x);if(v)document.querySelector(".qt").insertAdjacentHTML("beforeend",`<span class="vi">${esc(v)}</span>`);
   const okk=b.dataset.w===x[0];
   answered(x[0],okk);
   if(okk){combo++;speak(x[0]);const g=Math.min(12,5+combo);gain(g,["Correct! ","Awesome! ","Nailed it! "][combo%3]+"+"+g+" XP"+(lastWt>1?" · +"+lastWt+" 💧":""))}
-  else{b.classList.add("no");combo=0;save();hud();toast("Not quite — we'll review it at the end 💪")}
+  else{b.classList.add("no");combo=0;save();hud();toast("Not quite 💪")}
   $("nx").innerHTML=nextBtn(r);$("nb").onclick=rQuiz;
  });
 }
@@ -705,13 +740,13 @@ function rType(x){
 function rEnd(){
  const r=S.rd,n=r.deck.length,w=r.wr,ph=r.ph;
  const lst=w.map(k=>{const z=byW(k);return z?`<div class="it"><b>${esc(z[0])}${cnt(z[0])}</b><small>${esc(z[2])}</small></div>`:""}).join("");
- const to1=()=>{newRound(1);rQuiz()};
+ const to1=()=>{switchRound(1);rQuiz()};
  if(ph===1){
   const pf=!w.length;
   $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:40px">${pf?"🎯":"📝"}</div><b>${pf?(r.sub?"You fixed all the wrong words!":"Perfect! 100% correct!"):"Round 1 complete!"}</b><br>${r.ok}/${n} correct.${pf?"":"<br>You need 100% to unlock Round 2."}</div>${pf?"":`<div class="list"><b>Wrong words (${w.length})</b>${lst}</div>`}<div class="row">${pf?`<button class="btn l" id="r1">🔁 Back to Round 1</button><button class="btn" id="go">🔁 Go to Round 2</button>`:`<button class="btn" id="rt">🔁 Redo wrong words</button>`}</div>`;
   const rt=$("rt");if(rt)rt.onclick=()=>{newRound(1,w.slice());rQuiz()};
   const r1=$("r1");if(r1)r1.onclick=to1;
-  const go=$("go");if(go)go.onclick=()=>{newRound(2);rQuiz()};
+  const go=$("go");if(go)go.onclick=()=>{switchRound(2);rQuiz()};
  }else if(!w.length){
   if(!r.cel){r.cel=1;save();confetti();gain(r.sub?20:50,"🏆 Perfect! +"+(r.sub?20:50)+" XP")}
   $("v").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:52px">🏆</div><b>${r.sub?"You fixed all the wrong words!":"Amazing! "+n+"/"+n+(ph===3?" spelled":" matched")+" correctly!"}</b><br>${r.sub?"Keep practicing!":"You've conquered the whole list."}</div><div class="row"><button class="btn l" id="r1">↩️ Back to Round 1</button><button class="btn" id="go">🔁 New Round ${ph}</button></div>`;
@@ -778,7 +813,7 @@ function rAdd(){
  asUp();
  asb.onclick=e=>{e.preventDefault();e.stopPropagation();S.noauto=S.noauto?0:1;save();asUp();toast(S.noauto?"Auto sync off":"Auto sync on")};
  $("shs").onclick=async()=>{if(await syncSheet(false))rAdd()};
- $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4])]);
+ $("sb").onclick=()=>{const rows=$("sy").value.split("\n").map(l=>l.split("\t")).filter(r=>r[0]&&r[0].trim()&&r[2]).map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4]),true,cl(r[5])]);
   if(!rows.length){toast("No Sheet data received");return}
   const have=new Set(rows.map(r=>r[0].toLowerCase()));
   S.base=rows;S.custom=S.custom.filter(x=>!have.has(x[0].toLowerCase())).map(x=>[x[0],x[1],x[2],x[3]||"",x[4]||"",false]);
@@ -816,7 +851,7 @@ async function syncSheet(silent){
   if(!res.ok)throw 0;
   let rows=parseCSV(await res.text())
    .filter(r=>r[0]&&r[0].trim()&&r[2]&&r[2].trim())
-   .map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4])]);
+   .map(r=>[r[0].trim(),(r[1]||"").trim(),cl(r[2]),cl(r[3]),cl(r[4]),true,cl(r[5])]);
   if(rows.length&&/^(word|từ)$/i.test(rows[0][0]))rows.shift();
   if(rows.length<5)throw 0;
   applyRows(rows);
@@ -982,11 +1017,23 @@ const pic=w=>{const m=Math.min(S.m[w]||0,5);if(m<0)return rot();const wt=!!(S.w&
 function stName(w){const m=Math.min(S.m[w]||0,5);if(m<0)return "Rotten seed";if(m>=5){const f=fstate(w);return (f===2||ripe2(w))?"Fruiting":f===1?"Blooming":"Fully grown"}return SN[m]}
 function gardenStat(rp){const w=W();return "🍎 "+w.filter(x=>(S.m[x[0]]||0)>=5).length+"/"+w.length+" fully grown"+(rp!=null?" · 🧺 "+rp+" ripe":"")}
 function openQuiz(){fixRound();inQ=true;$("qp").style.display="";hud();rQuiz()}
-function quizStat(){const r=S.rd;return r&&r.deck.length?"Round "+r.ph+" · "+r.i+"/"+r.deck.length:"Not started"}
+function quizStat(){return "Overview + "+TOPICS().length+" topics"}
+function rQuizMenu(){
+ gClean();inQ=false;$("qp").style.display="none";
+ const ts=TOPICS();
+ if(S.qt&&!ts.includes(S.qt))setQT("");
+ hud();
+ const items=[["","🎯","Overview (all words)",W().length]].concat(ts.map(t=>[t,TI[t]||"📘",t,W().filter(x=>tp(x)===t).length]));
+ $("v").innerHTML=`<div class="gh qh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Games</button><b>🎯 Quiz</b><span></span></div>`+
+  items.map(i=>{const r=rdOf(i[0]);return `<div class="gc" data-t="${esc(i[0])}"><div class="ge">${i[1]}</div><div class="gi"><b>${esc(i[2])}</b><span>${i[3]} words</span><em>${r&&r.deck.length?"Round "+r.ph+" · "+r.i+"/"+r.deck.length:"Not started"}</em></div></div>`}).join("");
+ $("gb").onclick=rGames;
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>{setQT(c.dataset.t);openQuiz()});
+}
+
 function rGames(){
  gClean();inQ=false;$("qp").style.display="none";hud();
  $("v").innerHTML=`<div class="gh"><b>🎮 Games</b></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="quiz"?quizStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("");
- document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({quiz:openQuiz,balloon:gBalloon,space:gSpace})[c.dataset.g]());
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({quiz:rQuizMenu,balloon:gBalloon,space:gSpace})[c.dataset.g]());
 }
 function gShell(title){
  gClean();
@@ -3057,8 +3104,8 @@ function waterPlant(word){
  });
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inQ=false;wlOpen=true;render()});
-$("qb").onclick=()=>rGames();
-$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.bm={};S.f2={};S.rd=null;combo=0;gwDrop();save();hud();render();gwBoot();toast("Reset done ↺")};
+$("qb").onclick=()=>rQuizMenu();
+$("rs").onclick=()=>{if(!confirm("Reset Level, XP, round progress, garden growth and correct/wrong counts? (Your word list, 💧, 🪙 and shop items are kept.)"))return;S.xp=0;S.m={};S.c={};S.w={};S.wp={};S.fr={};S.hv={};S.bv={};S.bm={};S.f2={};S.rd=null;S.rph={};S.rcur={};combo=0;gwDrop();save();hud();render();gwBoot();toast("Reset done ↺")};
 $("rsf").onclick=()=>{
  if(!confirm("FULL RESET?\n\nThis erases EVERYTHING: 💧, 🪙, shop items, soil/pots, bees & butterflies, XP, streak, garden growth, scores and counts.\n\nOnly your Word List is kept.\n\nThis cannot be undone."))return;
  if(!confirm("Are you really sure? Last chance."))return;
