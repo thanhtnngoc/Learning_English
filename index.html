@@ -872,6 +872,7 @@ function gClean(){
 }
 const GAMES=[
  {k:"quiz",e:"🎯",t:"Quiz",d:"Round 1: Choice the word. Round 2: Choice the meaning. Round 3: Spell it."},
+ {k:"speak",e:"🎤",t:"Speak",d:"See the meaning, say the English word out loud. The app tells you if it understood you."},
  {k:"balloon",e:"🎈",t:"Balloon Pop",d:"Read the definition and pop the right balloon before it floats away."},
  {k:"space",e:"🚀",t:"Space Typing",d:"Type the word that matches the clue before the alien lands."}
 ];
@@ -1033,7 +1034,7 @@ function rQuizMenu(){
 function rGames(){
  gClean();inQ=false;$("qp").style.display="none";hud();
  $("v").innerHTML=`<div class="gh"><b>🎮 Games</b></div>`+GAMES.map(g=>`<div class="gc" data-g="${g.k}"><div class="ge">${g.e}</div><div class="gi"><b>${g.t}</b><span>${g.d}</span><em>${g.k==="quiz"?quizStat():"Best: "+(S.gb[g.k]||0)}</em></div></div>`).join("");
- document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({quiz:rQuizMenu,balloon:gBalloon,space:gSpace})[c.dataset.g]());
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>({quiz:rQuizMenu,balloon:gBalloon,space:gSpace,speak:rSpeakMenu})[c.dataset.g]());
 }
 function gShell(title){
  gClean();
@@ -1195,6 +1196,72 @@ function gSpace(){
  inp.addEventListener("blur",()=>setTimeout(unfit.f,0));
  lgBind(()=>{en.forEach(e=>{if(e.dead)return;const c=e.el.querySelector(".ec");if(c&&c.firstChild)c.firstChild.textContent=cq(e.x)})});
  upd();inp.focus();raf=requestAnimationFrame(t=>{last=t;loop(t)});
+}
+/* ---- Speak (pronunciation) ---- */
+function rSpeakMenu(){
+ gClean();inQ=false;$("qp").style.display="none";hud();
+ const ts=TOPICS();
+ const items=[["","🎤","Overview (all words)",W().length]].concat(ts.map(t=>[t,TI[t]||"📘",t,W().filter(x=>tp(x)===t).length]));
+ $("v").innerHTML=`<div class="gh qh"><button class="btn l" id="gb" style="flex:none;padding:6px 12px">← Games</button><b>🎤 Speak</b><span></span></div>`+
+  items.map(i=>`<div class="gc" data-t="${esc(i[0])}"><div class="ge">${i[1]}</div><div class="gi"><b>${esc(i[2])}</b><span>${i[3]} words</span></div></div>`).join("");
+ $("gb").onclick=rGames;
+ document.querySelectorAll(".gc").forEach(c=>c.onclick=()=>gSpeak(c.dataset.t));
+}
+
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const prKey=s=>String(s).toLowerCase().replace(/[^a-z]/g,"");
+function gSpeak(topic){
+ topic=topic||"";
+ gShell("🎤 Speak");
+ $("gb").onclick=rSpeakMenu;
+ if(!SR){$("ga").innerHTML=`<div class="q" style="text-align:center">⚠️ This browser can't listen to speech.<br>Try Chrome (Android / desktop) or Safari.</div>`;return}
+ const N=10,wt=x=>{const p=(S.pr||{})[x[0]]||[0,0];return 1+2*p[1]+(5-Math.max(0,Math.min(5,S.m[x[0]]||0)))};
+ // ưu tiên từ hay đọc sai và từ cây còn yếu
+ const deck=(topic?W().filter(x=>tp(x)===topic):W()).map(x=>[Math.pow(Math.random(),1/wt(x)),x]).sort((a,b)=>b[0]-a[0]).slice(0,N).map(a=>a[1]);
+ if(!deck.length){$("ga").innerHTML=`<div class="q" style="text-align:center">No words yet.</div>`;return}
+ let i=0,score=0,over=false,rec=null,att=0,done=false,fail=false,shown=false;
+ const upd=()=>{$("gs").textContent="🎤 "+Math.min(i+1,deck.length)+"/"+deck.length+" ⭐ "+score};
+ gStop=()=>{try{if(rec){const r=rec;rec=null;r.abort()}}catch(e){}try{speechSynthesis.cancel()}catch(e){}if(!over){if(score>(S.gb.speak||0))S.gb.speak=score;const w=payout(score);if(w)toast("+"+w+" 💧");save()}};
+ function reveal(x){shown=true;$("sprv").innerHTML=`<b style="font-size:26px">${esc(x[0])}</b><div class="ipa">${esc(x[1]||"")}</div>`}
+ function judge(alts){
+  const x=deck[i],t=prKey(x[0]),k=alts.findIndex(a=>prKey(a)===t),res=$("spres");
+  if(done){res.innerHTML=(k===0?"✅ ":"🟡 ")+"I heard <b>"+esc(alts[0]||"…")+"</b>";return}   // luyện thêm, không tính điểm nữa
+  S.pr=S.pr||{};const c=S.pr[x[0]]=S.pr[x[0]]||[0,0];
+  att++;
+  if(k===0){
+   if(!fail)c[0]++;
+   done=true;score+=shown?3:(att===1?10:6);upd();
+   reveal(x);res.innerHTML="✅ Clear! You said <b>"+esc(alts[0])+"</b>";
+   $("spnx").textContent="Next ➜";
+   gain(2);speak(x[0]);
+  }else{
+   if(!fail){c[1]++;fail=true}
+   res.innerHTML=(k>0?"🟡 Almost. I heard <b>":"❌ I heard <b>")+esc(alts[0]||"…")+"</b>. Listen and try again.";
+   if(att>=3&&!shown)reveal(x);
+   save();
+  }
+ }
+ function listen(){
+  if(rec||over)return;
+  try{speechSynthesis.cancel()}catch(e){}
+  const b=$("spmk"),res=$("spres"),r=new SR();rec=r;
+  r.lang=S.acc||"en-GB";r.maxAlternatives=5;r.interimResults=false;
+  b.disabled=true;b.textContent="🎤 Listening…";res.textContent="…";
+  let got=false;
+  r.onresult=e=>{if(rec!==r)return;got=true;judge(Array.from(e.results[0]).map(a=>a.transcript.trim()))};
+  r.onerror=e=>{if(rec!==r)return;got=true;res.textContent=e.error==="not-allowed"||e.error==="service-not-allowed"?"⚠️ Microphone blocked. Allow it in your browser settings.":e.error==="no-speech"?"I didn't hear anything. Try again.":e.error==="network"?"⚠️ Speech recognition needs an internet connection.":"⚠️ Couldn't listen ("+e.error+")"};
+  r.onend=()=>{if(rec!==r)return;rec=null;b.disabled=false;b.textContent=done?"🎤 Again":"🎤 Say it";if(!got)res.textContent="I didn't catch that. Try again."};
+  try{r.start()}catch(e){rec=null;b.disabled=false;b.textContent="🎤 Say it";res.textContent="⚠️ Couldn't start the microphone."}
+ }
+ function show(){
+  const x=deck[i];att=0;done=false;fail=false;shown=false;upd();
+  $("ga").innerHTML=`<div class="q" style="text-align:center"><div style="font-size:22px;font-weight:800">${esc(vi(x)||x[2])}</div>${vi(x)?`<div class="hint">${esc(x[2])}</div>`:""}<div id="sprv" style="margin-top:12px;min-height:60px"></div></div><div class="q" id="spres" style="margin-top:10px;text-align:center;min-height:52px">Say the English word out loud</div><div class="row"><button class="btn l" id="sphr" style="flex:none;padding:12px 16px">🔊</button><button class="btn" id="spmk">🎤 Say it</button></div><div class="row"><button class="btn l" id="spsw">👁 Show word</button><button class="btn l" id="spnx">Skip ➜</button></div>`;
+  $("sphr").onclick=()=>speak(x[0]);
+  $("spsw").onclick=()=>reveal(x);
+  $("spmk").onclick=listen;
+  $("spnx").onclick=()=>{try{if(rec){const r=rec;rec=null;r.abort()}}catch(e){}i++;if(i>=deck.length){over=true;gOver("speak",score,()=>gSpeak(topic))}else show()};
+ }
+ show();
 }
 
 /* ---- Word Garden ---- */
