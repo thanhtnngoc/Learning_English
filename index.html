@@ -530,7 +530,7 @@ function ffAct(p){
  const e=f2e(w)||(S.f2[w]={d:ld(),s:0,h:0});
  e.s=1;
  save();plSet(p);progUpd();
- gtoast("✨ \""+w+"\" lit up");
+ gtoast("✨ \""+w+"\" lit up");gStatUpd();
  return true;
 }
 function ff2Up(w){ // chỉ gọi từ fruitUp => chỉ khi trả lời đúng trong Quiz/games
@@ -635,7 +635,19 @@ const pshuf=names=>{
 };
 const byW=n=>W().find(x=>x[0]===n);
 function stash(){const r=S.rd;if(!r||r.sub||!r.deck.length)return;const k=S.qt||"";S.rph=S.rph||{};(S.rph[k]=S.rph[k]||{})[r.ph]=r;S.rcur=S.rcur||{};S.rcur[k]=r.ph}
+function syncSub(){
+ const r=S.rd;
+ if(!r||!r.sub)return;
+ const k=S.qt||"",main=S.rph&&S.rph[k]&&S.rph[k][r.ph];
+ if(!main||main===r)return;
+ // từ đã làm xong trong ván sửa mà không sai → gỡ khỏi danh sách sai của round gốc
+ const fixed=r.deck.slice(0,r.i).filter(n=>!r.wr.includes(n));
+ if(!fixed.length)return;
+ main.wr=(main.wr||[]).filter(n=>!fixed.includes(n));
+ save();
+}
 function switchRound(to){
+ syncSub();
  stash();
  const k=S.qt||"",r=(S.rph&&S.rph[k]&&S.rph[k][to])||null;
  // có round cũ chưa xong (hoặc xong nhưng còn từ sai) thì làm tiếp; xong 100% thì mở ván mới
@@ -664,7 +676,7 @@ function fixRound(){
 }
 function confetti(){for(let n=0;n<70;n++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","✨","🎊","⭐","💜"][n%5];e.style.left=Math.random()*100+"vw";e.style.animationDuration=(2+Math.random()*2)+"s";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),5500)}}
 let lastWt=0;
-function answered(w,okk){const r=S.rd;r.i++;lastWt=0;if(okk){const c=combo+1;lastWt=1+Math.floor(c/4);r.ok++;S.coins=(S.coins||0)+lastWt}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1);if(okk)fruitUp(w)}
+function answered(w,okk){const r=S.rd;r.i++;lastWt=0;if(okk){const c=combo+1;lastWt=1+Math.floor(c/4);r.ok++;S.coins=(S.coins||0)+lastWt}else if(!r.wr.includes(w))r.wr.push(w);mark(w,okk?1:-1);if(okk)fruitUp(w);syncSub()}
 function rQuiz(){
  if(!S.rd||!S.rd.deck.length)newRound(1);
  const r=S.rd;
@@ -1356,7 +1368,7 @@ function gGarden(){
  const rp=w.filter(x=>pickable(x[0])).length;
  const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),p=Math.round(tot/(5*w.length)*100);
  const pg=progInfo().length?`<button class="chip rl" id="prg"></button>`:"";
- $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧): answer right and it grows, answer wrong and it wilts. Answering well in Quiz and the other games also makes plants grow.<br><br>Skip a day and you lose 10% 💧. Green plants are never affected. A wilted plant costs 2 💧 to keep its level; 4 💧 more makes it green again. Without enough 💧, it drops a level.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% grown</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
+ $("v").innerHTML=`<div class="gh" style="flex-wrap:wrap"><span class="cur"><button class="chip rl" id="rul" aria-label="Rules">ℹ️ Rules</button><button class="chip rl" id="swb" aria-label="Plant motion">${S.nosway?"🌿 Off":"🌿 On"}</button></span><span class="cur">${pg}<span class="chip" id="wc">💧 ${S.coins}</span><button class="chip rl" id="gx">🪙 ${S.gold||0} ⇄</button></span></div><div class="rlb" id="rlb" style="display:none">Earn 💧 from Quiz, Cards and games. Tap a plant to water it (1 💧): answer right and it grows, answer wrong and it wilts. Answering well in Quiz and the other games also makes plants grow.<br><br>Skip a day and you lose 10% 💧. Green plants are never affected. A wilted plant costs 2 💧 to keep its level; 4 💧 more makes it green again. Without enough 💧, it drops a level.<br><br>Fully grown plants bear fruit again after you answer correctly in Quiz, Balloon Pop or Space Typing (flower, then fruit). Pick them with the sickle: 9 🪙 per plant, once a day.</div><div class="rlb" id="prb" style="display:none"></div><div class="hint" id="gst" style="text-align:center;margin:0 0 8px">${gardenStat(rp)} · ${p}% progress</div><div class="row gact"><button class="btn l" id="shp">🛒 Shop</button><button class="btn l${hm?" on":""}" id="skl">${SICKLE} Sickle</button><button class="btn" id="hva"${rp?"":" disabled"}>🧺 All (${rp})</button></div><div id="gwslot"></div>`;
  gwCells(GHFX);GHFX=false;            // cập nhật ô tại chỗ, côn trùng đang đậu không bị mất cây
  $("gwslot").replaceWith(GW);
  document.querySelectorAll(".pl").forEach(b=>b.onclick=()=>hm?harvestOne(b.dataset.w,b):waterPlant(b.dataset.w));
@@ -1629,7 +1641,7 @@ function bfAct(p){
  S.coins-=BF_W;S.gold-=BF_G;S.m[w]=4;
  S.fr=S.fr||{};delete S.fr[w];
  save();plSet(p);hudC();
- gtoast("🦋 \""+w+"\" bloomed");progUpd();return true;
+ gtoast("🦋 \""+w+"\" bloomed");progUpd();gStatUpd();return true;
 }
 function bfNew(h,g,i){
  const sz=24,el=document.createElement("div");el.className="bf rest";
@@ -1718,9 +1730,17 @@ const beeOk=w=>bfBloom(w)&&(S.hv||{})[w]!==ld()&&!(S.w&&S.w[w])&&!beeDay().seen[
 const beeTotal=()=>Math.max(1,Math.ceil(W().length*BEE_RANGE));   // hạn mức/ngày = % tổng số cây
 const beeCount=()=>((S.own&&+S.own.bee)||1)*3;    // số con ong (tốc độ làm việc)
 function beeDay(){const t=ld();if(!S.bee||S.bee.d!==t)S.bee={d:t,used:0,seen:{}};return S.bee}
+function gStatUpd(){
+ const e=$("gst");if(!e)return;
+ const w=W(),rp=w.filter(x=>pickable(x[0])).length;
+ const tot=w.reduce((a,x)=>a+Math.max(0,Math.min(S.m[x[0]]||0,5)),0),
+       p=w.length?Math.round(tot/(5*w.length)*100):0;
+ e.textContent=gardenStat(rp)+" · "+p+"% progress";
+ const hv=$("hva");if(hv){hv.textContent="🧺 All ("+rp+")";hv.disabled=!rp}
+}
 function beeUpd(p){
  plSet(p);
- const rp=W().filter(x=>pickable(x[0])).length,hv=$("hva");if(hv){hv.textContent="🧺 All ("+rp+")";hv.disabled=!rp}
+ gStatUpd();
 }
 function beeAct(p){
  const w=p.dataset.w;if(!gwLive()||!byW(w))return false;const b=beeDay();
