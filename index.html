@@ -352,6 +352,12 @@ body.gfocus .top,body.gfocus .tabs,body.gfocus #ga .hint{display:none}
 .list .sg{margin-top:10px;padding:2px 12px 4px;background:var(--card);border:1px solid var(--bd);border-radius:14px}
 .list .sg .it:last-child{border-bottom:0}
 .list .sgt{padding:8px 0 2px;border-bottom:0;font-size:12px;font-weight:700;color:var(--pr)}
+.list .sgh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:0;font-size:14px;font-weight:700;color:var(--pr);cursor:pointer;user-select:none;-webkit-user-select:none}
+.list .sgc{font-style:normal;color:var(--mu);transition:transform .15s}
+.list .sg.open .sgc{transform:rotate(90deg)}
+.list .sg.open .sgh{border-bottom:1px solid var(--bd)}
+.list .sgb{display:none;padding:0;border-bottom:0}
+.list .sg.open .sgb{display:block}
 .keep *{animation-play-state:paused!important}
 .bf.cri{width:21.6px;height:21.6px;pointer-events:auto;cursor:pointer}
 .crb{position:absolute;left:50%;bottom:100%;margin-bottom:3px;transform:translateX(-50%);white-space:nowrap;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:3px 8px;font-size:11px;line-height:1.3;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.2);pointer-events:none;opacity:0;transition:opacity .2s;z-index:5}
@@ -806,16 +812,23 @@ function simRow(x){
  if(L.length&&L[0].toLowerCase().startsWith(p))L[0]=L[0].slice(p.length).trim();
  return `<div class="it li"><span class="lt"><b>${esc(x[0])}${x[1]?`<span class="ip">${esc(x[1])}</span>`:""}${vi(x)?`<span class="vi">${esc(vi(x))}</span>`:""}</b>${L.map((t,i)=>`<small${i?' class="vd"':""}>${esc(t)}</small>`).join("")}</span><span class="lr">${cnt(x[0])}<button class="sp" data-w="${esc(x[0])}" title="Listen">🔊</button></span></div>`;
 }
+let simOpenG=new Set();   // nhớ nhóm nào đang mở
 function simHtml(q){
  let G=simGroups();
  if(q){
   const m=new Set(wlFind(W().filter(ntOf),q).map(x=>x[0]));
   G=G.map(g=>g.loose?{loose:1,items:g.items.filter(x=>m.has(x[0]))}:g).filter(g=>g.loose?g.items.length:g.items.some(x=>m.has(x[0])));
  }
- return G.map(g=>`<div class="sg">${g.loose?`<div class="sgt">No group yet</div>`:g.items.length>1?`<div class="sgt">${g.items.map(x=>esc(x[0])).join(" ≈ ")}</div>`:""}${g.items.map(simRow).join("")}</div>`).join("");
+ return G.map(g=>{
+  const k=g.loose?"~loose":g.items.map(x=>x[0]).join("|"),
+   t=g.loose?"No group yet ("+g.items.length+")":g.items.map(x=>esc(x[0])).join(" ≈ "),
+   o=simOpenG.has(k)||!!q;   // đang tìm kiếm thì tự mở các nhóm khớp
+  return `<div class="sg${o?" open":""}" data-k="${esc(k)}"><div class="sgh" role="button" tabindex="0"><span>${t}</span><i class="sgc">▸</i></div><div class="sgb">${g.items.map(simRow).join("")}</div></div>`;
+ }).join("");
 }
+
 function simSec(){
- const n=W().filter(ntOf).length;
+ const n=simGroups().length;
  return n?`<details id="sgd" style="margin:0 0 14px"${simOpen?" open":""}><summary>🔀 Similar words (${n})</summary><div class="list" id="sgl">${simHtml("")}</div></details>`:"";
 }
 function rAdd(){
@@ -831,7 +844,16 @@ function rAdd(){
  const sgd=$("sgd"),sgl=$("sgl");
  if(sgd){
   sgd.ontoggle=()=>{simOpen=sgd.open};
-  sgl.onclick=e=>{const b=e.target.closest(".sp");if(b)speak(b.dataset.w)};
+  sgl.onclick=e=>{
+    const b=e.target.closest(".sp");
+    if(b){speak(b.dataset.w);return}
+    const h=e.target.closest(".sgh");
+    if(h){
+      const s=h.parentNode,k=s.dataset.k;
+      s.classList.toggle("open");
+      if(s.classList.contains("open"))simOpenG.add(k);else simOpenG.delete(k);
+    }
+  };
  }
  let cnt0=String(L.length);
  ws.oninput=()=>{
